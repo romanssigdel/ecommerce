@@ -1,3 +1,5 @@
+import 'package:ecommerce/custom/custom_button.dart';
+import 'package:ecommerce/custom/custom_textformfield.dart';
 import 'package:flutter/material.dart';
 
 class SignupPage extends StatefulWidget {
@@ -31,91 +33,69 @@ class _SignupPageState extends State<SignupPage> {
                   SizedBox(
                     height: 30,
                   ),
-                  SizedBox(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.person,
-                            size: 30,
-                            color: Colors.black,
-                          ),
-                          labelText: "Name",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(27))),
+                  CustomTextFormField(
+                    labelText: "Name",
+                    prefixIcon: Icon(
+                      Icons.person,
+                      color: Colors.black,
+                      size: 30,
                     ),
                   ),
                   SizedBox(
                     height: 30,
                   ),
-                  SizedBox(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.mail,
-                            size: 30,
-                            color: Colors.black,
-                          ),
-                          labelText: "Email",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(27))),
+                  CustomTextFormField(
+                    labelText: "Email",
+                    prefixIcon: Icon(
+                      Icons.mail,
+                      color: Colors.black,
+                      size: 30,
                     ),
                   ),
                   SizedBox(
                     height: 30,
                   ),
-                  SizedBox(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.lock,
-                            size: 30,
-                            color: Colors.black,
-                          ),
-                          suffixIcon: Icon(Icons.visibility_off),
-                          labelText: "Password",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(27))),
+                  CustomTextFormField(
+                    labelText: "Password",
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: Colors.black,
+                      size: 30,
+                    ),
+                    suffixIcon: Icon(
+                      Icons.visibility_off,
+                      size: 30,
+                      color: Colors.black,
                     ),
                   ),
                   SizedBox(
                     height: 30,
                   ),
-                  SizedBox(
-                    height: 60,
-                    width: MediaQuery.of(context).size.width * 0.95,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.lock,
-                            size: 30,
-                            color: Colors.black,
-                          ),
-                          suffixIcon: Icon(Icons.visibility_off),
-                          labelText: "Confirm Password",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(27))),
+                  CustomTextFormField(
+                    labelText: "Confirm Password",
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: Colors.black,
+                      size: 30,
+                    ),
+                    suffixIcon: Icon(
+                      Icons.visibility_off,
+                      size: 30,
+                      color: Colors.black,
                     ),
                   ),
                   SizedBox(
                     height: 30,
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * .95,
-                    height: 50,
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xff1161FC)),
-                        onPressed: () {},
-                        child: Text(
-                          "Sign Up",
-                          style: TextStyle(color: Colors.white, fontSize: 20),
-                        )),
+                  CustomButton(
+                    onPressed: () {},
+                    child: Text(
+                      "Sign Up",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
                   ),
                   SizedBox(
                     height: 10,
