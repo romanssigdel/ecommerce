@@ -16,7 +16,11 @@ class _DescriptionPageSecondState extends State<DescriptionPageSecond> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(child: Image.asset("assets/images/ecommerce2.png")),
+            Image.asset("assets/images/ecommerce2.png"),
+            Text(
+              "Your ultimate Shopping\n    Experience awaits.",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 27),
+            )
           ],
         ),
       ),

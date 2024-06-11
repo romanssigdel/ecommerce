@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 class CustomButton extends StatelessWidget {
   Function()? onPressed;
   Widget? child;
-  CustomButton({super.key, this.onPressed, this.child});
+  Color? backgroundColor;
+  Color? foregroundColor;
+  CustomButton(
+      {super.key,
+      this.onPressed,
+      this.child,
+      this.backgroundColor,
+      this.foregroundColor});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +18,9 @@ class CustomButton extends StatelessWidget {
         width: MediaQuery.of(context).size.width * .95,
         height: 50,
         child: ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Color(0xff1161FC)),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: backgroundColor,
+                foregroundColor: foregroundColor),
             onPressed: onPressed,
             child: child));
   }

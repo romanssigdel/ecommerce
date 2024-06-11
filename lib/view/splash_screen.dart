@@ -1,4 +1,5 @@
-import 'package:ecommerce/signup_form.dart';
+import 'package:ecommerce/view/description_page.dart';
+import 'package:ecommerce/view/signup_form.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreenPage extends StatefulWidget {
@@ -15,7 +16,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => SignupPage(),
+            builder: (context) => DescriptionPage(),
           ),
           (route) => false);
     });
