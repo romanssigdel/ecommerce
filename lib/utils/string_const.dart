@@ -18,3 +18,8 @@ String signInButtonStr = "Sign In";
 String dividerOrStr = "or";
 
 String alreadyHaveAccountStr = "Already have an Account?";
+
+String noInternetConectionStr = "No Internet Available!";
+
+String dataSuccessfullySavedStr = "Data Successfully Saved.";
+String dataNotSavedStr = "Data Saving Unsuccessful.";
