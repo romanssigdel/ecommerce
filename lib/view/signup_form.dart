@@ -1,5 +1,7 @@
 import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/custom/custom_textformfield.dart';
+import 'package:ecommerce/utils/color_const.dart';
+import 'package:ecommerce/utils/string_const.dart';
 import 'package:flutter/material.dart';
 
 class SignupPage extends StatefulWidget {
@@ -10,6 +12,7 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  String? password;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -25,7 +28,7 @@ class _SignupPageState extends State<SignupPage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 0, top: 0),
                     child: Text(
-                      "Create an\nAccount",
+                      createAccountStr,
                       style:
                           TextStyle(fontSize: 30, fontWeight: FontWeight.w900),
                     ),
@@ -34,7 +37,13 @@ class _SignupPageState extends State<SignupPage> {
                     height: 30,
                   ),
                   CustomTextFormField(
-                    labelText: "Name",
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return nameValidationStr;
+                      }
+                      return null;
+                    },
+                    labelText: nameStr,
                     prefixIcon: Icon(
                       Icons.person,
                       color: Colors.black,
@@ -45,7 +54,13 @@ class _SignupPageState extends State<SignupPage> {
                     height: 30,
                   ),
                   CustomTextFormField(
-                    labelText: "Email",
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return emailValidtionStr;
+                      }
+                      return null;
+                    },
+                    labelText: emailStr,
                     prefixIcon: Icon(
                       Icons.mail,
                       color: Colors.black,
@@ -56,7 +71,18 @@ class _SignupPageState extends State<SignupPage> {
                     height: 30,
                   ),
                   CustomTextFormField(
-                    labelText: "Password",
+                    onChanged: (value) {
+                      password = value;
+                    },
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return passwordValidationStr;
+                      } else if (value.length < 8) {
+                        return passwordLengthValidationStr;
+                      }
+                      return null;
+                    },
+                    labelText: passwordStr,
                     prefixIcon: Icon(
                       Icons.lock,
                       color: Colors.black,
@@ -72,7 +98,17 @@ class _SignupPageState extends State<SignupPage> {
                     height: 30,
                   ),
                   CustomTextFormField(
-                    labelText: "Confirm Password",
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return confirmPasswordValidationStr;
+                      } else if (value.length < 8) {
+                        return passwordLengthValidationStr;
+                      } else if (value != password) {
+                        return passwordMatchValidationStr;
+                      }
+                      return null;
+                    },
+                    labelText: confirmPasswordStr,
                     prefixIcon: Icon(
                       Icons.lock,
                       color: Colors.black,
@@ -88,9 +124,11 @@ class _SignupPageState extends State<SignupPage> {
                     height: 30,
                   ),
                   CustomButton(
+                    backgroundColor: buttonBackgroundColor,
+                    foregroundColor: buttonForegroundColor,
                     onPressed: () {},
                     child: Text(
-                      "Sign Up",
+                      signUpButtonStr,
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -107,7 +145,7 @@ class _SignupPageState extends State<SignupPage> {
                         indent: 15,
                         endIndent: 5,
                       )),
-                      Text("or"),
+                      Text(dividerOrStr),
                       Expanded(
                           child: Divider(
                         indent: 5,
@@ -160,14 +198,14 @@ class _SignupPageState extends State<SignupPage> {
                         width: 10,
                       ),
                       Text(
-                        "Already have an Account?",
+                        alreadyHaveAccountStr,
                         style: TextStyle(fontSize: 16),
                       ),
                       SizedBox(
                         width: 50,
                       ),
                       Text(
-                        "Sign In",
+                        signInButtonStr,
                         style:
                             TextStyle(fontSize: 16, color: Color(0xff1161FC)),
                       )
