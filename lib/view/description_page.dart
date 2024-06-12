@@ -1,4 +1,5 @@
 import 'package:ecommerce/custom/custom_button.dart';
+import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/view/description_page_first.dart';
 import 'package:ecommerce/view/description_page_second.dart';
 import 'package:ecommerce/view/signin_form.dart';
@@ -96,6 +97,8 @@ class _DescriptionPageState extends State<DescriptionPage> {
                 SizedBox(
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: CustomButton(
+                      backgroundColor: buttonBackgroundColor,
+                      foregroundColor: buttonForegroundColor,
                       onPressed: () {
                         Navigator.pushAndRemoveUntil(
                             context,
@@ -115,6 +118,8 @@ class _DescriptionPageState extends State<DescriptionPage> {
                 SizedBox(
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: CustomButton(
+                      backgroundColor: buttonBackgroundColor,
+                      foregroundColor: buttonForegroundColor,
                       onPressed: () {
                         pageController.nextPage(
                             duration: Duration(microseconds: 2),

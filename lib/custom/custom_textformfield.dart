@@ -7,6 +7,7 @@ class CustomTextFormField extends StatelessWidget {
   Function(String)? onChanged;
   String? Function(String?)? validator;
   TextInputType? keyboardType;
+  bool obscureText;
   CustomTextFormField(
       {super.key,
       this.labelText,
@@ -14,13 +15,16 @@ class CustomTextFormField extends StatelessWidget {
       this.suffixIcon,
       this.onChanged,
       this.validator,
-      this.keyboardType});
+      this.keyboardType,
+      this.obscureText = false,
+      });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.95,
       child: TextFormField(
+        obscureText: obscureText,
         keyboardType: keyboardType,
         autovalidateMode: AutovalidateMode.onUserInteraction,
         onChanged: onChanged,

@@ -5,6 +5,7 @@ import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
+import 'package:ecommerce/view/signin_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -84,58 +85,81 @@ class _SignupPageState extends State<SignupPage> {
                         height: 30,
                       ),
                       CustomTextFormField(
-                        onChanged: (value) {
-                          userProvider.setPassword(value);
-                        },
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return passwordValidationStr;
-                          } else if (value.length < 8) {
-                            return passwordLengthValidationStr;
-                          }
-                          return null;
-                        },
-                        labelText: passwordStr,
-                        prefixIcon: Icon(
-                          Icons.lock,
-                          color: Colors.black,
-                          size: 30,
-                        ),
-                        suffixIcon: Icon(
-                          Icons.visibility_off,
-                          size: 30,
-                          color: Colors.black,
-                        ),
-                      ),
+                          obscureText: userProvider.showPassword ? false : true,
+                          onChanged: (value) {
+                            userProvider.setPassword(value);
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return passwordValidationStr;
+                            } else if (value.length < 8) {
+                              return passwordLengthValidationStr;
+                            }
+                            return null;
+                          },
+                          labelText: passwordStr,
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Colors.black,
+                            size: 30,
+                          ),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              userProvider.setShowPassword();
+                            },
+                            icon: userProvider.showPassword
+                                ? Icon(
+                                    Icons.visibility,
+                                    size: 30,
+                                    color: Colors.black,
+                                  )
+                                : Icon(
+                                    Icons.visibility_off,
+                                    size: 30,
+                                    color: Colors.black,
+                                  ),
+                          )),
                       SizedBox(
                         height: 30,
                       ),
                       CustomTextFormField(
-                        onChanged: (value) {
-                          userProvider.setConfirmPassword(value);
-                        },
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return confirmPasswordValidationStr;
-                          } else if (value.length < 8) {
-                            return passwordLengthValidationStr;
-                          } else if (value != userProvider.password) {
-                            return passwordMatchValidationStr;
-                          }
-                          return null;
-                        },
-                        labelText: confirmPasswordStr,
-                        prefixIcon: Icon(
-                          Icons.lock,
-                          color: Colors.black,
-                          size: 30,
-                        ),
-                        suffixIcon: Icon(
-                          Icons.visibility_off,
-                          size: 30,
-                          color: Colors.black,
-                        ),
-                      ),
+                          obscureText:
+                              userProvider.showConfirmPassword ? false : true,
+                          onChanged: (value) {
+                            userProvider.setConfirmPassword(value);
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return confirmPasswordValidationStr;
+                            } else if (value.length < 8) {
+                              return passwordLengthValidationStr;
+                            } else if (value != userProvider.password) {
+                              return passwordMatchValidationStr;
+                            }
+                            return null;
+                          },
+                          labelText: confirmPasswordStr,
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Colors.black,
+                            size: 30,
+                          ),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              userProvider.setShowConfirmPassword();
+                            },
+                            icon: userProvider.showConfirmPassword
+                                ? Icon(
+                                    Icons.visibility,
+                                    size: 30,
+                                    color: Colors.black,
+                                  )
+                                : Icon(
+                                    Icons.visibility_off,
+                                    size: 30,
+                                    color: Colors.black,
+                                  ),
+                          )),
                       SizedBox(
                         height: 30,
                       ),
@@ -146,10 +170,17 @@ class _SignupPageState extends State<SignupPage> {
                           if (_formKey.currentState!.validate()) {
                             await userProvider.saveStudentData();
                             if (userProvider.saveUserStatus ==
-                                    StatusUtil.success &&
-                                userProvider.isSuccess) {
-                              Helper.displaySnackbar(
-                                  context, dataSuccessfullySavedStr);
+                                StatusUtil.success) {
+                              if (userProvider.isSuccess) {
+                                Helper.displaySnackbar(
+                                    context, dataSuccessfullySavedStr);
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SigninPage(),
+                                    ),
+                                    (route) => false);
+                              }
                             } else if (userProvider.saveUserStatus ==
                                 StatusUtil.error) {
                               Helper.displaySnackbar(
@@ -157,13 +188,15 @@ class _SignupPageState extends State<SignupPage> {
                             }
                           }
                         },
-                        child: Text(
-                          signUpButtonStr,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
+                        child: userProvider.saveUserStatus == StatusUtil.loading
+                            ? CircularProgressIndicator()
+                            : Text(
+                                signUpButtonStr,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
                       ),
                       SizedBox(
                         height: 10,
@@ -236,11 +269,9 @@ class _SignupPageState extends State<SignupPage> {
                           SizedBox(
                             width: 50,
                           ),
-                          Text(
-                            signInButtonStr,
-                            style: TextStyle(
-                                fontSize: 16, color: Color(0xff1161FC)),
-                          )
+                          Text(signInButtonStr,
+                              style: TextStyle(
+                                  fontSize: 16, color: buttonBackgroundColor)),
                         ],
                       )
                     ],

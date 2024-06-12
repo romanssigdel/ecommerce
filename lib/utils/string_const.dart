@@ -28,4 +28,4 @@ String dataNotSavedStr = "Data Saving Unsuccessful.";
 String loginAccountStr = "Let's\nSign In!";
 String loginSuccessful = "Login Successful";
 String loginFailed = "Login Failed";
-String invalidCredential = "Invalid Credential!S";
+String invalidCredential = "Invalid Credential!";

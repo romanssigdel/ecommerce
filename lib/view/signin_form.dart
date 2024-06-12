@@ -65,29 +65,37 @@ class _SigninPageState extends State<SigninPage> {
                         height: 30,
                       ),
                       CustomTextFormField(
-                        onChanged: (value) {
-                          userProvider.setPassword(value);
-                        },
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return passwordValidationStr;
-                          } else if (value.length < 8) {
-                            return passwordLengthValidationStr;
-                          }
-                          return null;
-                        },
-                        labelText: passwordStr,
-                        prefixIcon: Icon(
-                          Icons.lock,
-                          color: Colors.black,
-                          size: 30,
-                        ),
-                        suffixIcon: Icon(
-                          Icons.visibility_off,
-                          size: 30,
-                          color: Colors.black,
-                        ),
-                      ),
+                          obscureText: userProvider.showPassword ? false : true,
+                          onChanged: (value) {
+                            userProvider.setPassword(value);
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return passwordValidationStr;
+                            } else if (value.length < 8) {
+                              return passwordLengthValidationStr;
+                            }
+                            return null;
+                          },
+                          labelText: passwordStr,
+                          prefixIcon: Icon(
+                            Icons.lock,
+                            color: Colors.black,
+                            size: 30,
+                          ),
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                userProvider.setShowPassword();
+                              },
+                              icon: userProvider.showPassword
+                                  ? Icon(
+                                      Icons.visibility,
+                                      size: 30,
+                                    )
+                                  : Icon(
+                                      Icons.visibility_off,
+                                      size: 30,
+                                    ))),
                       SizedBox(
                         height: 30,
                       ),

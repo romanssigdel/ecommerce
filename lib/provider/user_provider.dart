@@ -6,6 +6,22 @@ import 'package:ecommerce/services/user_services_impl.dart';
 import 'package:flutter/material.dart';
 
 class UserProvider extends ChangeNotifier {
+  bool _showPassword = false;
+  bool get showPassword => _showPassword;
+
+  bool _showConfirmPassword = false;
+  bool get showConfirmPassword => _showConfirmPassword;
+
+  setShowPassword() {
+    _showPassword = !_showPassword;
+    notifyListeners();
+  }
+
+  setShowConfirmPassword() {
+    _showConfirmPassword = !_showConfirmPassword;
+    notifyListeners();
+  }
+
   String? name, email, password, confirmPassword;
   String? errorMessage;
   bool isSuccess = false;
