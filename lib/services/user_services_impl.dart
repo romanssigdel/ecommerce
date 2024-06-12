@@ -7,6 +7,7 @@ import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/string_const.dart';
 
 class UserServicesImplementation extends UserServices {
+  List<User> userList = [];
   @override
   Future<ApiResponse> saveUserData(User user) async {
     bool isSuccess = false;
@@ -26,6 +27,21 @@ class UserServicesImplementation extends UserServices {
     } else {
       return ApiResponse(
           statusUtil: StatusUtil.error, errorMessage: noInternetConectionStr);
+    }
+  }
+
+  @override
+  Future<ApiResponse> getUserData() async {
+    try {
+      await FirebaseFirestore.instance.collection("user").get().then((value) {
+        print(value);
+        userList.addAll(value.docs.map((e) => User.fromJson(e.data())).toList());
+        print(userList);
+      });
+      return ApiResponse(statusUtil: StatusUtil.success, data: userList);
+    } catch (e) {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, errorMessage: e.toString());
     }
   }
 }
