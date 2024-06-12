@@ -10,6 +10,7 @@ class UserProvider extends ChangeNotifier {
   String? errorMessage;
   bool isSuccess = false;
   List<User> userList = [];
+  bool isUserExists = false;
 
   UserServices userServices = UserServicesImplementation();
 
@@ -42,6 +43,14 @@ class UserProvider extends ChangeNotifier {
 
   setGetUserStatus(StatusUtil statusUtil) {
     _getUserStatus = statusUtil;
+    notifyListeners();
+  }
+
+  StatusUtil _getLoginUserStatus = StatusUtil.none;
+  StatusUtil get getLoginUserStatus => _getLoginUserStatus;
+
+  setGetLoginUserStatus(StatusUtil statusUtil) {
+    _getLoginUserStatus = statusUtil;
     notifyListeners();
   }
 
@@ -78,6 +87,21 @@ class UserProvider extends ChangeNotifier {
     } else if (apiResponse.statusUtil == StatusUtil.error) {
       errorMessage = apiResponse.errorMessage;
       setGetUserStatus(StatusUtil.error);
+    }
+  }
+
+  Future<void> loginCheckUserData() async {
+    if (_getLoginUserStatus != StatusUtil.loading) {
+      setGetLoginUserStatus(StatusUtil.loading);
+    }
+    User user = User(email: email, password: password);
+    ApiResponse apiResponse = await userServices.checkUserData(user);
+    if (apiResponse.statusUtil == StatusUtil.success) {
+      isUserExists = apiResponse.data;
+      setGetLoginUserStatus(StatusUtil.success);
+    } else if (apiResponse.statusUtil == StatusUtil.error) {
+      errorMessage = apiResponse.errorMessage;
+      setGetLoginUserStatus(StatusUtil.error);
     }
   }
 }

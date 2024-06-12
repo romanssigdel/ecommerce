@@ -18,8 +18,14 @@ String signInButtonStr = "Sign In";
 String dividerOrStr = "or";
 
 String alreadyHaveAccountStr = "Already have an Account?";
+String dontHaveAccountStr = "Don't have an Account?";
 
 String noInternetConectionStr = "No Internet Available!";
 
 String dataSuccessfullySavedStr = "Data Successfully Saved.";
 String dataNotSavedStr = "Data Saving Unsuccessful.";
+
+String loginAccountStr = "Let's\nSign In!";
+String loginSuccessful = "Login Successful";
+String loginFailed = "Login Failed";
+String invalidCredential = "Invalid Credential!S";
