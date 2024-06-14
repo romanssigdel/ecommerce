@@ -2,6 +2,7 @@ import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/view/description_page_first.dart';
 import 'package:ecommerce/view/description_page_second.dart';
+import 'package:ecommerce/view/home_page.dart';
 import 'package:ecommerce/view/signin_form.dart';
 import 'package:ecommerce/view/signup_form.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class DescriptionPage extends StatefulWidget {
 
 class _DescriptionPageState extends State<DescriptionPage> {
   List<bool> isSelected = [true, false];
+  int pageIndex = 0;
   PageController pageController = PageController();
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
                       isSelected[i] = false;
                     }
                     setState(() {
+                      pageIndex = index;
                       isSelected;
                       if (index == 1) {
                         pageController.nextPage(
@@ -94,36 +97,47 @@ class _DescriptionPageState extends State<DescriptionPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                pageIndex < 1
+                    ? SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        child: CustomButton(
+                          backgroundColor: buttonBackgroundColor,
+                          foregroundColor: buttonForegroundColor,
+                          onPressed: () {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SignupPage(),
+                                ),
+                                (route) => false);
+                          },
+                          child: Text(
+                            "Skip",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20),
+                          ),
+                        ))
+                    : SizedBox(),
                 SizedBox(
                     width: MediaQuery.of(context).size.width * 0.4,
                     child: CustomButton(
                       backgroundColor: buttonBackgroundColor,
                       foregroundColor: buttonForegroundColor,
                       onPressed: () {
-                        Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SignupPage(),
-                            ),
-                            (route) => false);
-                      },
-                      child: Text(
-                        "Skip",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
-                      ),
-                    )),
-                SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    child: CustomButton(
-                      backgroundColor: buttonBackgroundColor,
-                      foregroundColor: buttonForegroundColor,
-                      onPressed: () {
-                        pageController.nextPage(
-                            duration: Duration(microseconds: 2),
-                            curve: Curves.easeInOut);
+                        if (pageIndex < 1) {
+                          pageController.nextPage(
+                              duration: Duration(microseconds: 2),
+                              curve: Curves.easeInOut);
+                        } else {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SigninPage(),
+                              ),
+                              (route) => false);
+                        }
                       },
                       child: Text(
                         "Next",

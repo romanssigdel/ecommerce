@@ -64,7 +64,7 @@ class UserServicesImplementation extends UserServices {
             .then((value) {
           if (value.docs.isNotEmpty) {
             isUserExists = true;
-            print(value);
+            // print(value);
           }
         });
         return ApiResponse(statusUtil: StatusUtil.success, data: isUserExists);

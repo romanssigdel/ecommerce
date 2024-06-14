@@ -1,23 +1,38 @@
+import 'package:ecommerce/provider/icons_providers.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/view/description_page.dart';
 import 'package:ecommerce/firebase_options.dart';
+import 'package:ecommerce/view/home_page.dart';
 import 'package:ecommerce/view/signin_form.dart';
 import 'package:ecommerce/view/signup_form.dart';
 import 'package:ecommerce/view/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
-  runApp(const MyApp());
+  runApp(MyApp());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  MyApp({super.key});
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool isLoginUserLoggedIn = false;
+  @override
+  void initState() {
+    getLoginUserFromSharedPreference();
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +40,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(
           create: (context) => UserProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => IconsProvider(),
         )
       ],
       child: MaterialApp(
@@ -34,8 +52,16 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: SignupPage(),
+        home: isLoginUserLoggedIn ? HomePage(): SplashScreenPage(),
       ),
     );
+  }
+
+  getLoginUserFromSharedPreference() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    isLoginUserLoggedIn = prefs.getBool("isLogin") ?? false;
+    setState(() {
+      isLoginUserLoggedIn;
+    });
   }
 }
