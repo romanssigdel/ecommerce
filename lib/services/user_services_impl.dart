@@ -35,10 +35,10 @@ class UserServicesImplementation extends UserServices {
     if (await Helper().isInternetConnectionAvailable()) {
       try {
         await FirebaseFirestore.instance.collection("user").get().then((value) {
-          print(value);
+          //print(value);
           userList
               .addAll(value.docs.map((e) => User.fromJson(e.data())).toList());
-          print(userList);
+         // print(userList);
         });
         return ApiResponse(statusUtil: StatusUtil.success, data: userList);
       } catch (e) {
