@@ -4,6 +4,7 @@ import 'package:ecommerce/model/user.dart';
 import 'package:ecommerce/services/user_services.dart';
 import 'package:ecommerce/services/user_services_impl.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider extends ChangeNotifier {
   String? name, email, password, confirmPassword;
@@ -103,5 +104,9 @@ class UserProvider extends ChangeNotifier {
       errorMessage = apiResponse.errorMessage;
       setGetLoginUserStatus(StatusUtil.error);
     }
+  }
+  saveLoginUserToSharedPreference()async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLogin', true);
   }
 }

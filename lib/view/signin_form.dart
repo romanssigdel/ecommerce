@@ -113,6 +113,8 @@ class _SigninPageState extends State<SigninPage> {
                                 if (userProvider.isUserExists) {
                                   Helper.displaySnackbar(
                                       context, loginSuccessful);
+                                  userProvider
+                                      .saveLoginUserToSharedPreference();
                                   Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
