@@ -7,6 +7,7 @@ import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
 import 'package:ecommerce/view/home_page.dart';
+import 'package:ecommerce/view/signup_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +19,19 @@ class SigninPage extends StatefulWidget {
 }
 
 class _SigninPageState extends State<SigninPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(
+      Duration.zero,
+      () {
+        var provider = Provider.of<UserProvider>(context, listen: false);
+        provider.readRememberMe();
+      },
+    );
+  }
+
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -47,9 +61,7 @@ class _SigninPageState extends State<SigninPage> {
                           height: 30,
                         ),
                         CustomTextFormField(
-                          onChanged: (value) {
-                            userProvider.setEmail(value);
-                          },
+                          controller: userProvider.emailTextField,
                           validator: (value) {
                             if (value!.isEmpty) {
                               return emailValidtionStr;
@@ -69,9 +81,7 @@ class _SigninPageState extends State<SigninPage> {
                         CustomTextFormField(
                             obscureText:
                                 iconsProvider.showPassword ? false : true,
-                            onChanged: (value) {
-                              userProvider.setPassword(value);
-                            },
+                            controller: userProvider.passwordTextField,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return passwordValidationStr;
@@ -99,8 +109,19 @@ class _SigninPageState extends State<SigninPage> {
                                         Icons.visibility_off,
                                         size: 30,
                                       ))),
-                        SizedBox(
-                          height: 30,
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: userProvider.isCheckRememberMe,
+                              onChanged: (value) {
+                                userProvider.rememberMe(value!);
+                                userProvider.setSaveCheckRememberMe(value);
+                              },
+                            ),
+                            Text(
+                              rememberMeStr,
+                            )
+                          ],
                         ),
                         CustomButton(
                           backgroundColor: buttonBackgroundColor,
@@ -214,11 +235,23 @@ class _SigninPageState extends State<SigninPage> {
                             SizedBox(
                               width: 45,
                             ),
-                            Text(
-                              signInButtonStr,
-                              style: TextStyle(
-                                  fontSize: 16, color: Color(0xff1161FC)),
-                            )
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    shadowColor: Colors.transparent,
+                                    backgroundColor: Colors.white),
+                                onPressed: () {
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SignupPage(),
+                                      ),
+                                      (route) => false);
+                                },
+                                child: Text(
+                                  signUpButtonStr,
+                                  style: TextStyle(
+                                      fontSize: 16, color: Color(0xff1161FC)),
+                                ))
                           ],
                         )
                       ],

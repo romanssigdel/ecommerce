@@ -3,6 +3,7 @@ import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/model/user.dart';
 import 'package:ecommerce/services/user_services.dart';
 import 'package:ecommerce/services/user_services_impl.dart';
+import 'package:ecommerce/utils/string_const.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,6 +13,16 @@ class UserProvider extends ChangeNotifier {
   bool isSuccess = false;
   List<User> userList = [];
   bool isUserExists = false;
+
+  bool isCheckRememberMe = false;
+
+  setSaveCheckRememberMe(value) {
+    isCheckRememberMe = value!;
+    notifyListeners();
+  }
+
+  TextEditingController emailTextField = TextEditingController();
+  TextEditingController passwordTextField = TextEditingController();
 
   UserServices userServices = UserServicesImplementation();
 
@@ -95,7 +106,8 @@ class UserProvider extends ChangeNotifier {
     if (_getLoginUserStatus != StatusUtil.loading) {
       setGetLoginUserStatus(StatusUtil.loading);
     }
-    User user = User(email: email, password: password);
+    User user =
+        User(email: emailTextField.text, password: passwordTextField.text);
     ApiResponse apiResponse = await userServices.checkUserData(user);
     if (apiResponse.statusUtil == StatusUtil.success) {
       isUserExists = apiResponse.data;
@@ -105,8 +117,29 @@ class UserProvider extends ChangeNotifier {
       setGetLoginUserStatus(StatusUtil.error);
     }
   }
-  saveLoginUserToSharedPreference()async{
+
+  saveLoginUserToSharedPreference() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLogin', true);
+  }
+
+  rememberMe(bool value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (value) {
+      await prefs.setBool('rememberMe', true);
+      await prefs.setString('email', emailTextField.text);
+      await prefs.setString('password', passwordTextField.text);
+    } else {
+      await prefs.remove('rememberMe');
+      await prefs.remove('email');
+      await prefs.remove('password');
+    }
+  }
+
+  readRememberMe() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    emailTextField.text = prefs.getString('email')?? "";
+    passwordTextField.text = prefs.getString('password') ?? "";
+    notifyListeners();
   }
 }

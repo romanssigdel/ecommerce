@@ -134,7 +134,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SigninPage(),
+                                builder: (context) => SignupPage(),
                               ),
                               (route) => false);
                         }

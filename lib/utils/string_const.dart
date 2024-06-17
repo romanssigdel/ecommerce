@@ -29,3 +29,5 @@ String loginAccountStr = "Let's\nSign In!";
 String loginSuccessful = "Login Successful";
 String loginFailed = "Login Failed";
 String invalidCredential = "Invalid Credential!";
+
+String rememberMeStr = "Remember me";
