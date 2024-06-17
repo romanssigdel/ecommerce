@@ -32,8 +32,7 @@ class _SignupPageState extends State<SignupPage> {
                 child: Form(
                   key: _formKey,
                   child: Consumer<IconsProvider>(
-                    builder: (context, iconsProvider, child) => 
-                     Column(
+                    builder: (context, iconsProvider, child) => Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
@@ -88,7 +87,8 @@ class _SignupPageState extends State<SignupPage> {
                           height: 30,
                         ),
                         CustomTextFormField(
-                            obscureText: iconsProvider.showPassword ? false : true,
+                            obscureText:
+                                iconsProvider.showPassword ? false : true,
                             onChanged: (value) {
                               userProvider.setPassword(value);
                             },
@@ -126,8 +126,9 @@ class _SignupPageState extends State<SignupPage> {
                           height: 30,
                         ),
                         CustomTextFormField(
-                            obscureText:
-                                iconsProvider.showConfirmPassword ? false : true,
+                            obscureText: iconsProvider.showConfirmPassword
+                                ? false
+                                : true,
                             onChanged: (value) {
                               userProvider.setConfirmPassword(value);
                             },
@@ -191,15 +192,16 @@ class _SignupPageState extends State<SignupPage> {
                               }
                             }
                           },
-                          child: userProvider.saveUserStatus == StatusUtil.loading
-                              ? CircularProgressIndicator()
-                              : Text(
-                                  signUpButtonStr,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                          child:
+                              userProvider.saveUserStatus == StatusUtil.loading
+                                  ? CircularProgressIndicator()
+                                  : Text(
+                                      signUpButtonStr,
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                         ),
                         SizedBox(
                           height: 10,
@@ -252,7 +254,8 @@ class _SignupPageState extends State<SignupPage> {
                                           borderRadius:
                                               BorderRadius.circular(10))),
                                   onPressed: () {},
-                                  child: Image.asset("assets/images/google.png")),
+                                  child:
+                                      Image.asset("assets/images/google.png")),
                             ),
                           ],
                         ),
@@ -272,9 +275,20 @@ class _SignupPageState extends State<SignupPage> {
                             SizedBox(
                               width: 50,
                             ),
-                            Text(signInButtonStr,
-                                style: TextStyle(
-                                    fontSize: 16, color: buttonBackgroundColor)),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => SigninPage(),
+                                    ),
+                                    (route) => false);
+                              },
+                              child: Text(signInButtonStr,
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: buttonBackgroundColor)),
+                            ),
                           ],
                         )
                       ],
