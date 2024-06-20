@@ -9,12 +9,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider extends ChangeNotifier {
   String? name, email, password, confirmPassword;
+  TextEditingController? roleTextField;
   String? errorMessage;
   bool isSuccess = false;
   List<User> userList = [];
   bool isUserExists = false;
+  
+  User? userData;
 
   bool isCheckRememberMe = false;
+
+  String? userRole;
 
   setSaveCheckRememberMe(value) {
     isCheckRememberMe = value!;
@@ -25,6 +30,10 @@ class UserProvider extends ChangeNotifier {
   TextEditingController passwordTextField = TextEditingController();
 
   UserServices userServices = UserServicesImplementation();
+
+  setRole(value) {
+    roleTextField = TextEditingController(text: value);
+  }
 
   setName(value) {
     name = value;
@@ -73,6 +82,7 @@ class UserProvider extends ChangeNotifier {
 
     User user = User(
         name: name,
+        role: roleTextField!.text,
         email: email,
         password: password,
         confirmPassword: confirmPassword);
@@ -110,7 +120,9 @@ class UserProvider extends ChangeNotifier {
         User(email: emailTextField.text, password: passwordTextField.text);
     ApiResponse apiResponse = await userServices.checkUserData(user);
     if (apiResponse.statusUtil == StatusUtil.success) {
-      isUserExists = apiResponse.data;
+      userData = apiResponse.data;
+      isUserExists = true;
+
       setGetLoginUserStatus(StatusUtil.success);
     } else if (apiResponse.statusUtil == StatusUtil.error) {
       errorMessage = apiResponse.errorMessage;
@@ -138,7 +150,7 @@ class UserProvider extends ChangeNotifier {
 
   readRememberMe() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    emailTextField.text = prefs.getString('email')?? "";
+    emailTextField.text = prefs.getString('email') ?? "";
     passwordTextField.text = prefs.getString('password') ?? "";
     notifyListeners();
   }

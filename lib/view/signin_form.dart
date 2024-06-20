@@ -8,6 +8,7 @@ import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
 import 'package:ecommerce/view/home_page.dart';
 import 'package:ecommerce/view/signup_form.dart';
+import 'package:ecommerce/view/user_account.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -139,7 +140,7 @@ class _SigninPageState extends State<SigninPage> {
                                   Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => HomePage(),
+                                        builder: (context) => UserAccount(),
                                       ),
                                       (route) => false);
                                 } else {

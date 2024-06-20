@@ -4,5 +4,6 @@ class ApiResponse {
   StatusUtil? statusUtil;
   dynamic data;
   String? errorMessage;
-  ApiResponse({this.data, this.errorMessage, this.statusUtil});
+  String? role;
+  ApiResponse({this.role,this.data, this.errorMessage, this.statusUtil});
 }

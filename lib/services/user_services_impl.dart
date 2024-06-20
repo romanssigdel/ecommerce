@@ -8,13 +8,14 @@ import 'package:ecommerce/utils/string_const.dart';
 
 class UserServicesImplementation extends UserServices {
   List<User> userList = [];
+
   @override
   Future<ApiResponse> saveUserData(User user) async {
     bool isSuccess = false;
     if (await Helper().isInternetConnectionAvailable()) {
       try {
         await FirebaseFirestore.instance
-            .collection("user")
+            .collection("users")
             .add(user.toJson())
             .then((value) {
           isSuccess = true;
@@ -38,7 +39,7 @@ class UserServicesImplementation extends UserServices {
           //print(value);
           userList
               .addAll(value.docs.map((e) => User.fromJson(e.data())).toList());
-         // print(userList);
+          // print(userList);
         });
         return ApiResponse(statusUtil: StatusUtil.success, data: userList);
       } catch (e) {
@@ -53,21 +54,26 @@ class UserServicesImplementation extends UserServices {
 
   @override
   Future<ApiResponse> checkUserData(User user) async {
-    bool isUserExists = false;
+    // bool isUserExists = false;
+    User? userData;
     if (await Helper().isInternetConnectionAvailable()) {
       try {
         await FirebaseFirestore.instance
-            .collection("user")
+            .collection("users")
             .where("email", isEqualTo: user.email)
             .where("password", isEqualTo: user.password)
             .get()
             .then((value) {
           if (value.docs.isNotEmpty) {
-            isUserExists = true;
+            // isUserExists = true;
+            userData = User.fromJson(value.docs[0].data());
+            print(userData);
+            // print(user.role);
+            // userRole = user.role;
             // print(value);
           }
         });
-        return ApiResponse(statusUtil: StatusUtil.success, data: isUserExists);
+        return ApiResponse(statusUtil: StatusUtil.success, data: userData);
       } catch (e) {
         return ApiResponse(
             statusUtil: StatusUtil.error, errorMessage: e.toString());

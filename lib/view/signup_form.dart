@@ -83,6 +83,12 @@ class _SignupPageState extends State<SignupPage> {
                             size: 30,
                           ),
                         ),
+                        iconsProvider.visibility
+                            ? CustomTextFormField(
+                                controller: userProvider.setRole("user"),
+                                labelText: "role",
+                              )
+                            : SizedBox(),
                         SizedBox(
                           height: 30,
                         ),
