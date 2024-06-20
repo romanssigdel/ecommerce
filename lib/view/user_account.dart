@@ -1,7 +1,11 @@
+import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/provider/user_provider.dart';
+import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
+import 'package:ecommerce/view/signin_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserAccount extends StatefulWidget {
   const UserAccount({super.key});
@@ -49,8 +53,8 @@ class _UserAccountState extends State<UserAccount> {
                               color: Colors.white,
                             )),
                         SizedBox(
-                          width: 10,
-                        ),
+                            // width: 10,
+                            ),
                         userProvider.userData!.role == "user"
                             ? Text(
                                 userProvider.userData!.name!,
@@ -61,8 +65,8 @@ class _UserAccountState extends State<UserAccount> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18)),
                         SizedBox(
-                          width: 50,
-                        ),
+                            // width: 50,
+                            ),
                         IconButton(
                             onPressed: () {},
                             icon: Icon(
@@ -101,11 +105,29 @@ class _UserAccountState extends State<UserAccount> {
                     )
                   ],
                 ),
+              ),
+              CustomButton(
+                onPressed: () {
+                  logoutUserFromSharedPreference();
+                },
+                child: Text("Logout"),
               )
             ],
           ),
         ),
       ),
     );
+  }
+
+  logoutUserFromSharedPreference() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('isLogin');
+    Helper.displaySnackbar(context, "Successfully Logged Out!");
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SigninPage(),
+        ),
+        (route) => false);
   }
 }
