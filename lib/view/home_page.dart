@@ -40,11 +40,6 @@ class _HomePageState extends State<HomePage> {
           body: userProvider.getUserStatus == StatusUtil.loading
               ? Center(child: CircularProgressIndicator())
               : Column(children: [
-                  ElevatedButton(
-                      onPressed: () {
-                        logoutUserFromSharedPreference();
-                      },
-                      child: Text("logout")),
                   Expanded(
                     child: ListView.builder(
                       itemCount: userProvider.userList.length,
