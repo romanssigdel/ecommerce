@@ -1,3 +1,4 @@
+import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
@@ -19,18 +20,18 @@ class _UserAccountState extends State<UserAccount> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getValue();
+    // getValue();
   }
 
-  getValue() {
-    Future.delayed(
-      Duration.zero,
-      () {
-        var provider = Provider.of<UserProvider>(context, listen: false);
-        provider.loginCheckUserData();
-      },
-    );
-  }
+  // getValue() {
+  //   Future.delayed(
+  //     Duration.zero,
+  //     () {
+  //       var provider = Provider.of<UserProvider>(context, listen: false);
+  //       provider.loginCheckUserData();
+  //     },
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -55,13 +56,13 @@ class _UserAccountState extends State<UserAccount> {
                         SizedBox(
                             // width: 10,
                             ),
-                        userProvider.userData!.role == "user"
+                        UserData.userData!.role == "user"
                             ? Text(
-                                userProvider.userData!.name!,
+                                UserData.userData!.name!,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18),
                               )
-                            : Text(userProvider.userData!.name!,
+                            : Text(UserData.userData!.name!,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18)),
                         SizedBox(
@@ -111,6 +112,14 @@ class _UserAccountState extends State<UserAccount> {
                   logoutUserFromSharedPreference();
                 },
                 child: Text("Logout"),
+              ),
+              CustomButton(
+                onPressed: () {
+                  userProvider.deleteUserData();
+                },
+                child: userProvider.getDeleterUserStatus == StatusUtil.loading
+                    ? CircularProgressIndicator()
+                    : Text("Delete"),
               )
             ],
           ),

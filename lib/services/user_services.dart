@@ -5,4 +5,5 @@ abstract class UserServices {
   Future<ApiResponse> saveUserData(User user);
   Future<ApiResponse> getUserData();
   Future<ApiResponse> checkUserData(User user);
+  Future<ApiResponse> deleteUserData();
 }

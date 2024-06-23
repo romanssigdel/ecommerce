@@ -14,8 +14,8 @@ class UserProvider extends ChangeNotifier {
   bool isSuccess = false;
   List<User> userList = [];
   bool isUserExists = false;
-  
-  User? userData;
+
+  // User? userData;
 
   bool isCheckRememberMe = false;
 
@@ -75,6 +75,14 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  StatusUtil _getDeleteUserStatus = StatusUtil.none;
+  StatusUtil get getDeleterUserStatus => _getDeleteUserStatus;
+
+  setGetDeleteUserStatus(StatusUtil statusUtil) {
+    _getDeleteUserStatus = statusUtil;
+    notifyListeners();
+  }
+
   Future<void> saveStudentData() async {
     if (_saveUserStatus != StatusUtil.loading) {
       setSaveUserStatus(StatusUtil.loading);
@@ -120,13 +128,25 @@ class UserProvider extends ChangeNotifier {
         User(email: emailTextField.text, password: passwordTextField.text);
     ApiResponse apiResponse = await userServices.checkUserData(user);
     if (apiResponse.statusUtil == StatusUtil.success) {
-      userData = apiResponse.data;
+      UserData.userData = apiResponse.data;
       isUserExists = true;
 
       setGetLoginUserStatus(StatusUtil.success);
     } else if (apiResponse.statusUtil == StatusUtil.error) {
       errorMessage = apiResponse.errorMessage;
       setGetLoginUserStatus(StatusUtil.error);
+    }
+  }
+
+  Future<void> deleteUserData() async {
+    if (_getDeleteUserStatus != StatusUtil.loading) {
+      setGetDeleteUserStatus(StatusUtil.loading);
+    }
+    ApiResponse apiResponse = await userServices.deleteUserData();
+    if (apiResponse.statusUtil == StatusUtil.success) {
+      setGetDeleteUserStatus(StatusUtil.success);
+    } else if (apiResponse.statusUtil == StatusUtil.error) {
+      setGetDeleteUserStatus(StatusUtil.error);
     }
   }
 
@@ -154,4 +174,8 @@ class UserProvider extends ChangeNotifier {
     passwordTextField.text = prefs.getString('password') ?? "";
     notifyListeners();
   }
+}
+
+class UserData {
+  static User? userData;
 }
