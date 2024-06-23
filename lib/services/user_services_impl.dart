@@ -8,7 +8,7 @@ import 'package:ecommerce/utils/string_const.dart';
 
 class UserServicesImplementation extends UserServices {
   List<User> userList = [];
-
+  bool isSuccessfullyDeleted = false;
   @override
   Future<ApiResponse> saveUserData(User user) async {
     bool isSuccess = false;
@@ -37,9 +37,20 @@ class UserServicesImplementation extends UserServices {
       try {
         await FirebaseFirestore.instance.collection("user").get().then((value) {
           //print(value);
-          userList
-              .addAll(value.docs.map((e) => User.fromJson(e.data())).toList());
-          // print(userList);
+          userList.addAll(value.docs.map((e) {
+            final user = User.fromJson(e.data());
+            user.id = e.id;
+            return user;
+          }).toList());
+
+          //   userList
+          //     .addAll(value.docs.map((e) => User.fromJson(e.data())).toList());
+
+          // for (int i = 0; i < userList.length; i++) {
+          //   userList[i].id = value.docs[i].id;
+          // }
+
+          print(userList);
         });
         return ApiResponse(statusUtil: StatusUtil.success, data: userList);
       } catch (e) {
@@ -67,6 +78,7 @@ class UserServicesImplementation extends UserServices {
           if (value.docs.isNotEmpty) {
             // isUserExists = true;
             userData = User.fromJson(value.docs[0].data());
+            
             print(userData);
             // print(user.role);
             // userRole = user.role;
@@ -77,6 +89,28 @@ class UserServicesImplementation extends UserServices {
       } catch (e) {
         return ApiResponse(
             statusUtil: StatusUtil.error, errorMessage: e.toString());
+      }
+    } else {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, errorMessage: noInternetConectionStr);
+    }
+  }
+
+  @override
+  Future<ApiResponse> deleteUserData() async {
+    if (await Helper().isInternetConnectionAvailable()) {
+      try {
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc()
+            .delete()
+            .then((value) {
+          isSuccessfullyDeleted = true;
+        });
+        return ApiResponse(
+            statusUtil: StatusUtil.success, data: isSuccessfullyDeleted);
+      } catch (e) {
+        return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
       }
     } else {
       return ApiResponse(
