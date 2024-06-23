@@ -14,7 +14,8 @@ class UserProvider extends ChangeNotifier {
   bool isSuccess = false;
   List<User> userList = [];
   bool isUserExists = false;
-
+  String? userId;
+  bool? isSuccessfullyUserDataDeleted;
   // User? userData;
 
   bool isCheckRememberMe = false;
@@ -76,7 +77,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   StatusUtil _getDeleteUserStatus = StatusUtil.none;
-  StatusUtil get getDeleterUserStatus => _getDeleteUserStatus;
+  StatusUtil get getDeleteUserStatus => _getDeleteUserStatus;
 
   setGetDeleteUserStatus(StatusUtil statusUtil) {
     _getDeleteUserStatus = statusUtil;
@@ -90,7 +91,7 @@ class UserProvider extends ChangeNotifier {
 
     User user = User(
         name: name,
-        role: roleTextField!.text,
+        role: roleTextField?.text,
         email: email,
         password: password,
         confirmPassword: confirmPassword);
@@ -142,10 +143,13 @@ class UserProvider extends ChangeNotifier {
     if (_getDeleteUserStatus != StatusUtil.loading) {
       setGetDeleteUserStatus(StatusUtil.loading);
     }
-    ApiResponse apiResponse = await userServices.deleteUserData();
+    userId = UserData.userData!.id;
+    ApiResponse apiResponse = await userServices.deleteUserData(userId!);
     if (apiResponse.statusUtil == StatusUtil.success) {
+      isSuccessfullyUserDataDeleted = apiResponse.data;
       setGetDeleteUserStatus(StatusUtil.success);
     } else if (apiResponse.statusUtil == StatusUtil.error) {
+      errorMessage = apiResponse.errorMessage;
       setGetDeleteUserStatus(StatusUtil.error);
     }
   }

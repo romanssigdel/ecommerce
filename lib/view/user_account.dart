@@ -116,8 +116,15 @@ class _UserAccountState extends State<UserAccount> {
               CustomButton(
                 onPressed: () {
                   userProvider.deleteUserData();
+                  if (userProvider.getDeleteUserStatus == StatusUtil.success) {
+                    Helper.displaySnackbar(
+                        context, "Data Successfully deleted");
+                  } else if (userProvider.getDeleteUserStatus ==
+                      StatusUtil.error) {
+                    Helper.displaySnackbar(context, "Data Deletion Failed!");
+                  }
                 },
-                child: userProvider.getDeleterUserStatus == StatusUtil.loading
+                child: userProvider.getDeleteUserStatus == StatusUtil.loading
                     ? CircularProgressIndicator()
                     : Text("Delete"),
               )
