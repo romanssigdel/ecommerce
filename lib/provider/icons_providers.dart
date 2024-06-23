@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class IconsProvider extends ChangeNotifier {
   bool _showPassword = false;
-  bool visibility = false;
+  
   bool get showPassword => _showPassword;
 
   bool _showConfirmPassword = false;
@@ -17,6 +17,4 @@ class IconsProvider extends ChangeNotifier {
     _showConfirmPassword = !_showConfirmPassword;
     notifyListeners();
   }
-
-  
 }

@@ -9,6 +9,7 @@ import 'package:ecommerce/utils/string_const.dart';
 class UserServicesImplementation extends UserServices {
   List<User> userList = [];
   bool isSuccessfullyDeleted = false;
+  
   @override
   Future<ApiResponse> saveUserData(User user) async {
     bool isSuccess = false;
@@ -35,7 +36,7 @@ class UserServicesImplementation extends UserServices {
   Future<ApiResponse> getUserData() async {
     if (await Helper().isInternetConnectionAvailable()) {
       try {
-        await FirebaseFirestore.instance.collection("user").get().then((value) {
+        await FirebaseFirestore.instance.collection("users").get().then((value) {
           //print(value);
           userList.addAll(value.docs.map((e) {
             final user = User.fromJson(e.data());
@@ -77,9 +78,10 @@ class UserServicesImplementation extends UserServices {
             .then((value) {
           if (value.docs.isNotEmpty) {
             // isUserExists = true;
-            userData = User.fromJson(value.docs[0].data());
+           userData = User.fromJson(value.docs[0].data());
             
-            print(userData);
+            userData?.id = value.docs[0].id;
+            print(userData!.id);
             // print(user.role);
             // userRole = user.role;
             // print(value);
@@ -97,12 +99,12 @@ class UserServicesImplementation extends UserServices {
   }
 
   @override
-  Future<ApiResponse> deleteUserData() async {
+  Future<ApiResponse> deleteUserData(String id) async {
     if (await Helper().isInternetConnectionAvailable()) {
       try {
         await FirebaseFirestore.instance
             .collection("users")
-            .doc()
+            .doc(id)
             .delete()
             .then((value) {
           isSuccessfullyDeleted = true;
