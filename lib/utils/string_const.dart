@@ -31,3 +31,5 @@ String loginFailed = "Login Failed";
 String invalidCredential = "Invalid Credential!";
 
 String rememberMeStr = "Remember me";
+
+String defaultUserStr = "user";

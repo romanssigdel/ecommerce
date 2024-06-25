@@ -9,7 +9,7 @@ import 'package:ecommerce/utils/string_const.dart';
 class UserServicesImplementation extends UserServices {
   List<User> userList = [];
   bool isSuccessfullyDeleted = false;
-  
+
   @override
   Future<ApiResponse> saveUserData(User user) async {
     bool isSuccess = false;
@@ -36,23 +36,11 @@ class UserServicesImplementation extends UserServices {
   Future<ApiResponse> getUserData() async {
     if (await Helper().isInternetConnectionAvailable()) {
       try {
-        await FirebaseFirestore.instance.collection("users").get().then((value) {
-          //print(value);
-          userList.addAll(value.docs.map((e) {
-            final user = User.fromJson(e.data());
-            user.id = e.id;
-            return user;
-          }).toList());
-
-          //   userList
-          //     .addAll(value.docs.map((e) => User.fromJson(e.data())).toList());
-
-          // for (int i = 0; i < userList.length; i++) {
-          //   userList[i].id = value.docs[i].id;
-          // }
-
-          print(userList);
-        });
+        var value = await FirebaseFirestore.instance.collection("users").get();
+        var userList = value.docs.map((e) => User.fromJson(e.data())).toList();
+        for (int i = 0; i < userList.length; i++) {
+          userList[i].id = value.docs[i].id;
+        }
         return ApiResponse(statusUtil: StatusUtil.success, data: userList);
       } catch (e) {
         return ApiResponse(
@@ -66,7 +54,7 @@ class UserServicesImplementation extends UserServices {
 
   @override
   Future<ApiResponse> checkUserData(User user) async {
-    // bool isUserExists = false;
+    bool isUserExists = false;
     User? userData;
     if (await Helper().isInternetConnectionAvailable()) {
       try {
@@ -77,17 +65,14 @@ class UserServicesImplementation extends UserServices {
             .get()
             .then((value) {
           if (value.docs.isNotEmpty) {
-            // isUserExists = true;
-           userData = User.fromJson(value.docs[0].data());
-            
+            isUserExists = true;
+            userData = User.fromJson(value.docs[0].data());
+
             userData?.id = value.docs[0].id;
-            print(userData!.id);
-            // print(user.role);
-            // userRole = user.role;
-            // print(value);
           }
         });
-        return ApiResponse(statusUtil: StatusUtil.success, data: userData);
+        UserCheckResult result = UserCheckResult(userData, isUserExists);
+        return ApiResponse(statusUtil: StatusUtil.success, data: result);
       } catch (e) {
         return ApiResponse(
             statusUtil: StatusUtil.error, errorMessage: e.toString());
@@ -119,4 +104,10 @@ class UserServicesImplementation extends UserServices {
           statusUtil: StatusUtil.error, errorMessage: noInternetConectionStr);
     }
   }
+}
+
+class UserCheckResult {
+  User? userData;
+  bool? isUserExists;
+  UserCheckResult(this.userData, this.isUserExists);
 }

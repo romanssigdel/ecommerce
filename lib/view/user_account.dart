@@ -3,6 +3,7 @@ import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
+import 'package:ecommerce/utils/string_const.dart';
 import 'package:ecommerce/view/signin_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -20,18 +21,18 @@ class _UserAccountState extends State<UserAccount> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // getValue();
+    getValue();
   }
 
-  // getValue() {
-  //   Future.delayed(
-  //     Duration.zero,
-  //     () {
-  //       var provider = Provider.of<UserProvider>(context, listen: false);
-  //       provider.loginCheckUserData();
-  //     },
-  //   );
-  // }
+  getValue() {
+    Future.delayed(
+      Duration.zero,
+      () {
+        var provider = Provider.of<UserProvider>(context, listen: false);
+        provider.loginCheckUserData();
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +57,7 @@ class _UserAccountState extends State<UserAccount> {
                         SizedBox(
                             // width: 10,
                             ),
-                        UserData.userData!.role == "user"
+                        UserData.userData!.role == defaultUserStr
                             ? Text(
                                 UserData.userData!.name!,
                                 style: TextStyle(
@@ -114,15 +115,8 @@ class _UserAccountState extends State<UserAccount> {
                 child: Text("Logout"),
               ),
               CustomButton(
-                onPressed: () {
-                  userProvider.deleteUserData();
-                  if (userProvider.getDeleteUserStatus == StatusUtil.success) {
-                    Helper.displaySnackbar(
-                        context, "Data Successfully deleted");
-                  } else if (userProvider.getDeleteUserStatus ==
-                      StatusUtil.error) {
-                    Helper.displaySnackbar(context, "Data Deletion Failed!");
-                  }
+                onPressed: () async {
+                  createShowDialog(context, userProvider);
                 },
                 child: userProvider.getDeleteUserStatus == StatusUtil.loading
                     ? CircularProgressIndicator()
@@ -145,5 +139,42 @@ class _UserAccountState extends State<UserAccount> {
           builder: (context) => SigninPage(),
         ),
         (route) => false);
+  }
+
+  createShowDialog(BuildContext context, UserProvider userProvider) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete File'),
+          content: Text('Are you sure you want to delete this file?'),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                await userProvider.deleteUserData();
+                if (userProvider.getDeleteUserStatus == StatusUtil.success) {
+                  Helper.displaySnackbar(context, "Data Successfully deleted");
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SigninPage(),
+                      ),
+                      (route) => false);
+                }
+                // Perform delete operation here
+                // Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('No'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -1,9 +1,13 @@
+
+
 import 'package:ecommerce/core/api_response.dart';
 import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/model/user.dart';
 import 'package:ecommerce/services/user_services.dart';
 import 'package:ecommerce/services/user_services_impl.dart';
+import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/string_const.dart';
+import 'package:ecommerce/view/signin_form.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -129,8 +133,12 @@ class UserProvider extends ChangeNotifier {
         User(email: emailTextField.text, password: passwordTextField.text);
     ApiResponse apiResponse = await userServices.checkUserData(user);
     if (apiResponse.statusUtil == StatusUtil.success) {
-      UserData.userData = apiResponse.data;
-      isUserExists = true;
+      UserCheckResult result = apiResponse.data as UserCheckResult;
+
+      UserData.userData = result.userData;
+      if (result.isUserExists!) {
+        isUserExists = true;
+      }
 
       setGetLoginUserStatus(StatusUtil.success);
     } else if (apiResponse.statusUtil == StatusUtil.error) {
