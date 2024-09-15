@@ -53,36 +53,44 @@ class _UserAccountState extends State<UserAccount> {
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                            )),
-                        if (user != null)
-                          Text(
-                            user!.name!,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                color: Colors.white),
-                          ),
-                        IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.settings,
-                              size: 30,
-                              color: Colors.white,
-                            )),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 20),
-                          child: CircleAvatar(
-                              radius: 20,
-                              backgroundImage:
-                                  AssetImage("assets/images/logo.png")),
+                        Row(
+                          children: [
+                            IconButton(
+                                onPressed: () {},
+                                icon: Icon(
+                                  Icons.arrow_back,
+                                  color: Colors.white,
+                                )),
+                            if (user != null)
+                              Text(
+                                user!.name!,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                    color: Colors.white),
+                              ),
+                          ],
                         ),
+                        Row(
+                          children: [
+                            IconButton(
+                                onPressed: () {},
+                                icon: Icon(
+                                  Icons.settings,
+                                  size: 30,
+                                  color: Colors.white,
+                                )),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 20),
+                              child: CircleAvatar(
+                                  radius: 20,
+                                  backgroundImage:
+                                      AssetImage("assets/images/logo.png")),
+                            ),
+                          ],
+                        )
                       ],
                     ),
                     Row(
@@ -101,10 +109,18 @@ class _UserAccountState extends State<UserAccount> {
                           ],
                         ),
                         Column(
-                          children: [Text("Vouchers"), Text("10")],
+                          children: [
+                            Text("Vouchers",
+                                style: TextStyle(color: Colors.white)),
+                            Text("10", style: TextStyle(color: Colors.white))
+                          ],
                         ),
                         Column(
-                          children: [Text("Stores"), Text("10")],
+                          children: [
+                            Text("Stores",
+                                style: TextStyle(color: Colors.white)),
+                            Text("10", style: TextStyle(color: Colors.white))
+                          ],
                         )
                       ],
                     )

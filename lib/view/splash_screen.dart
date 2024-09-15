@@ -1,6 +1,7 @@
 import 'package:ecommerce/view/description_page.dart';
 import 'package:ecommerce/view/signup_form.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreenPage extends StatefulWidget {
   const SplashScreenPage({super.key});
@@ -40,4 +41,5 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       ),
     );
   }
+
 }

@@ -47,8 +47,8 @@ class _HomePageState extends State<HomePage> {
                         return Card(
                           child: Column(
                             children: [
-                              Text(userProvider.userList[index].name!),
-                              Text(userProvider.userList[index].email!)
+                              // Text(userProvider.userList[index].name!),
+                              // Text(userProvider.userList[index].email!)
                             ],
                           ),
                         );
