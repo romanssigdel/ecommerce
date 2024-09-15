@@ -1,5 +1,3 @@
-
-
 import 'package:ecommerce/core/api_response.dart';
 import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/model/user.dart';
@@ -94,11 +92,11 @@ class UserProvider extends ChangeNotifier {
     }
 
     User user = User(
-        name: name,
-        role: roleTextField?.text,
-        email: email,
-        password: password,
-        confirmPassword: confirmPassword);
+      name: name,
+      role: roleTextField?.text,
+      email: email,
+      password: password,
+    );
 
     ApiResponse apiResponse = await userServices.saveUserData(user);
 
@@ -133,13 +131,18 @@ class UserProvider extends ChangeNotifier {
         User(email: emailTextField.text, password: passwordTextField.text);
     ApiResponse apiResponse = await userServices.checkUserData(user);
     if (apiResponse.statusUtil == StatusUtil.success) {
-      UserCheckResult result = apiResponse.data as UserCheckResult;
-
-      UserData.userData = result.userData;
-      if (result.isUserExists!) {
+      // UserCheckResult result = apiResponse.data as UserCheckResult;
+      // UserData.userData = result.userData;
+      User? userData = apiResponse.data;
+      if (userData != null) {
+        UserData.userData = userData;
         isUserExists = true;
-      }
 
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("userName", userData.name.toString());
+        prefs.setString("userEmail", userData.email.toString());
+        prefs.setString("userRole", userData.role.toString());
+      }
       setGetLoginUserStatus(StatusUtil.success);
     } else if (apiResponse.statusUtil == StatusUtil.error) {
       errorMessage = apiResponse.errorMessage;

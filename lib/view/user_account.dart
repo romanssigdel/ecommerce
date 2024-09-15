@@ -1,5 +1,6 @@
 import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/custom/custom_button.dart';
+import 'package:ecommerce/model/user.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
@@ -17,6 +18,7 @@ class UserAccount extends StatefulWidget {
 }
 
 class _UserAccountState extends State<UserAccount> {
+  User? user;
   @override
   void initState() {
     // TODO: implement initState
@@ -27,9 +29,14 @@ class _UserAccountState extends State<UserAccount> {
   getValue() {
     Future.delayed(
       Duration.zero,
-      () {
-        var provider = Provider.of<UserProvider>(context, listen: false);
-        provider.loginCheckUserData();
+      () async {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? userName = prefs.getString("userName");
+        String? userEmail = prefs.getString("userEmail");
+        String? userRole = prefs.getString("userRole");
+        setState(() {
+          user = User(email: userEmail, name: userName, role: userRole);
+        });
       },
     );
   }
@@ -46,7 +53,7 @@ class _UserAccountState extends State<UserAccount> {
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         IconButton(
                             onPressed: () {},
@@ -54,21 +61,14 @@ class _UserAccountState extends State<UserAccount> {
                               Icons.arrow_back,
                               color: Colors.white,
                             )),
-                        SizedBox(
-                            // width: 10,
-                            ),
-                        UserData.userData!.role == defaultUserStr
-                            ? Text(
-                                UserData.userData!.name!,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
-                              )
-                            : Text(UserData.userData!.name!,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18)),
-                        SizedBox(
-                            // width: 50,
-                            ),
+                        if (user != null)
+                          Text(
+                            user!.name!,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                color: Colors.white),
+                          ),
                         IconButton(
                             onPressed: () {},
                             icon: Icon(
@@ -76,10 +76,13 @@ class _UserAccountState extends State<UserAccount> {
                               size: 30,
                               color: Colors.white,
                             )),
-                        CircleAvatar(
-                            radius: 20,
-                            backgroundImage:
-                                AssetImage("assets/images/logo.png")),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 20),
+                          child: CircleAvatar(
+                              radius: 20,
+                              backgroundImage:
+                                  AssetImage("assets/images/logo.png")),
+                        ),
                       ],
                     ),
                     Row(
@@ -132,6 +135,9 @@ class _UserAccountState extends State<UserAccount> {
   logoutUserFromSharedPreference() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('isLogin');
+    await prefs.remove('userName');
+    await prefs.remove('userEmail');
+    await prefs.remove('userRole');
     Helper.displaySnackbar(context, "Successfully Logged Out!");
     Navigator.pushAndRemoveUntil(
         context,
