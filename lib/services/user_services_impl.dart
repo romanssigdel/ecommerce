@@ -54,7 +54,7 @@ class UserServicesImplementation extends UserServices {
 
   @override
   Future<ApiResponse> checkUserData(User user) async {
-    bool isUserExists = false;
+    // bool isUserExists = false;
     User? userData;
     if (await Helper().isInternetConnectionAvailable()) {
       try {
@@ -65,14 +65,12 @@ class UserServicesImplementation extends UserServices {
             .get()
             .then((value) {
           if (value.docs.isNotEmpty) {
-            isUserExists = true;
+            // isUserExists = true
             userData = User.fromJson(value.docs[0].data());
-
-            userData?.id = value.docs[0].id;
           }
         });
-        UserCheckResult result = UserCheckResult(userData, isUserExists);
-        return ApiResponse(statusUtil: StatusUtil.success, data: result);
+        // UserCheckResult result = UserCheckResult(userData, isUserExists);
+        return ApiResponse(statusUtil: StatusUtil.success, data: userData);
       } catch (e) {
         return ApiResponse(
             statusUtil: StatusUtil.error, errorMessage: e.toString());
@@ -106,8 +104,3 @@ class UserServicesImplementation extends UserServices {
   }
 }
 
-class UserCheckResult {
-  User? userData;
-  bool? isUserExists;
-  UserCheckResult(this.userData, this.isUserExists);
-}
