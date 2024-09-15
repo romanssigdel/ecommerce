@@ -18,6 +18,7 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  RegExp regExp = RegExp(emailPattern);
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -73,6 +74,8 @@ class _SignupPageState extends State<SignupPage> {
                           validator: (value) {
                             if (value!.isEmpty) {
                               return emailValidtionStr;
+                            } else if (!regExp.hasMatch(value)) {
+                              return emailRegexValidation;
                             }
                             return null;
                           },

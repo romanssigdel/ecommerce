@@ -33,3 +33,5 @@ String invalidCredential = "Invalid Credential!";
 String rememberMeStr = "Remember me";
 
 String defaultUserStr = "user";
+String emailPattern = r'^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[a-zA-Z]+';
+String emailRegexValidation = "Email not Valid.";

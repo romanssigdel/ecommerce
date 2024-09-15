@@ -21,6 +21,7 @@ class SigninPage extends StatefulWidget {
 }
 
 class _SigninPageState extends State<SigninPage> {
+  RegExp regExp = RegExp(emailPattern);
   @override
   void initState() {
     // TODO: implement initState
@@ -67,6 +68,8 @@ class _SigninPageState extends State<SigninPage> {
                           validator: (value) {
                             if (value!.isEmpty) {
                               return emailValidtionStr;
+                            } else if (!regExp.hasMatch(value)) {
+                              return emailRegexValidation;
                             }
                             return null;
                           },

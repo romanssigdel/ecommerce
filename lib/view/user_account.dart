@@ -87,7 +87,7 @@ class _UserAccountState extends State<UserAccount> {
                               child: CircleAvatar(
                                   radius: 20,
                                   backgroundImage:
-                                      AssetImage("assets/images/logo.png")),
+                                      AssetImage("assets/images/user.png")),
                             ),
                           ],
                         )
@@ -127,11 +127,297 @@ class _UserAccountState extends State<UserAccount> {
                   ],
                 ),
               ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                color: Color(0xffF6F6F6),
+                width: MediaQuery.of(context).size.width * 0.95,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              "My Orders",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text("View All",
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Column(
+                            children: [
+                              Image.asset("assets/images/package_box_alt.png"),
+                              Text("To Pay")
+                            ],
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            Image.asset("assets/images/package.png"),
+                            Text("To Ship")
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Image.asset("assets/images/package_car.png"),
+                            Text("To Receive")
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10.0),
+                          child: Column(
+                            children: [
+                              Image.asset("assets/images/Chat_alt_3.png"),
+                              Text("Chat")
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 10.0, right: 10.0, bottom: 10),
+                      child: Row(
+                        children: [
+                          Image.asset("assets/images/Refund_back_light.png"),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text("My Returns"),
+                          Spacer(),
+                          Image.asset("assets/images/package_cancellation.png"),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text("My Cancellations")
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                color: Color(0xffF6F6F6),
+                width: MediaQuery.of(context).size.width * 0.95,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              "My Services",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Text("View All",
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Column(
+                            children: [
+                              Image.asset("assets/images/Message.png"),
+                              Text("Messages")
+                            ],
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            Image.asset("assets/images/Credit_card.png"),
+                            Text("Payment")
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Image.asset("assets/images/Question.png"),
+                            Text("Help")
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 10.0),
+                          child: Column(
+                            children: [
+                              Image.asset("assets/images/Send_fill.png"),
+                              Text("To Review")
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                color: Color(0xffF6F6F6),
+                width: MediaQuery.of(context).size.width * 0.95,
+                child: const Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 10.0),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            child: Text(
+                              "Location Tracker of Products Arrival",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Country: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            width: 30,
+                          ),
+                          Text(
+                            "Nepal",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            "City: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            width: 30,
+                          ),
+                          Text(
+                            "Bhaktapur",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Exact Location: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            width: 30,
+                          ),
+                          Text(
+                            "Sanotimi",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(left: 10.0, bottom: 10),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Arrival Time: ",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            width: 30,
+                          ),
+                          Text(
+                            "0days, 3hrs",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
               CustomButton(
                 onPressed: () {
                   logoutUserFromSharedPreference();
                 },
                 child: Text("Logout"),
+              ),
+              SizedBox(
+                height: 20,
               ),
               CustomButton(
                 onPressed: () async {
