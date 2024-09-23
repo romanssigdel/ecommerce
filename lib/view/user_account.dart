@@ -24,6 +24,7 @@ class UserAccount extends StatefulWidget {
 
 class _UserAccountState extends State<UserAccount> {
   User? user;
+
   List<String> adminFunctions = [
     "Add Product",
     "Customer List",
@@ -59,16 +60,19 @@ class _UserAccountState extends State<UserAccount> {
     getValue();
   }
 
+  String? userName, userEmail, userRole;
+  bool isLoading = true;
   getValue() {
     Future.delayed(
       Duration.zero,
       () async {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? userName = prefs.getString("userName");
-        String? userEmail = prefs.getString("userEmail");
-        String? userRole = prefs.getString("userRole");
+        userName = prefs.getString("userName");
+        userEmail = prefs.getString("userEmail");
+        userRole = prefs.getString("userRole");
         setState(() {
-          user = User(email: userEmail, name: userName, role: userRole);
+          // user = User(email: userEmail, name: userName, role: userRole);
+          isLoading = false;
         });
       },
     );
@@ -76,18 +80,24 @@ class _UserAccountState extends State<UserAccount> {
 
   File file = File("");
   bool loader = false;
-
+  final _formKey = GlobalKey<FormState>();
+  String? productName, price, description;
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     //admin page starts from here
-    return user!.role == "admin"
+    return userRole == "admin"
         ? Consumer<UserProvider>(
             builder: (context, userProvider, child) => SafeArea(
                   child: Scaffold(
                     appBar: AppBar(
                       backgroundColor: backGroundColor,
                       title: Text(
-                        user!.name!,
+                        userName ?? "",
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
@@ -172,87 +182,127 @@ class _UserAccountState extends State<UserAccount> {
                             ],
                           ),
                           if (selectedIndex == 0)
-                            Column(
-                              children: [
-                                file.path.isEmpty
-                                    ? SizedBox(
-                                        height: 100,
-                                        width: 100,
-                                        child: ClipRRect(
-                                          child: Image.asset(
-                                            "assets/images/add-product.png",
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  file.path.isEmpty
+                                      ? SizedBox(
+                                          height: 100,
+                                          width: 100,
+                                          child: ClipRRect(
+                                            child: Image.asset(
+                                              "assets/images/add-product.png",
+                                            ),
+                                          ),
+                                        )
+                                      : SizedBox(
+                                          height: 100,
+                                          width: 100,
+                                          child: ClipRRect(
+                                            child: Image.file(file),
                                           ),
                                         ),
-                                      )
-                                    : SizedBox(
-                                        height: 100,
-                                        width: 100,
-                                        child: ClipRRect(
-                                          child: Image.file(file),
-                                        ),
-                                      ),
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.50,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                  child: CustomButton(
-                                      backgroundColor: backGroundColor,
-                                      onPressed: () {
-                                        pickImage();
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.50,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.05,
+                                    child: CustomButton(
+                                        backgroundColor: backGroundColor,
+                                        onPressed: () {
+                                          pickImage();
+                                        },
+                                        child: loader == true
+                                            ? CircularProgressIndicator()
+                                            : Text(
+                                                "Upload Image",
+                                                style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 10),
+                                    child: CustomTextFormField(
+                                      onChanged: (value) {
+                                        productName = value;
                                       },
-                                      child: loader == true
-                                          ? CircularProgressIndicator()
-                                          : Text(
-                                              "Upload Image",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                            )),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10.0, horizontal: 10),
-                                  child: CustomTextFormField(
-                                    labelText: "Product name",
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10.0, horizontal: 10),
-                                  child: CustomTextFormField(
-                                    labelText: "Price",
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 8.0, horizontal: 10),
-                                  child: TextFormField(
-                                    maxLines:
-                                        null, // Allows the TextFormField to grow dynamically
-                                    minLines:
-                                        10, // Sets a minimum number of lines
-                                    keyboardType: TextInputType
-                                        .multiline, // Allows multiline input
-                                    decoration: InputDecoration(
-                                      hintText: 'Description of the Product...',
-                                      border:
-                                          OutlineInputBorder(), // Adds a border around the text area
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return productNameValidationStr;
+                                        }
+                                        return null;
+                                      },
+                                      labelText: "Product name",
                                     ),
                                   ),
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                CustomButton(
-                                  backgroundColor: backGroundColor,
-                                  onPressed: () {},
-                                  child: Text("Submit",
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold)),
-                                )
-                              ],
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 10),
+                                    child: CustomTextFormField(
+                                      keyboardType: TextInputType.number,
+                                      onChanged: (value) {
+                                        price = value;
+                                      },
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return priceValidationStr;
+                                        }
+                                        return null;
+                                      },
+                                      labelText: "Price",
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 10),
+                                    child: TextFormField(
+                                      onChanged: (value) {
+                                        description = value;
+                                      },
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return descriptionValidationStr;
+                                        }
+                                      },
+                                      maxLines:
+                                          null, // Allows the TextFormField to grow dynamically
+                                      minLines:
+                                          10, // Sets a minimum number of lines
+                                      keyboardType: TextInputType
+                                          .multiline, // Allows multiline input
+                                      decoration: InputDecoration(
+                                        hintText:
+                                            'Description of the Product...',
+                                        border:
+                                            OutlineInputBorder(), // Adds a border around the text area
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  CustomButton(
+                                    backgroundColor: backGroundColor,
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {}
+                                    },
+                                    child: Text("Submit",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold)),
+                                  ),
+                                  CustomButton(
+                                    onPressed: () {
+                                      logoutShowDialog(context, userProvider);
+                                    },
+                                    child: Text("Logout"),
+                                  ),
+                                ],
+                              ),
                             )
                         ],
                       ),
@@ -283,7 +333,7 @@ class _UserAccountState extends State<UserAccount> {
                 appBar: AppBar(
                   backgroundColor: backGroundColor,
                   title: Text(
-                    user!.name!,
+                    userName ?? "",
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold),
                   ),
