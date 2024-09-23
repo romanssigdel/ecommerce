@@ -18,7 +18,6 @@ class UserProvider extends ChangeNotifier {
   bool isUserExists = false;
   String? userId;
   bool? isSuccessfullyUserDataDeleted;
-  // User? userData;
 
   bool isCheckRememberMe = false;
 
@@ -131,8 +130,6 @@ class UserProvider extends ChangeNotifier {
         User(email: emailTextField.text, password: passwordTextField.text);
     ApiResponse apiResponse = await userServices.checkUserData(user);
     if (apiResponse.statusUtil == StatusUtil.success) {
-      // UserCheckResult result = apiResponse.data as UserCheckResult;
-      // UserData.userData = result.userData;
       User? userData = apiResponse.data;
       if (userData != null) {
         UserData.userData = userData;
