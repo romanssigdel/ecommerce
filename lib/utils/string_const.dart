@@ -37,3 +37,7 @@ String emailPattern = r'^[a-zA-Z0-9._]+@[a-zA-Z0-9]+\.[a-zA-Z]+';
 String emailRegexValidation = "Email not Valid.";
 
 String searchProduct = "Search for Products";
+
+String productNameValidationStr = "Please enter you product name";
+String priceValidationStr = "Please enter Product's price.";
+String descriptionValidationStr = "Please enter product description";
