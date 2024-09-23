@@ -44,56 +44,56 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<UserProvider>(
-      builder: (context, userProvider, child) => SingleChildScrollView(
-        child: SafeArea(
-          child: userProvider.getUserStatus == StatusUtil.loading
-              ? Center(child: CircularProgressIndicator())
-              : Scaffold(
-                  appBar: AppBar(
-                    backgroundColor: backGroundColor,
-                    leadingWidth: 110,
-                    leading: Padding(
-                      padding: const EdgeInsets.only(left: 10.0),
-                      child: Row(
-                        children: [
-                          Text(
-                            "Epasal",
-                            style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                        ],
+      builder: (context, userProvider, child) => SafeArea(
+        child: userProvider.getUserStatus == StatusUtil.loading
+            ? Center(child: CircularProgressIndicator())
+            : Scaffold(
+                appBar: AppBar(
+                  backgroundColor: backGroundColor,
+                  leadingWidth: 110,
+                  leading: Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Row(
+                      children: [
+                        Text(
+                          "Epasal",
+                          style: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                  centerTitle: true,
+                  actions: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 30.0),
+                      child: Icon(
+                        Icons.chat,
+                        color: Colors.white,
+                        size: 30,
                       ),
                     ),
-                    centerTitle: true,
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 30.0),
-                        child: Icon(
-                          Icons.chat,
-                          color: Colors.white,
-                          size: 30,
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 30.0),
+                      child: Icon(
+                        Icons.notifications_none,
+                        color: Colors.white,
+                        size: 34,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 30.0),
-                        child: Icon(
-                          Icons.notifications_none,
-                          color: Colors.white,
-                          size: 34,
-                        ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 15.0),
+                      child: CircleAvatar(
+                        radius: 20,
+                        backgroundImage: AssetImage("assets/images/user.png"),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15.0),
-                        child: CircleAvatar(
-                          radius: 20,
-                          backgroundImage: AssetImage("assets/images/user.png"),
-                        ),
-                      )
-                    ],
-                  ),
-                  body: Center(
+                    )
+                  ],
+                ),
+                body: Center(
+                  child: SingleChildScrollView(
                     child: Column(children: [
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),
@@ -181,30 +181,65 @@ class _HomePageState extends State<HomePage> {
                       //     },
                       //   ),
                       // ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.80,
-                        child: GridView.count(
-                          crossAxisSpacing: 4,
-                          mainAxisSpacing: 4,
-                          crossAxisCount: 2,
-                          children: List.generate(categories.length, (index) {
-                            return Center(
-                              child: Card(
-                                child: Column(
-                                  children: [
-                                    Text(categories[index]),
-                                    // Text(userProvider.userList[index].email!)
-                                  ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10.0, vertical: 10),
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height * 1,
+                          width: MediaQuery.of(context).size.width * 1,
+                          child: GridView.count(
+                            crossAxisSpacing: 1,
+                            mainAxisSpacing: 4,
+                            crossAxisCount: 2,
+                            scrollDirection: Axis.vertical,
+                            physics: ScrollPhysics(),
+                            children: List.generate(categories.length, (index) {
+                              return Center(
+                                child: SizedBox(
+                                  height: 300,
+                                  width: 300,
+                                  child: Card(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Image.asset(
+                                          "assets/images/ecommerce1.png",
+                                          height: 120,
+                                          width: 177,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 5.0),
+                                          child: Text(categories[index]),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 8.0),
+                                          child: Text(
+                                            "Rs.2000",
+                                            style: TextStyle(
+                                                color: Colors.red,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            );
-                          }),
+                              );
+                            }),
+                          ),
                         ),
                       )
                     ]),
                   ),
                 ),
-        ),
+              ),
       ),
     );
   }
