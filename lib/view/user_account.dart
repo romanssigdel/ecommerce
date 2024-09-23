@@ -19,6 +19,34 @@ class UserAccount extends StatefulWidget {
 
 class _UserAccountState extends State<UserAccount> {
   User? user;
+  List<String> adminFunctions = [
+    "Add Product",
+    "Customer List",
+    "Sold Products"
+  ];
+  int selectedIndex = 0;
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static const List<Widget> widgetOptions = <Widget>[
+    Text(
+      'Add Product',
+      style: optionStyle,
+    ),
+    Text(
+      'Customer List',
+      style: optionStyle,
+    ),
+    Text(
+      'Sold Products',
+      style: optionStyle,
+    ),
+  ];
+  void onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -48,70 +76,117 @@ class _UserAccountState extends State<UserAccount> {
         ? Consumer<UserProvider>(
             builder: (context, userProvider, child) => SafeArea(
                   child: Scaffold(
-                    appBar: AppBar(
-                      backgroundColor: backGroundColor,
-                      title: Text(
-                        user!.name!,
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                      leading: Builder(
-                        builder: (context) {
-                          return IconButton(
-                              onPressed: () {
-                                Scaffold.of(context).openDrawer();
-                              },
-                              icon: Icon(
-                                Icons.menu,
-                                color: Colors.white,
-                              ));
-                        },
-                      ),
-                      actions: [
-                        Row(
-                          children: [
-                            IconButton(
-                                onPressed: () {},
+                      appBar: AppBar(
+                        backgroundColor: backGroundColor,
+                        title: Text(
+                          user!.name!,
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                        leading: Builder(
+                          builder: (context) {
+                            return IconButton(
+                                onPressed: () {
+                                  Scaffold.of(context).openDrawer();
+                                },
                                 icon: Icon(
-                                  Icons.settings,
-                                  size: 30,
+                                  Icons.menu,
                                   color: Colors.white,
-                                )),
-                            Padding(
-                              padding: const EdgeInsets.only(right: 20),
-                              child: CircleAvatar(
-                                  radius: 20,
-                                  backgroundImage:
-                                      AssetImage("assets/images/user.png")),
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                    drawer: Drawer(
-                      child: Text(
-                        "hello",
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                    body: Column(
-                      children: [
-                        Container(
-                          color: backGroundColor,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [],
-                          ),
-                        ),
-                        CustomButton(
-                          onPressed: () {
-                            logoutShowDialog(context, userProvider);
+                                ));
                           },
-                          child: Text("Logout"),
                         ),
-                      ],
-                    ),
-                  ),
+                        actions: [
+                          Row(
+                            children: [
+                              IconButton(
+                                  onPressed: () {},
+                                  icon: Icon(
+                                    Icons.settings,
+                                    size: 30,
+                                    color: Colors.white,
+                                  )),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 20),
+                                child: CircleAvatar(
+                                    radius: 20,
+                                    backgroundImage:
+                                        AssetImage("assets/images/user.png")),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      drawer: Drawer(
+                          child: ListView(
+                        children: [
+                          DrawerHeader(
+                              decoration: BoxDecoration(color: backGroundColor),
+                              child: Text(
+                                "Admin Panel",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold),
+                              )),
+                          ListTile(
+                            title: const Text('Add Product'),
+                            selected: selectedIndex == 0,
+                            onTap: () {
+                              onItemTapped(0);
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            title: const Text('Customer List'),
+                            selected: selectedIndex == 1,
+                            onTap: () {
+                              onItemTapped(1);
+                              Navigator.pop(context);
+                            },
+                          ),
+                          ListTile(
+                            title: const Text('Sold Products'),
+                            selected: selectedIndex == 2,
+                            onTap: () {
+                              onItemTapped(2);
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      )),
+                      body: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              widgetOptions[selectedIndex],
+                            ],
+                          ),
+                          if (widgetOptions[selectedIndex] ==
+                              Text("Add Product"))
+                            Column(
+                              children: [Text("add Product")],
+                            )
+                        ],
+                      )
+                      // Column(
+                      //   children: [
+                      //     Container(
+                      //       color: backGroundColor,
+                      //       child: Row(
+                      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //         children: [],
+                      //       ),
+                      //     ),
+                      //     CustomButton(
+                      //       onPressed: () {
+                      //         logoutShowDialog(context, userProvider);
+                      //       },
+                      //       child: Text("Logout"),
+                      //     ),
+                      //   ],
+                      // ),
+                      ),
                 ))
         //userPage starts from here
         : Consumer<UserProvider>(
