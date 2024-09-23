@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/custom/custom_button.dart';
+import 'package:ecommerce/custom/custom_textformfield.dart';
 import 'package:ecommerce/model/user.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
@@ -7,8 +10,10 @@ import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
 import 'package:ecommerce/view/signin_form.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class UserAccount extends StatefulWidget {
   const UserAccount({super.key});
@@ -69,6 +74,9 @@ class _UserAccountState extends State<UserAccount> {
     );
   }
 
+  File file = File("");
+  bool loader = false;
+
   @override
   Widget build(BuildContext context) {
     //admin page starts from here
@@ -76,85 +84,86 @@ class _UserAccountState extends State<UserAccount> {
         ? Consumer<UserProvider>(
             builder: (context, userProvider, child) => SafeArea(
                   child: Scaffold(
-                      appBar: AppBar(
-                        backgroundColor: backGroundColor,
-                        title: Text(
-                          user!.name!,
-                          style: TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                        leading: Builder(
-                          builder: (context) {
-                            return IconButton(
-                                onPressed: () {
-                                  Scaffold.of(context).openDrawer();
-                                },
+                    appBar: AppBar(
+                      backgroundColor: backGroundColor,
+                      title: Text(
+                        user!.name!,
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                      leading: Builder(
+                        builder: (context) {
+                          return IconButton(
+                              onPressed: () {
+                                Scaffold.of(context).openDrawer();
+                              },
+                              icon: Icon(
+                                Icons.menu,
+                                color: Colors.white,
+                              ));
+                        },
+                      ),
+                      actions: [
+                        Row(
+                          children: [
+                            IconButton(
+                                onPressed: () {},
                                 icon: Icon(
-                                  Icons.menu,
+                                  Icons.settings,
+                                  size: 30,
                                   color: Colors.white,
-                                ));
+                                )),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 20),
+                              child: CircleAvatar(
+                                  radius: 20,
+                                  backgroundImage:
+                                      AssetImage("assets/images/user.png")),
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                    drawer: Drawer(
+                        child: ListView(
+                      children: [
+                        DrawerHeader(
+                            decoration: BoxDecoration(color: backGroundColor),
+                            child: Text(
+                              "Admin Panel",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.bold),
+                            )),
+                        ListTile(
+                          title: const Text('Add Product'),
+                          selected: selectedIndex == 0,
+                          onTap: () {
+                            onItemTapped(0);
+                            Navigator.pop(context);
                           },
                         ),
-                        actions: [
-                          Row(
-                            children: [
-                              IconButton(
-                                  onPressed: () {},
-                                  icon: Icon(
-                                    Icons.settings,
-                                    size: 30,
-                                    color: Colors.white,
-                                  )),
-                              Padding(
-                                padding: const EdgeInsets.only(right: 20),
-                                child: CircleAvatar(
-                                    radius: 20,
-                                    backgroundImage:
-                                        AssetImage("assets/images/user.png")),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      drawer: Drawer(
-                          child: ListView(
-                        children: [
-                          DrawerHeader(
-                              decoration: BoxDecoration(color: backGroundColor),
-                              child: Text(
-                                "Admin Panel",
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold),
-                              )),
-                          ListTile(
-                            title: const Text('Add Product'),
-                            selected: selectedIndex == 0,
-                            onTap: () {
-                              onItemTapped(0);
-                              Navigator.pop(context);
-                            },
-                          ),
-                          ListTile(
-                            title: const Text('Customer List'),
-                            selected: selectedIndex == 1,
-                            onTap: () {
-                              onItemTapped(1);
-                              Navigator.pop(context);
-                            },
-                          ),
-                          ListTile(
-                            title: const Text('Sold Products'),
-                            selected: selectedIndex == 2,
-                            onTap: () {
-                              onItemTapped(2);
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                      )),
-                      body: Column(
+                        ListTile(
+                          title: const Text('Customer List'),
+                          selected: selectedIndex == 1,
+                          onTap: () {
+                            onItemTapped(1);
+                            Navigator.pop(context);
+                          },
+                        ),
+                        ListTile(
+                          title: const Text('Sold Products'),
+                          selected: selectedIndex == 2,
+                          onTap: () {
+                            onItemTapped(2);
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    )),
+                    body: SingleChildScrollView(
+                      child: Column(
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -162,31 +171,110 @@ class _UserAccountState extends State<UserAccount> {
                               widgetOptions[selectedIndex],
                             ],
                           ),
-                          if (widgetOptions[selectedIndex] ==
-                              Text("Add Product"))
+                          if (selectedIndex == 0)
                             Column(
-                              children: [Text("add Product")],
+                              children: [
+                                file.path.isEmpty
+                                    ? SizedBox(
+                                        height: 100,
+                                        width: 100,
+                                        child: ClipRRect(
+                                          child: Image.asset(
+                                            "assets/images/add-product.png",
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox(
+                                        height: 100,
+                                        width: 100,
+                                        child: ClipRRect(
+                                          child: Image.file(file),
+                                        ),
+                                      ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.50,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.05,
+                                  child: CustomButton(
+                                      backgroundColor: backGroundColor,
+                                      onPressed: () {
+                                        pickImage();
+                                      },
+                                      child: loader == true
+                                          ? CircularProgressIndicator()
+                                          : Text(
+                                              "Upload Image",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 10),
+                                  child: CustomTextFormField(
+                                    labelText: "Product name",
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 10),
+                                  child: CustomTextFormField(
+                                    labelText: "Price",
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 10),
+                                  child: TextFormField(
+                                    maxLines:
+                                        null, // Allows the TextFormField to grow dynamically
+                                    minLines:
+                                        10, // Sets a minimum number of lines
+                                    keyboardType: TextInputType
+                                        .multiline, // Allows multiline input
+                                    decoration: InputDecoration(
+                                      hintText: 'Description of the Product...',
+                                      border:
+                                          OutlineInputBorder(), // Adds a border around the text area
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                CustomButton(
+                                  backgroundColor: backGroundColor,
+                                  onPressed: () {},
+                                  child: Text("Submit",
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold)),
+                                )
+                              ],
                             )
                         ],
-                      )
-                      // Column(
-                      //   children: [
-                      //     Container(
-                      //       color: backGroundColor,
-                      //       child: Row(
-                      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //         children: [],
-                      //       ),
-                      //     ),
-                      //     CustomButton(
-                      //       onPressed: () {
-                      //         logoutShowDialog(context, userProvider);
-                      //       },
-                      //       child: Text("Logout"),
-                      //     ),
-                      //   ],
-                      // ),
                       ),
+                    ),
+                    // Column(
+                    //   children: [
+                    //     Container(
+                    //       color: backGroundColor,
+                    //       child: Row(
+                    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //         children: [],
+                    //       ),
+                    //     ),
+                    //     CustomButton(
+                    //       onPressed: () {
+                    //         logoutShowDialog(context, userProvider);
+                    //       },
+                    //       child: Text("Logout"),
+                    //     ),
+                    //   ],
+                    // ),
+                  ),
                 ))
         //userPage starts from here
         : Consumer<UserProvider>(
@@ -688,5 +776,32 @@ class _UserAccountState extends State<UserAccount> {
         );
       },
     );
+  }
+
+  pickImage() async {
+    final ImagePicker picker = ImagePicker();
+// Pick an image.
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    file = File(image!.path);
+    setState(() {
+      loader = true;
+      file;
+    });
+    try {
+      // List<String> fileName = file.path.split('/');
+      String fileName = file.path.split('/').last;
+      var storageReference = FirebaseStorage.instance.ref();
+      var uploadReference = storageReference.child(fileName);
+      await uploadReference.putFile(file);
+      String? downloadUrl = await uploadReference.getDownloadURL();
+      setState(() {
+        loader = false;
+      });
+      // print("downloadUrl$downloadUrl");
+    } catch (e) {
+      setState(() {
+        loader = false;
+      });
+    }
   }
 }
