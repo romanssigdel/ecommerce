@@ -43,6 +43,7 @@ dependencies:
   firebase_auth: ^4.17.8
   image_picker: ^1.0.8
   firebase_storage: ^11.6.9
+  shimmer: ^3.0.0
   
 
 dev_dependencies:
