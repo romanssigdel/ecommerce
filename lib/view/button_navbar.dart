@@ -1,5 +1,8 @@
 import 'package:ecommerce/utils/color_const.dart';
+import 'package:ecommerce/utils/string_const.dart';
+import 'package:ecommerce/view/cart.dart';
 import 'package:ecommerce/view/home_page.dart';
+import 'package:ecommerce/view/my_wishlist.dart';
 import 'package:ecommerce/view/user_account.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +17,12 @@ class CustomBottomNavigationBar extends StatefulWidget {
 }
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
-  List<Widget> itemList = [HomePage(), UserAccount()];
+  List<Widget> itemList = [
+    HomePage(),
+    MyWishlist(),
+    AddCart(),
+    UserAccount(),
+  ];
   int selectedIndex = 0;
   @override
   void initState() {
@@ -30,6 +38,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: selectedIndex,
           selectedItemColor: backGroundColor,
+          unselectedItemColor: Colors.grey,
+          // showUnselectedLabels: true,
           onTap: (value) {
             selectedIndex = value;
             setState(() {
@@ -38,7 +48,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           },
           items: [
             BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile")
+            BottomNavigationBarItem(
+                icon: Icon(Icons.favorite), label: "My WishList"),
+            BottomNavigationBarItem(
+                icon: Icon(Icons.add_shopping_cart), label: "Cart"),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
           ]),
     );
   }

@@ -234,6 +234,7 @@ class _UserAccountState extends State<UserAccount> {
                                 widgetOptions[selectedIndex],
                               ],
                             ),
+                            // add products
                             if (selectedIndex == 0)
                               Form(
                                 key: _formKey,
@@ -386,7 +387,7 @@ class _UserAccountState extends State<UserAccount> {
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       CustomBottomNavigationBar(
-                                                          initialIndex: 1),
+                                                          initialIndex: 3),
                                                 ),
                                                 (route) => false);
                                           } else if (productProvider
@@ -480,108 +481,131 @@ class _UserAccountState extends State<UserAccount> {
                             //product list
                             if (selectedIndex == 3)
                               Consumer<ProductProvider>(
-                                builder: (context, value, child) => Column(
-                                  children: [
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.9,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.95,
-                                      child: ListView.builder(
-                                        itemCount:
-                                            productProvider.productslist.length,
-                                        itemBuilder: (context, index) {
-                                          return Card(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10.0,
-                                                      vertical: 10),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                builder:
+                                    (context, value, child) =>
+                                        productProvider.getProductStatus ==
+                                                StatusUtil.loading
+                                            ? CircularProgressIndicator()
+                                            : Column(
                                                 children: [
-                                                  ClipRRect(
-                                                    child: Image.network(
-                                                      productProvider
-                                                          .productslist[index]
-                                                          .image!,
-                                                      height: 70,
-                                                      width: 70,
-                                                      fit: BoxFit.fill,
+                                                  SizedBox(
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.9,
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            0.95,
+                                                    child: ListView.builder(
+                                                      itemCount: productProvider
+                                                          .productslist.length,
+                                                      itemBuilder:
+                                                          (context, index) {
+                                                        return Card(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        10.0,
+                                                                    vertical:
+                                                                        10),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                ClipRRect(
+                                                                  child: Image
+                                                                      .network(
+                                                                    productProvider
+                                                                        .productslist[
+                                                                            index]
+                                                                        .image!,
+                                                                    height: 70,
+                                                                    width: 70,
+                                                                    fit: BoxFit
+                                                                        .fill,
+                                                                  ),
+                                                                ),
+                                                                Column(
+                                                                  crossAxisAlignment:
+                                                                      CrossAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    Row(
+                                                                      children: [
+                                                                        Text(
+                                                                            "Name: ",
+                                                                            style:
+                                                                                TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                                                        Text(
+                                                                          productProvider
+                                                                              .productslist[index]
+                                                                              .name!,
+                                                                          style:
+                                                                              TextStyle(fontSize: 18),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    Row(
+                                                                      children: [
+                                                                        Text(
+                                                                            "Price: ",
+                                                                            style:
+                                                                                TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                                                        Text(
+                                                                          productProvider
+                                                                              .productslist[index]
+                                                                              .price!,
+                                                                          style:
+                                                                              TextStyle(fontSize: 18),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Row(
+                                                                  children: [
+                                                                    IconButton(
+                                                                        onPressed:
+                                                                            () {},
+                                                                        icon:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .edit,
+                                                                          color:
+                                                                              Colors.green,
+                                                                        )),
+                                                                    IconButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          productProvider.deleteProduct(productProvider
+                                                                              .productslist[index]
+                                                                              .id!);
+                                                                          getProductData();
+                                                                        },
+                                                                        icon:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .delete,
+                                                                          color:
+                                                                              Colors.redAccent,
+                                                                        )),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
                                                     ),
-                                                  ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          Text("Name: ",
-                                                              style: TextStyle(
-                                                                  fontSize: 20,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold)),
-                                                          Text(
-                                                            productProvider
-                                                                .productslist[
-                                                                    index]
-                                                                .name!,
-                                                            style: TextStyle(
-                                                                fontSize: 18),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Text("Price: ",
-                                                              style: TextStyle(
-                                                                  fontSize: 20,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold)),
-                                                          Text(
-                                                            productProvider
-                                                                .productslist[
-                                                                    index]
-                                                                .price!,
-                                                            style: TextStyle(
-                                                                fontSize: 18),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Row(
-                                                    children: [
-                                                      IconButton(
-                                                          onPressed: () {},
-                                                          icon: Icon(
-                                                            Icons.edit,
-                                                            color: Colors.green,
-                                                          )),
-                                                      IconButton(
-                                                          onPressed: () {},
-                                                          icon: Icon(
-                                                            Icons.delete,
-                                                            color: Colors
-                                                                .redAccent,
-                                                          )),
-                                                    ],
                                                   ),
                                                 ],
                                               ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               )
                           ],
                         ),

@@ -6,9 +6,25 @@ import 'package:ecommerce/services/admin_services_impl.dart';
 import 'package:flutter/material.dart';
 
 class ProductProvider extends ChangeNotifier {
+  List<String> categoryImages = [
+    "assets/images/mobile.png",
+    "assets/images/laptop.png",
+    "assets/images/printer.png",
+    "assets/images/earbuds.png",
+    "assets/images/smartwatch.png",
+  ];
+  List<String> categories = [
+    "Mobile",
+    "Laptop",
+    "Printer",
+    "Earbuds",
+    "Smart Watches"
+  ];
+
   String? productName, productDescription, productCategory, productPrice;
   String? errorMessage;
   String? isSuccess;
+  String? isSuccessfullyProductDeleted;
   TextEditingController? imageTextField;
   List<Product> productslist = [];
 
@@ -44,8 +60,16 @@ class ProductProvider extends ChangeNotifier {
   StatusUtil? _getProductStatus = StatusUtil.none;
   StatusUtil? get getProductStatus => _getProductStatus;
 
-  setGetStatusProduct(StatusUtil status) {
-    _getProductStatus = status;
+  StatusUtil? _deleteProductStatus = StatusUtil.none;
+  StatusUtil? get deleteProductStatus => _deleteProductStatus;
+
+  setDeleteStatus(StatusUtil statusUtil) {
+    _deleteProductStatus = statusUtil;
+    notifyListeners();
+  }
+
+  setGetStatusProduct(StatusUtil statusUtil) {
+    _getProductStatus = statusUtil;
     notifyListeners();
   }
 
@@ -79,6 +103,20 @@ class ProductProvider extends ChangeNotifier {
     } else if (apiResponse.statusUtil == StatusUtil.error) {
       errorMessage = apiResponse.errorMessage;
       setGetStatusProduct(StatusUtil.error);
+    }
+  }
+
+  Future<void> deleteProduct(String id) async {
+    if (_deleteProductStatus != StatusUtil.loading) {
+      setDeleteStatus(StatusUtil.loading);
+    }
+    ApiResponse apiResponse = await adminServices.deleteProduct(id);
+    if (apiResponse.statusUtil == StatusUtil.success) {
+      isSuccessfullyProductDeleted = apiResponse.data;
+      setDeleteStatus(StatusUtil.success);
+    } else if (apiResponse.statusUtil == StatusUtil.error) {
+      errorMessage = apiResponse.errorMessage;
+      setDeleteStatus(StatusUtil.error);
     }
   }
 }
