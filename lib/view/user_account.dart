@@ -1,9 +1,11 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/custom/custom_textformfield.dart';
 import 'package:ecommerce/model/user.dart';
+import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
@@ -79,9 +81,11 @@ class _UserAccountState extends State<UserAccount> {
   }
 
   File file = File("");
+  String? downloadUrl;
   bool loader = false;
   final _formKey = GlobalKey<FormState>();
-  String? productName, price, description;
+  String? productName, description, category;
+  Double? price;
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
@@ -170,160 +174,206 @@ class _UserAccountState extends State<UserAccount> {
                             Navigator.pop(context);
                           },
                         ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 370.0, left: 10, right: 10),
+                          child: CustomButton(
+                            backgroundColor: backGroundColor,
+                            foregroundColor: buttonForegroundColor,
+                            onPressed: () {
+                              logoutShowDialog(context, userProvider);
+                            },
+                            child: Text("Logout"),
+                          ),
+                        ),
                       ],
                     )),
                     body: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              widgetOptions[selectedIndex],
-                            ],
-                          ),
-                          if (selectedIndex == 0)
-                            Form(
-                              key: _formKey,
-                              child: Column(
-                                children: [
-                                  file.path.isEmpty
-                                      ? SizedBox(
-                                          height: 100,
-                                          width: 100,
-                                          child: ClipRRect(
-                                            child: Image.asset(
-                                              "assets/images/add-product.png",
+                      child: Consumer<ProductProvider>(
+                        builder: (context, productProvider, child) => Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                widgetOptions[selectedIndex],
+                              ],
+                            ),
+                            if (selectedIndex == 0)
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  children: [
+                                    file.path.isEmpty
+                                        ? SizedBox(
+                                            height: 100,
+                                            width: 100,
+                                            child: ClipRRect(
+                                              child: Image.asset(
+                                                "assets/images/add-product.png",
+                                              ),
+                                            ),
+                                          )
+                                        : SizedBox(
+                                            height: 100,
+                                            width: 100,
+                                            child: ClipRRect(
+                                              child: Image.file(file),
                                             ),
                                           ),
-                                        )
-                                      : SizedBox(
-                                          height: 100,
-                                          width: 100,
-                                          child: ClipRRect(
-                                            child: Image.file(file),
-                                          ),
-                                        ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.50,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.05,
-                                    child: CustomButton(
-                                        backgroundColor: backGroundColor,
-                                        onPressed: () {
-                                          pickImage();
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.50,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.05,
+                                      child: CustomButton(
+                                          backgroundColor: backGroundColor,
+                                          onPressed: () async {
+                                            await pickImage();
+                                          },
+                                          child: loader == true
+                                              ? CircularProgressIndicator()
+                                              : Text(
+                                                  "Select Image",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                )),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        onChanged: (value) {
+                                          productProvider.setProductName(value);
                                         },
-                                        child: loader == true
-                                            ? CircularProgressIndicator()
-                                            : Text(
-                                                "Upload Image",
-                                                style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              )),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 10),
-                                    child: CustomTextFormField(
-                                      onChanged: (value) {
-                                        productName = value;
-                                      },
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return productNameValidationStr;
-                                        }
-                                        return null;
-                                      },
-                                      labelText: "Product name",
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 10),
-                                    child: CustomTextFormField(
-                                      keyboardType: TextInputType.number,
-                                      onChanged: (value) {
-                                        price = value;
-                                      },
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return priceValidationStr;
-                                        }
-                                        return null;
-                                      },
-                                      labelText: "Price",
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0, horizontal: 10),
-                                    child: TextFormField(
-                                      onChanged: (value) {
-                                        description = value;
-                                      },
-                                      validator: (value) {
-                                        if (value!.isEmpty) {
-                                          return descriptionValidationStr;
-                                        }
-                                      },
-                                      maxLines:
-                                          null, // Allows the TextFormField to grow dynamically
-                                      minLines:
-                                          10, // Sets a minimum number of lines
-                                      keyboardType: TextInputType
-                                          .multiline, // Allows multiline input
-                                      decoration: InputDecoration(
-                                        hintText:
-                                            'Description of the Product...',
-                                        border:
-                                            OutlineInputBorder(), // Adds a border around the text area
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return productNameValidationStr;
+                                          }
+                                          return null;
+                                        },
+                                        labelText: "Product name",
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  CustomButton(
-                                    backgroundColor: backGroundColor,
-                                    onPressed: () {
-                                      if (_formKey.currentState!.validate()) {}
-                                    },
-                                    child: Text("Submit",
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                  CustomButton(
-                                    onPressed: () {
-                                      logoutShowDialog(context, userProvider);
-                                    },
-                                    child: Text("Logout"),
-                                  ),
-                                ],
-                              ),
-                            )
-                        ],
+                                    if (downloadUrl != null)
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10.0, horizontal: 10),
+                                        child: CustomTextFormField(
+                                          controller: productProvider
+                                              .setProductImage(downloadUrl!),
+                                          // readOnly: true,
+                                          labelText: "Product Image",
+                                        ),
+                                      ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        keyboardType: TextInputType.number,
+                                        onChanged: (value) {
+                                          productProvider
+                                              .setProductPrice(value);
+                                        },
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return priceValidationStr;
+                                          }
+                                          return null;
+                                        },
+                                        labelText: "Price",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        onChanged: (value) {
+                                          productProvider
+                                              .setProductCategory(value);
+                                        },
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return categoryValidationStr;
+                                          }
+                                          return null;
+                                        },
+                                        labelText: "Category",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0, horizontal: 10),
+                                      child: TextFormField(
+                                        onChanged: (value) {
+                                          productProvider
+                                              .setProducctDescription(value);
+                                        },
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return descriptionValidationStr;
+                                          }
+                                          return null;
+                                        },
+                                        maxLines:
+                                            null, // Allows the TextFormField to grow dynamically
+                                        minLines:
+                                            5, // Sets a minimum number of lines
+                                        keyboardType: TextInputType
+                                            .multiline, // Allows multiline input
+                                        decoration: InputDecoration(
+                                          hintText:
+                                              'Description of the Product...',
+                                          border: OutlineInputBorder(),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    CustomButton(
+                                      backgroundColor: backGroundColor,
+                                      onPressed: () async {
+                                        if (_formKey.currentState!.validate()) {
+                                          await productProvider.saveProduct();
+                                          if (productProvider
+                                                  .saveProductStatus ==
+                                              StatusUtil.success) {
+                                            Helper.displaySnackbar(context,
+                                                "Product Successfully Saved!");
+                                            Navigator.pushAndRemoveUntil(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      UserAccount(),
+                                                ),
+                                                (route) => false);
+                                          } else if (productProvider
+                                                  .saveProductStatus ==
+                                              StatusUtil.error) {
+                                            Helper.displaySnackbar(
+                                                context, "Product not Saved.");
+                                          }
+                                        }
+                                      },
+                                      child: productProvider
+                                                  .saveProductStatus ==
+                                              StatusUtil.loading
+                                          ? CircularProgressIndicator()
+                                          : Text("Submit",
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold)),
+                                    ),
+                                  ],
+                                ),
+                              )
+                          ],
+                        ),
                       ),
                     ),
-                    // Column(
-                    //   children: [
-                    //     Container(
-                    //       color: backGroundColor,
-                    //       child: Row(
-                    //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //         children: [],
-                    //       ),
-                    //     ),
-                    //     CustomButton(
-                    //       onPressed: () {
-                    //         logoutShowDialog(context, userProvider);
-                    //       },
-                    //       child: Text("Logout"),
-                    //     ),
-                    //   ],
-                    // ),
                   ),
                 ))
         //userPage starts from here
@@ -843,8 +893,9 @@ class _UserAccountState extends State<UserAccount> {
       var storageReference = FirebaseStorage.instance.ref();
       var uploadReference = storageReference.child(fileName);
       await uploadReference.putFile(file);
-      String? downloadUrl = await uploadReference.getDownloadURL();
+      downloadUrl = await uploadReference.getDownloadURL();
       setState(() {
+        downloadUrl;
         loader = false;
       });
       // print("downloadUrl$downloadUrl");

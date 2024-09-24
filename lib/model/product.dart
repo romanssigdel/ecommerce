@@ -2,14 +2,16 @@ class Product {
   String? image;
   String? name;
   String? description;
-  double? price;
+  String? category;
+  String? price;
 
-  Product({this.image, this.name, this.description, this.price});
+  Product({this.image, this.name, this.description, this.price, this.category});
 
   Product.fromJson(Map<String, dynamic> json) {
     image = json['image'];
     name = json['name'];
     description = json['description'];
+    category = json['category'];
     price = json['price'];
   }
 
@@ -18,6 +20,7 @@ class Product {
     data['image'] = this.image;
     data['name'] = this.name;
     data['description'] = this.description;
+    data['category'] = this.category;
     data['price'] = this.price;
     return data;
   }
