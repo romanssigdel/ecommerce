@@ -5,12 +5,7 @@ class User {
   String? password;
   String? role;
 
-  User(
-      {this.role,
-      this.name,
-      this.email,
-      this.password,
-      this.id});
+  User({this.role, this.name, this.email, this.password, this.id});
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
