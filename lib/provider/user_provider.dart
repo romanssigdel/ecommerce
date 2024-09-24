@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider extends ChangeNotifier {
+  String? id;
   String? name, email, password, confirmPassword;
   TextEditingController? roleTextField;
   String? errorMessage;
@@ -91,6 +92,7 @@ class UserProvider extends ChangeNotifier {
     }
 
     User user = User(
+      id: id,
       name: name,
       role: roleTextField?.text,
       email: email,

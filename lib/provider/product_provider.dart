@@ -10,6 +10,7 @@ class ProductProvider extends ChangeNotifier {
   String? errorMessage;
   String? isSuccess;
   TextEditingController? imageTextField;
+  List<Product> productslist = [];
 
   setProductImage(value) {
     imageTextField = TextEditingController(text: value);
@@ -40,6 +41,14 @@ class ProductProvider extends ChangeNotifier {
   StatusUtil? _saveProductStatus = StatusUtil.none;
   StatusUtil? get saveProductStatus => _saveProductStatus;
 
+  StatusUtil? _getProductStatus = StatusUtil.none;
+  StatusUtil? get getProductStatus => _getProductStatus;
+
+  setGetStatusProduct(StatusUtil status) {
+    _getProductStatus = status;
+    notifyListeners();
+  }
+
   Future<void> saveProduct() async {
     if (_saveProductStatus != StatusUtil.loading) {
       setSaveStatusProductName(StatusUtil.loading);
@@ -56,6 +65,20 @@ class ProductProvider extends ChangeNotifier {
     } else if (response.statusUtil == StatusUtil.error) {
       setSaveStatusProductName(StatusUtil.error);
       errorMessage = response.errorMessage;
+    }
+  }
+
+  Future<void> getProduct() async {
+    if (_getProductStatus != StatusUtil.loading) {
+      setGetStatusProduct(StatusUtil.loading);
+    }
+    ApiResponse apiResponse = await adminServices.getProduct();
+    if (apiResponse.statusUtil == StatusUtil.success) {
+      productslist = apiResponse.data;
+      setGetStatusProduct(StatusUtil.success);
+    } else if (apiResponse.statusUtil == StatusUtil.error) {
+      errorMessage = apiResponse.errorMessage;
+      setGetStatusProduct(StatusUtil.error);
     }
   }
 }

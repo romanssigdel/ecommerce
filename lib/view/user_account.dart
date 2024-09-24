@@ -31,7 +31,8 @@ class _UserAccountState extends State<UserAccount> {
   List<String> adminFunctions = [
     "Add Product",
     "Customer List",
-    "Sold Products"
+    "Sold Products",
+    "Products List"
   ];
   int selectedIndex = 0;
   static const TextStyle optionStyle =
@@ -49,6 +50,10 @@ class _UserAccountState extends State<UserAccount> {
       'Sold Products',
       style: optionStyle,
     ),
+    Text(
+      'Products list',
+      style: optionStyle,
+    ),
   ];
   void onItemTapped(int index) {
     setState(() {
@@ -61,6 +66,8 @@ class _UserAccountState extends State<UserAccount> {
     // TODO: implement initState
     super.initState();
     getValue();
+    getUserData();
+    getProductData();
   }
 
   String? userName, userEmail, userRole;
@@ -77,6 +84,26 @@ class _UserAccountState extends State<UserAccount> {
           // user = User(email: userEmail, name: userName, role: userRole);
           isLoading = false;
         });
+      },
+    );
+  }
+
+  getUserData() async {
+    Future.delayed(
+      Duration.zero,
+      () async {
+        var provider = Provider.of<UserProvider>(context, listen: false);
+        await provider.getUser();
+      },
+    );
+  }
+
+  getProductData() async {
+    Future.delayed(
+      Duration.zero,
+      () async {
+        var provider = Provider.of<ProductProvider>(context, listen: false);
+        await provider.getProduct();
       },
     );
   }
@@ -175,9 +202,17 @@ class _UserAccountState extends State<UserAccount> {
                             Navigator.pop(context);
                           },
                         ),
+                        ListTile(
+                          title: const Text('Products List'),
+                          selected: selectedIndex == 3,
+                          onTap: () {
+                            onItemTapped(3);
+                            Navigator.pop(context);
+                          },
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(
-                              top: 370.0, left: 10, right: 10),
+                              top: 310.0, left: 10, right: 10),
                           child: CustomButton(
                             backgroundColor: backGroundColor,
                             foregroundColor: buttonForegroundColor,
@@ -370,6 +405,180 @@ class _UserAccountState extends State<UserAccount> {
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontWeight: FontWeight.bold)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            if (selectedIndex == 1)
+                              Consumer<UserProvider>(
+                                builder: (context, value, child) => Column(
+                                  children: [
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.50,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.95,
+                                      child: ListView.builder(
+                                        itemCount: userProvider.userList.length,
+                                        itemBuilder: (context, index) {
+                                          return Card(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10.0,
+                                                      vertical: 10),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text("Name: ",
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                      Text(
+                                                        userProvider
+                                                            .userList[index]
+                                                            .name!,
+                                                        style: TextStyle(
+                                                            fontSize: 18),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text("Email: ",
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                      Text(
+                                                        userProvider
+                                                            .userList[index]
+                                                            .email!,
+                                                        style: TextStyle(
+                                                            fontSize: 18),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                            //product list
+                            if (selectedIndex == 3)
+                              Consumer<ProductProvider>(
+                                builder: (context, value, child) => Column(
+                                  children: [
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.9,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.95,
+                                      child: ListView.builder(
+                                        itemCount:
+                                            productProvider.productslist.length,
+                                        itemBuilder: (context, index) {
+                                          return Card(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10.0,
+                                                      vertical: 10),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  ClipRRect(
+                                                    child: Image.network(
+                                                      productProvider
+                                                          .productslist[index]
+                                                          .image!,
+                                                      height: 70,
+                                                      width: 70,
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                  ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Text("Name: ",
+                                                              style: TextStyle(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold)),
+                                                          Text(
+                                                            productProvider
+                                                                .productslist[
+                                                                    index]
+                                                                .name!,
+                                                            style: TextStyle(
+                                                                fontSize: 18),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Text("Price: ",
+                                                              style: TextStyle(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold)),
+                                                          Text(
+                                                            productProvider
+                                                                .productslist[
+                                                                    index]
+                                                                .price!,
+                                                            style: TextStyle(
+                                                                fontSize: 18),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      IconButton(
+                                                          onPressed: () {},
+                                                          icon: Icon(
+                                                            Icons.edit,
+                                                            color: Colors.green,
+                                                          )),
+                                                      IconButton(
+                                                          onPressed: () {},
+                                                          icon: Icon(
+                                                            Icons.delete,
+                                                            color: Colors
+                                                                .redAccent,
+                                                          )),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ],
                                 ),
