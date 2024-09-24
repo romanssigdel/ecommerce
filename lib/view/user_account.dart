@@ -10,6 +10,7 @@ import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
+import 'package:ecommerce/view/button_navbar.dart';
 import 'package:ecommerce/view/signin_form.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -258,14 +259,16 @@ class _UserAccountState extends State<UserAccount> {
                                       ),
                                     ),
                                     if (downloadUrl != null)
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10.0, horizontal: 10),
-                                        child: CustomTextFormField(
-                                          controller: productProvider
-                                              .setProductImage(downloadUrl!),
-                                          // readOnly: true,
-                                          labelText: "Product Image",
+                                      Visibility(
+                                        visible: false,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10.0, horizontal: 10),
+                                          child: CustomTextFormField(
+                                            controller: productProvider
+                                                .setProductImage(downloadUrl!),
+                                            labelText: "Product Image",
+                                          ),
                                         ),
                                       ),
                                     Padding(
@@ -320,7 +323,7 @@ class _UserAccountState extends State<UserAccount> {
                                         maxLines:
                                             null, // Allows the TextFormField to grow dynamically
                                         minLines:
-                                            5, // Sets a minimum number of lines
+                                            7, // Sets a minimum number of lines
                                         keyboardType: TextInputType
                                             .multiline, // Allows multiline input
                                         decoration: InputDecoration(
@@ -347,7 +350,8 @@ class _UserAccountState extends State<UserAccount> {
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      UserAccount(),
+                                                      CustomBottomNavigationBar(
+                                                          initialIndex: 1),
                                                 ),
                                                 (route) => false);
                                           } else if (productProvider
