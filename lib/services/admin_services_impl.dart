@@ -13,7 +13,7 @@ class AdminServicesImpl implements AdminServices {
     if (await Helper().isInternetConnectionAvailable()) {
       try {
         await FirebaseFirestore.instance
-            .collection("Products")
+            .collection("products")
             .add(product.toJson())
             .then((value) {
           isSuccess = true;

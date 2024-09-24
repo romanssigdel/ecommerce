@@ -8,7 +8,9 @@ class CustomTextFormField extends StatelessWidget {
   String? Function(String?)? validator;
   TextInputType? keyboardType;
   bool obscureText;
+  String? initialValue;
   TextEditingController? controller;
+  bool readOnly;
   CustomTextFormField({
     super.key,
     this.labelText,
@@ -18,7 +20,9 @@ class CustomTextFormField extends StatelessWidget {
     this.onChanged,
     this.validator,
     this.keyboardType,
+    this.initialValue,
     this.obscureText = false,
+    this.readOnly = false,
   });
 
   @override
@@ -26,6 +30,8 @@ class CustomTextFormField extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.95,
       child: TextFormField(
+        readOnly: readOnly,
+        initialValue: initialValue,
         controller: controller,
         obscureText: obscureText,
         keyboardType: keyboardType,

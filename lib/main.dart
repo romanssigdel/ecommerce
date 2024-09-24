@@ -1,5 +1,6 @@
 import 'package:ecommerce/model/user.dart';
 import 'package:ecommerce/provider/icons_providers.dart';
+import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/view/button_navbar.dart';
 import 'package:ecommerce/view/description_page.dart';
@@ -46,7 +47,8 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider(
           create: (context) => IconsProvider(),
-        )
+        ),
+        ChangeNotifierProvider(create: (context) => ProductProvider())
       ],
       child: MaterialApp(
         title: 'EPasal',

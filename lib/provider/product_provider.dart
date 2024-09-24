@@ -6,22 +6,26 @@ import 'package:ecommerce/services/admin_services_impl.dart';
 import 'package:flutter/material.dart';
 
 class ProductProvider extends ChangeNotifier {
-  String? productName, productImage, productDescription;
-  double? productPrice;
+  String? productName, productDescription, productCategory, productPrice;
   String? errorMessage;
   String? isSuccess;
+  TextEditingController? imageTextField;
+
+  setProductImage(value) {
+    imageTextField = TextEditingController(text: value);
+  }
 
   AdminServices adminServices = AdminServicesImpl();
   setProductName(String value) {
     productName = value;
   }
 
-  setProductPrice(double value) {
-    productPrice = value;
+  setProductCategory(String value) {
+    productCategory = value;
   }
 
-  setProductImage(String value) {
-    productImage = value;
+  setProductPrice(String value) {
+    productPrice = value;
   }
 
   setProducctDescription(String value) {
@@ -30,6 +34,7 @@ class ProductProvider extends ChangeNotifier {
 
   setSaveStatusProductName(StatusUtil status) {
     _saveProductStatus = status;
+    notifyListeners();
   }
 
   StatusUtil? _saveProductStatus = StatusUtil.none;
@@ -41,9 +46,10 @@ class ProductProvider extends ChangeNotifier {
     }
     Product product = Product(
         name: productName,
-        image: productImage,
+        image: imageTextField!.text,
         price: productPrice,
-        description: productDescription);
+        description: productDescription,
+        category: productCategory);
     ApiResponse response = await adminServices.saveProduct(product);
     if (response.statusUtil == StatusUtil.success) {
       setSaveStatusProductName(StatusUtil.success);
