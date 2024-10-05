@@ -6,7 +6,7 @@ import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
-import 'package:ecommerce/view/button_navbar.dart';
+import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/home_page.dart';
 import 'package:ecommerce/view/signup_form.dart';
 import 'package:ecommerce/view/user_account.dart';

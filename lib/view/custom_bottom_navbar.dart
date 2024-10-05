@@ -3,9 +3,11 @@ import 'package:ecommerce/utils/string_const.dart';
 import 'package:ecommerce/view/cart.dart';
 import 'package:ecommerce/view/home_page.dart';
 import 'package:ecommerce/view/my_wishlist.dart';
+import 'package:ecommerce/view/signin_form.dart';
 import 'package:ecommerce/view/user_account.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final int initialIndex;
@@ -17,24 +19,43 @@ class CustomBottomNavigationBar extends StatefulWidget {
 }
 
 class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
-  List<Widget> itemList = [
-    HomePage(),
-    MyWishlist(),
-    AddCart(),
-    UserAccount(),
-  ];
+  bool? isLogin = false;
   int selectedIndex = 0;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     selectedIndex = widget.initialIndex;
+    getSharedPreference();
+  }
+
+  getSharedPreference() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool? isLoginStatus = prefs.getBool("isLogin");
+    setState(() {
+      isLogin = isLoginStatus ?? false;
+    });
+  }
+
+  // List<Widget> itemList = [
+  //   HomePage(),
+  //   MyWishlist(),
+  //   AddCart(),
+  //   isLogin == true ? UserAccount() : SigninPage()
+  // ];
+  List<Widget> getItemList() {
+    return [
+      HomePage(),
+      MyWishlist(),
+      AddCart(),
+      isLogin == true ? UserAccount() : SigninPage(), // Conditional logic
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: itemList[selectedIndex],
+      body: getItemList()[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: selectedIndex,
           selectedItemColor: backGroundColor,

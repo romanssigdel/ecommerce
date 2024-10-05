@@ -39,7 +39,7 @@ class AdminServicesImpl implements AdminServices {
         for (int i = 0; i < productList.length; i++) {
           productList[i].id = value.docs[i].id;
         }
-      
+
         return ApiResponse(statusUtil: StatusUtil.success, data: productList);
       } catch (e) {
         return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
@@ -64,6 +64,28 @@ class AdminServicesImpl implements AdminServices {
         return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
       } catch (e) {
         return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
+      }
+    } else {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, data: noInternetConectionStr);
+    }
+  }
+
+  @override
+  Future<ApiResponse> updateProduct(Product product) async {
+    if (await Helper().isInternetConnectionAvailable()) {
+      try {
+        await FirebaseFirestore.instance
+            .collection("products")
+            .doc(product.id)
+            .update(product.toJson())
+            .then((value) {
+          isSuccess = true;
+        });
+        return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
+      } catch (e) {
+        return ApiResponse(
+            statusUtil: StatusUtil.error, errorMessage: e.toString());
       }
     } else {
       return ApiResponse(

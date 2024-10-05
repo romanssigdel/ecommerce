@@ -1,6 +1,6 @@
 import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/utils/color_const.dart';
-import 'package:ecommerce/view/button_navbar.dart';
+import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/description_page_first.dart';
 import 'package:ecommerce/view/description_page_second.dart';
 import 'package:ecommerce/view/home_page.dart';
@@ -108,7 +108,8 @@ class _DescriptionPageState extends State<DescriptionPage> {
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => SignupPage(),
+                                  builder: (context) =>
+                                      CustomBottomNavigationBar(),
                                 ),
                                 (route) => false);
                           },
@@ -135,7 +136,8 @@ class _DescriptionPageState extends State<DescriptionPage> {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => SignupPage(),
+                                builder: (context) =>
+                                    CustomBottomNavigationBar(),
                               ),
                               (route) => false);
                         }
