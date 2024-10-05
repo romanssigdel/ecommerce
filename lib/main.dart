@@ -2,7 +2,7 @@ import 'package:ecommerce/model/user.dart';
 import 'package:ecommerce/provider/icons_providers.dart';
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/provider/user_provider.dart';
-import 'package:ecommerce/view/button_navbar.dart';
+import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/description_page.dart';
 import 'package:ecommerce/firebase_options.dart';
 import 'package:ecommerce/view/home_page.dart';

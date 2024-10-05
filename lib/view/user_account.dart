@@ -4,13 +4,14 @@ import 'dart:io';
 import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/custom/custom_textformfield.dart';
+import 'package:ecommerce/model/product.dart';
 import 'package:ecommerce/model/user.dart';
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
-import 'package:ecommerce/view/button_navbar.dart';
+import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/signin_form.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,7 +20,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class UserAccount extends StatefulWidget {
-  const UserAccount({super.key});
+  UserAccount({super.key, this.product});
+  Product? product;
 
   @override
   State<UserAccount> createState() => _UserAccountState();
@@ -63,6 +65,26 @@ class _UserAccountState extends State<UserAccount> {
 
   @override
   void initState() {
+    if (widget.product != null) {
+      var provider = Provider.of<ProductProvider>(context, listen: false);
+      provider.setProductId(widget.product!.id ?? "");
+      provider.setProductName(widget.product!.name ?? "");
+      provider.setProductPrice(widget.product!.price ?? "");
+      provider.setCamera(widget.product!.camera ?? "");
+      provider.setProductCategory(widget.product!.category ?? "");
+      provider.setCpu(widget.product!.cpu ?? "");
+      provider.setProductDescription(widget.product!.description ?? "");
+      provider.setGraphics(widget.product!.graphics ?? "");
+      provider.setProductImage(widget.product!.image ?? "");
+      provider.setMemory(widget.product!.memory ?? "");
+      provider.setModel(widget.product!.model ?? "");
+      provider.setOperatingSystem(widget.product!.operatingSystem ?? "");
+      provider.setScreen(widget.product!.screen ?? "");
+      provider.setStorage(widget.product!.storage ?? "");
+      provider.setWaranty(widget.product!.warranty ?? "");
+      provider
+          .setWirelessConnectivity(widget.product!.wirelessConnectivity ?? "");
+    }
     // TODO: implement initState
     super.initState();
     getValue();
@@ -114,10 +136,32 @@ class _UserAccountState extends State<UserAccount> {
   final _formKey = GlobalKey<FormState>();
   String? productName, description, category;
   Double? price;
+
+  void clearForm(ProductProvider productProvider) {
+    _formKey.currentState?.reset(); // Resets the form's state
+
+    // Clear product data in provider
+    productProvider.setProductName("");
+    productProvider.setProductPrice("");
+    productProvider.setProductCategory("");
+    productProvider.setModel("");
+    productProvider.setCpu("");
+    productProvider.setOperatingSystem("");
+    productProvider.setMemory("");
+    productProvider.setStorage("");
+    productProvider.setScreen("");
+    productProvider.setGraphics("");
+    productProvider.setWirelessConnectivity("");
+    productProvider.setCamera("");
+    productProvider.setWaranty("");
+    productProvider.setProductDescription("");
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     }
@@ -282,6 +326,8 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
+                                        initialValue:
+                                            productProvider.productName,
                                         onChanged: (value) {
                                           productProvider.setProductName(value);
                                         },
@@ -301,6 +347,9 @@ class _UserAccountState extends State<UserAccount> {
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 10.0, horizontal: 10),
                                           child: CustomTextFormField(
+                                            initialValue: productProvider
+                                                .imageTextField
+                                                .toString(),
                                             controller: productProvider
                                                 .setProductImage(downloadUrl!),
                                             labelText: "Product Image",
@@ -311,6 +360,8 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
+                                        initialValue:
+                                            productProvider.productPrice,
                                         keyboardType: TextInputType.number,
                                         onChanged: (value) {
                                           productProvider
@@ -329,6 +380,8 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
+                                        initialValue:
+                                            productProvider.productCategory,
                                         onChanged: (value) {
                                           productProvider
                                               .setProductCategory(value);
@@ -344,11 +397,133 @@ class _UserAccountState extends State<UserAccount> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 8.0, horizontal: 10),
-                                      child: TextFormField(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        initialValue: productProvider.model,
+                                        onChanged: (value) {
+                                          productProvider.setModel(value);
+                                        },
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Please enter model.";
+                                          }
+                                          return null;
+                                        },
+                                        labelText: "model",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        initialValue: productProvider.cpu,
+                                        onChanged: (value) {
+                                          productProvider.setCpu(value);
+                                        },
+                                        labelText: "Cpu",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        initialValue:
+                                            productProvider.opertingSystem,
                                         onChanged: (value) {
                                           productProvider
-                                              .setProducctDescription(value);
+                                              .setOperatingSystem(value);
+                                        },
+                                        labelText: "Operating System",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        initialValue: productProvider.memory,
+                                        onChanged: (value) {
+                                          productProvider.setMemory(value);
+                                        },
+                                        labelText: "Memory",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        initialValue: productProvider.storage,
+                                        onChanged: (value) {
+                                          productProvider.setStorage(value);
+                                        },
+                                        labelText: "Storage",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        initialValue: productProvider.screen,
+                                        onChanged: (value) {
+                                          productProvider.setScreen(value);
+                                        },
+                                        labelText: "Screen",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        initialValue: productProvider.graphics,
+                                        onChanged: (value) {
+                                          productProvider.setGraphics(value);
+                                        },
+                                        labelText: "Graphics",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        initialValue: productProvider
+                                            .wirelessConnectivity,
+                                        onChanged: (value) {
+                                          productProvider
+                                              .setWirelessConnectivity(value);
+                                        },
+                                        labelText: "Wireless Connectivity",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        initialValue: productProvider.camera,
+                                        onChanged: (value) {
+                                          productProvider.setCamera(value);
+                                        },
+                                        labelText: "Camera",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        initialValue: productProvider.warranty,
+                                        onChanged: (value) {
+                                          productProvider.setWaranty(value);
+                                        },
+                                        labelText: "Waranty",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8.0, horizontal: 10),
+                                      child: TextFormField(
+                                        initialValue:
+                                            productProvider.productDescription,
+                                        onChanged: (value) {
+                                          productProvider
+                                              .setProductDescription(value);
                                         },
                                         validator: (value) {
                                           if (value!.isEmpty) {
@@ -572,7 +747,11 @@ class _UserAccountState extends State<UserAccount> {
                                                                   children: [
                                                                     IconButton(
                                                                         onPressed:
-                                                                            () {},
+                                                                            () {
+                                                                          updateShowDialog(
+                                                                              context,
+                                                                              productProvider.productslist[index]);
+                                                                        },
                                                                         icon:
                                                                             Icon(
                                                                           Icons
@@ -580,21 +759,20 @@ class _UserAccountState extends State<UserAccount> {
                                                                           color:
                                                                               Colors.green,
                                                                         )),
-                                                                    IconButton(
-                                                                        onPressed:
-                                                                            () {
-                                                                          productProvider.deleteProduct(productProvider
-                                                                              .productslist[index]
-                                                                              .id!);
-                                                                          getProductData();
-                                                                        },
-                                                                        icon:
-                                                                            Icon(
-                                                                          Icons
-                                                                              .delete,
-                                                                          color:
-                                                                              Colors.redAccent,
-                                                                        )),
+                                                                    productProvider.deleteProductStatus ==
+                                                                            StatusUtil
+                                                                                .loading
+                                                                        ? CircularProgressIndicator()
+                                                                        : IconButton(
+                                                                            onPressed:
+                                                                                () async {
+                                                                              deleteShowDialog(context, productProvider, productProvider.productslist[index].id!);
+                                                                            },
+                                                                            icon:
+                                                                                Icon(
+                                                                              Icons.delete,
+                                                                              color: Colors.redAccent,
+                                                                            )),
                                                                   ],
                                                                 ),
                                                               ],
@@ -1090,11 +1268,77 @@ class _UserAccountState extends State<UserAccount> {
             TextButton(
               onPressed: () async {
                 logoutUserFromSharedPreference();
-                Helper.displaySnackbar(context, "Logout Successfull!");
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SigninPage(),
+                      builder: (context) => CustomBottomNavigationBar(
+                        initialIndex: 3,
+                      ),
+                    ),
+                    (route) => false);
+
+                // Perform delete operation here
+                // Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('No'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  deleteShowDialog(
+      BuildContext context, ProductProvider productProvider, String id) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete'),
+          content: Text('Are you sure you want to Delete?'),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context);
+                await productProvider.deleteProduct(id);
+                await getProductData();
+              },
+              child: Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('No'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  updateShowDialog(BuildContext context, Product product) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Update'),
+          content: Text('Are you sure you want to Update?'),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => UserAccount(
+                        product: product,
+                      ),
                     ),
                     (route) => false);
 

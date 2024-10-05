@@ -21,10 +21,25 @@ class ProductProvider extends ChangeNotifier {
     "Smart Watches"
   ];
 
-  String? productName, productDescription, productCategory, productPrice;
+  String? id,
+      productName,
+      productDescription,
+      productCategory,
+      productPrice,
+      model,
+      cpu,
+      opertingSystem,
+      memory,
+      storage,
+      screen,
+      graphics,
+      wirelessConnectivity,
+      camera,
+      warranty;
+
   String? errorMessage;
   String? isSuccess;
-  String? isSuccessfullyProductDeleted;
+  bool? isSuccessfullyProductDeleted;
   TextEditingController? imageTextField;
   List<Product> productslist = [];
 
@@ -33,20 +48,79 @@ class ProductProvider extends ChangeNotifier {
   }
 
   AdminServices adminServices = AdminServicesImpl();
+  setProductId(String value) {
+    id = value;
+    notifyListeners();
+  }
+
   setProductName(String value) {
     productName = value;
+    notifyListeners();
   }
 
   setProductCategory(String value) {
     productCategory = value;
+    notifyListeners();
   }
 
   setProductPrice(String value) {
     productPrice = value;
+    notifyListeners();
   }
 
-  setProducctDescription(String value) {
+  setProductDescription(String value) {
     productDescription = value;
+    notifyListeners();
+  }
+
+  setModel(String value) {
+    model = value;
+    notifyListeners();
+  }
+
+  setCpu(String value) {
+    cpu = value;
+    notifyListeners();
+  }
+
+  setOperatingSystem(String value) {
+    opertingSystem = value;
+    notifyListeners();
+  }
+
+  setMemory(String value) {
+    memory = value;
+    notifyListeners();
+  }
+
+  setStorage(String value) {
+    storage = value;
+    notifyListeners();
+  }
+
+  setScreen(String value) {
+    screen = value;
+    notifyListeners();
+  }
+
+  setGraphics(String value) {
+    graphics = value;
+    notifyListeners();
+  }
+
+  setWirelessConnectivity(String value) {
+    wirelessConnectivity = value;
+    notifyListeners();
+  }
+
+  setCamera(String value) {
+    camera = value;
+    notifyListeners();
+  }
+
+  setWaranty(String value) {
+    warranty = value;
+    notifyListeners();
   }
 
   setSaveStatusProductName(StatusUtil status) {
@@ -78,11 +152,21 @@ class ProductProvider extends ChangeNotifier {
       setSaveStatusProductName(StatusUtil.loading);
     }
     Product product = Product(
+        id: id,
         name: productName,
         image: imageTextField!.text,
         price: productPrice,
-        description: productDescription,
-        category: productCategory);
+        category: productCategory,
+        model: model,
+        cpu: cpu,
+        operatingSystem: opertingSystem,
+        memory: memory,
+        storage: storage,
+        screen: screen,
+        graphics: graphics,
+        wirelessConnectivity: wirelessConnectivity,
+        camera: camera,
+        warranty: warranty);
     ApiResponse response = await adminServices.saveProduct(product);
     if (response.statusUtil == StatusUtil.success) {
       setSaveStatusProductName(StatusUtil.success);
