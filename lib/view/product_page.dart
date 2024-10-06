@@ -16,7 +16,10 @@ class _ProductPageState extends State<ProductPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("${widget.data.category!}"),
+          title: Text(
+            "${widget.data.category!}",
+            style: const TextStyle(fontWeight: FontWeight.w900),
+          ),
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -56,7 +59,7 @@ class _ProductPageState extends State<ProductPage> {
                       height: MediaQuery.of(context).size.height * 0.040,
                       width: MediaQuery.of(context).size.width * 0.50,
                       child: CustomButton(
-                        backgroundColor: Color.fromARGB(255, 21, 164, 26),
+                        backgroundColor: const Color.fromARGB(255, 21, 164, 26),
                         foregroundColor: buttonForegroundColor,
                         onPressed: () {},
                         child: const Text("Add to cart"),
@@ -87,28 +90,73 @@ class _ProductPageState extends State<ProductPage> {
                         Text("Model: ${widget.data.model!}",
                             style: const TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.w900)),
-                        // Text("Cpu: ${widget.data.cpu!}",
-                        //     style: const TextStyle(
-                        //         fontSize: 16, fontWeight: FontWeight.w900)),
-                        // Text(
-                        //     "Operating System: ${widget.data.operatingSystem!}",
-                        //     style: const TextStyle(
-                        //         fontSize: 16, fontWeight: FontWeight.w900)),
-                        // Text("Memory: ${widget.data.memory!}",
-                        //     style: const TextStyle(
-                        //         fontSize: 16, fontWeight: FontWeight.w900)),
-                        // Text("Storage: ${widget.data.storage!}",
-                        //     style: const TextStyle(
-                        //         fontSize: 16, fontWeight: FontWeight.w900)),
-                        // Text("Model: ${widget.data.model!}",
-                        //     style: const TextStyle(
-                        //         fontSize: 16, fontWeight: FontWeight.w900)),
-                        // Text("Model: ${widget.data.model!}",
-                        //     style: const TextStyle(
-                        //         fontSize: 16, fontWeight: FontWeight.w900)),
+                        Text("Cpu: ${widget.data.cpu!}",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w900)),
+                        Text(
+                            "Operating System: ${widget.data.operatingSystem!}",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w900)),
+                        Text("Memory: ${widget.data.memory!}",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w900)),
+                        Text("Storage: ${widget.data.storage!}",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w900)),
+                        Text("Camera: ${widget.data.camera!}",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w900)),
+                        Text("Storage: ${widget.data.storage!}",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w900)),
+                        Text("Screen: ${widget.data.screen!}",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w900)),
+                        Text("Warranty: ${widget.data.warranty!}",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w900)),
+                        Text(
+                            "Wireless Connectivity: ${widget.data.wirelessConnectivity!}",
+                            style: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.w900)),
                       ],
                     ),
                   ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 10.0, left: 10, right: 10, bottom: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.45,
+                      child: CustomButton(
+                        backgroundColor: buttonBackgroundColor,
+                        foregroundColor: buttonForegroundColor,
+                        onPressed: () {},
+                        child: Text("Rate Product"),
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.45,
+                      child: CustomButton(
+                        backgroundColor: Colors.redAccent,
+                        foregroundColor: buttonForegroundColor,
+                        onPressed: () {},
+                        child: const Row(children: [
+                          Icon(
+                            Icons.favorite,
+                          ),
+                          SizedBox(
+                            width: 1,
+                          ),
+                          Text("Add to favorites")
+                        ]),
+                      ),
+                    )
+                  ],
                 ),
               )
             ],
