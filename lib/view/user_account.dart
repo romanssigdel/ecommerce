@@ -722,7 +722,7 @@ class _UserAccountState extends State<UserAccount> {
                                                                               .productslist[index]
                                                                               .name!,
                                                                           style:
-                                                                              TextStyle(fontSize: 18),
+                                                                              TextStyle(fontSize: 16),
                                                                         ),
                                                                       ],
                                                                     ),
@@ -737,7 +737,7 @@ class _UserAccountState extends State<UserAccount> {
                                                                               .productslist[index]
                                                                               .price!,
                                                                           style:
-                                                                              TextStyle(fontSize: 18),
+                                                                              TextStyle(fontSize: 16),
                                                                         ),
                                                                       ],
                                                                     ),

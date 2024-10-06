@@ -61,6 +61,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           selectedItemColor: backGroundColor,
           unselectedItemColor: Colors.grey,
           // showUnselectedLabels: true,
+          // showSelectedLabels: false,
           onTap: (value) {
             selectedIndex = value;
             setState(() {
