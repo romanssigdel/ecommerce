@@ -14,8 +14,8 @@ class ProductProvider extends ChangeNotifier {
     "assets/images/smartwatch.png",
   ];
   List<String> categories = [
-    "Mobile",
-    "Laptop",
+    "mobilephone",
+    "laptop",
     "Printer",
     "Earbuds",
     "Smart Watches"
