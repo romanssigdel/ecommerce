@@ -1212,12 +1212,7 @@ class _UserAccountState extends State<UserAccount> {
     await prefs.remove('userEmail');
     await prefs.remove('userRole');
     Helper.displaySnackbar(context, "Successfully Logged Out!");
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SigninPage(),
-        ),
-        (route) => false);
+    
   }
 
   createShowDialog(BuildContext context, UserProvider userProvider) {
@@ -1236,7 +1231,9 @@ class _UserAccountState extends State<UserAccount> {
                   Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SigninPage(),
+                        builder: (context) => CustomBottomNavigationBar(
+                          initialIndex: 3,
+                        ),
                       ),
                       (route) => false);
                 }
