@@ -1,6 +1,11 @@
 import 'package:ecommerce/custom/custom_button.dart';
+import 'package:ecommerce/model/product.dart';
+import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/utils/color_const.dart';
+import 'package:ecommerce/view/cart.dart';
+import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProductPage extends StatefulWidget {
   var data;
@@ -32,134 +37,151 @@ class _ProductPageState extends State<ProductPage> {
           // leading: IconButton,
         ),
         body: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.40,
-                width: MediaQuery.of(context).size.width,
-                child: ClipRRect(
-                    child: Image.network(
-                  "${widget.data.image!}",
-                  fit: BoxFit.fill,
-                )),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Rs.${widget.data.price!}",
-                      style: const TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 18),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.040,
-                      width: MediaQuery.of(context).size.width * 0.50,
-                      child: CustomButton(
-                        backgroundColor: const Color.fromARGB(255, 21, 164, 26),
-                        foregroundColor: buttonForegroundColor,
-                        onPressed: () {},
-                        child: const Text("Add to cart"),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10.0, top: 10),
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 239, 237, 237),
-                      borderRadius: BorderRadius.circular(8)),
+          child: Consumer<ProductProvider>(
+            builder: (context, productProvider, child) => Column(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.40,
                   width: MediaQuery.of(context).size.width,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 7.0, vertical: 7),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("${widget.data.name!}",
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w900)),
-                        const Text("Specification",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w900)),
-                        Text("Model: ${widget.data.model!}",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w900)),
-                        Text("Cpu: ${widget.data.cpu!}",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w900)),
-                        Text(
-                            "Operating System: ${widget.data.operatingSystem!}",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w900)),
-                        Text("Memory: ${widget.data.memory!}",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w900)),
-                        Text("Storage: ${widget.data.storage!}",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w900)),
-                        Text("Camera: ${widget.data.camera!}",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w900)),
-                        Text("Storage: ${widget.data.storage!}",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w900)),
-                        Text("Screen: ${widget.data.screen!}",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w900)),
-                        Text("Warranty: ${widget.data.warranty!}",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w900)),
-                        Text(
-                            "Wireless Connectivity: ${widget.data.wirelessConnectivity!}",
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w900)),
-                      ],
+                  child: ClipRRect(
+                      child: Image.network(
+                    "${widget.data.image!}",
+                    fit: BoxFit.fill,
+                  )),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Rs.${widget.data.price!}",
+                        style: const TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 18),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.040,
+                        width: MediaQuery.of(context).size.width * 0.50,
+                        child: CustomButton(
+                          backgroundColor:
+                              const Color.fromARGB(255, 21, 164, 26),
+                          foregroundColor: buttonForegroundColor,
+                          onPressed: () {
+                            Product product = Product(
+                                id: widget.data.id!, name: widget.data.name!);
+                            productProvider.saveProductCart(product);
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      CustomBottomNavigationBar(
+                                    initialIndex: 2,
+                                  ),
+                                ),
+                                (route) => false);
+                          },
+                          child: const Text("Add to cart"),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 10, right: 10.0, top: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 239, 237, 237),
+                        borderRadius: BorderRadius.circular(8)),
+                    width: MediaQuery.of(context).size.width,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 7.0, vertical: 7),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("${widget.data.name!}",
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w900)),
+                          const Text("Specification",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.w900)),
+                          Text("Model: ${widget.data.model!}",
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w900)),
+                          Text("Cpu: ${widget.data.cpu!}",
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w900)),
+                          Text(
+                              "Operating System: ${widget.data.operatingSystem!}",
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w900)),
+                          Text("Memory: ${widget.data.memory!}",
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w900)),
+                          Text("Storage: ${widget.data.storage!}",
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w900)),
+                          Text("Camera: ${widget.data.camera!}",
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w900)),
+                          Text("Storage: ${widget.data.storage!}",
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w900)),
+                          Text("Screen: ${widget.data.screen!}",
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w900)),
+                          Text("Warranty: ${widget.data.warranty!}",
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w900)),
+                          Text(
+                              "Wireless Connectivity: ${widget.data.wirelessConnectivity!}",
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w900)),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 10.0, left: 10, right: 10, bottom: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.45,
-                      child: CustomButton(
-                        backgroundColor: buttonBackgroundColor,
-                        foregroundColor: buttonForegroundColor,
-                        onPressed: () {},
-                        child: Text("Rate Product"),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 10.0, left: 10, right: 10, bottom: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        child: CustomButton(
+                          backgroundColor: buttonBackgroundColor,
+                          foregroundColor: buttonForegroundColor,
+                          onPressed: () {},
+                          child: Text("Rate Product"),
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.45,
-                      child: CustomButton(
-                        backgroundColor: Colors.redAccent,
-                        foregroundColor: buttonForegroundColor,
-                        onPressed: () {},
-                        child: const Row(children: [
-                          Icon(
-                            Icons.favorite,
-                          ),
-                          SizedBox(
-                            width: 1,
-                          ),
-                          Text("Add to favorites")
-                        ]),
-                      ),
-                    )
-                  ],
-                ),
-              )
-            ],
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        child: CustomButton(
+                          backgroundColor: Colors.redAccent,
+                          foregroundColor: buttonForegroundColor,
+                          onPressed: () {},
+                          child: const Row(children: [
+                            Icon(
+                              Icons.favorite,
+                            ),
+                            SizedBox(
+                              width: 1,
+                            ),
+                            Text("Add to favorites")
+                          ]),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

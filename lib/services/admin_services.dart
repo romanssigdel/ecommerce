@@ -6,4 +6,6 @@ abstract class AdminServices {
   Future<ApiResponse> getProduct();
   Future<ApiResponse> deleteProduct(String id);
   Future<ApiResponse> updateProduct(Product product);
+  Future<ApiResponse> addProductToCart(Product product);
+  Future<ApiResponse> getProductFromCart();
 }

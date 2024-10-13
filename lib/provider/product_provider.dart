@@ -137,6 +137,14 @@ class ProductProvider extends ChangeNotifier {
   StatusUtil? _deleteProductStatus = StatusUtil.none;
   StatusUtil? get deleteProductStatus => _deleteProductStatus;
 
+  StatusUtil? _saveProductToCart = StatusUtil.none;
+  StatusUtil? get saveProductToCart => _saveProductToCart;
+
+  setSaveProductToCart(StatusUtil statusUtil) {
+    _saveProductToCart = statusUtil;
+    notifyListeners();
+  }
+
   setDeleteStatus(StatusUtil statusUtil) {
     _deleteProductStatus = statusUtil;
     notifyListeners();
@@ -201,6 +209,20 @@ class ProductProvider extends ChangeNotifier {
     } else if (apiResponse.statusUtil == StatusUtil.error) {
       errorMessage = apiResponse.errorMessage;
       setDeleteStatus(StatusUtil.error);
+    }
+  }
+
+  Future<void> saveProductCart(Product product) async {
+    if (_saveProductToCart != StatusUtil.loading) {
+      setSaveProductToCart(StatusUtil.loading);
+    }
+    ApiResponse apiResponse = await adminServices.addProductToCart(product);
+    if (apiResponse.statusUtil == StatusUtil.success) {
+      isSuccess = apiResponse.data;
+      setSaveProductToCart(StatusUtil.success);
+    } else if (apiResponse.statusUtil == StatusUtil.error) {
+      errorMessage = apiResponse.errorMessage;
+      setSaveProductToCart(StatusUtil.error);
     }
   }
 }
