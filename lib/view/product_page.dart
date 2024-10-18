@@ -1,11 +1,13 @@
 import 'package:ecommerce/custom/custom_button.dart';
+import 'package:ecommerce/model/cart.dart';
 import 'package:ecommerce/model/product.dart';
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/utils/color_const.dart';
-import 'package:ecommerce/view/cart.dart';
+import 'package:ecommerce/view/add_cart.dart';
 import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductPage extends StatefulWidget {
   var data;
@@ -16,6 +18,24 @@ class ProductPage extends StatefulWidget {
 }
 
 class _ProductPageState extends State<ProductPage> {
+  String? userId;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getValue();
+  }
+
+  getValue() {
+    Future.delayed(
+      Duration.zero,
+      () async {
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        userId = prefs.getString("userId");
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -69,9 +89,11 @@ class _ProductPageState extends State<ProductPage> {
                               const Color.fromARGB(255, 21, 164, 26),
                           foregroundColor: buttonForegroundColor,
                           onPressed: () {
-                            Product product = Product(
-                                id: widget.data.id!, name: widget.data.name!);
-                            productProvider.saveProductCart(product);
+                            Cart cart = Cart(
+                                userId: userId,
+                                id: widget.data.id!,
+                                name: widget.data.name!);
+                            productProvider.saveProductCart(cart);
                             Navigator.pushAndRemoveUntil(
                                 context,
                                 MaterialPageRoute(

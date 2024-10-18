@@ -36,7 +36,10 @@ class UserServicesImplementation extends UserServices {
   Future<ApiResponse> getUserData() async {
     if (await Helper().isInternetConnectionAvailable()) {
       try {
-        var value = await FirebaseFirestore.instance.collection("users").where("role",isEqualTo: "user").get();
+        var value = await FirebaseFirestore.instance
+            .collection("users")
+            .where("role", isEqualTo: "user")
+            .get();
         var userList = value.docs.map((e) => User.fromJson(e.data())).toList();
         for (int i = 0; i < userList.length; i++) {
           userList[i].id = value.docs[i].id;
@@ -67,6 +70,7 @@ class UserServicesImplementation extends UserServices {
           if (value.docs.isNotEmpty) {
             // isUserExists = true
             userData = User.fromJson(value.docs[0].data());
+            userData?.id = value.docs[0].id;
           }
         });
         // UserCheckResult result = UserCheckResult(userData, isUserExists);
