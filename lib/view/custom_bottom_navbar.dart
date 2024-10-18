@@ -1,6 +1,6 @@
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
-import 'package:ecommerce/view/cart.dart';
+import 'package:ecommerce/view/add_cart.dart';
 import 'package:ecommerce/view/home_page.dart';
 import 'package:ecommerce/view/my_wishlist.dart';
 import 'package:ecommerce/view/signin_form.dart';

@@ -1,4 +1,5 @@
 import 'package:ecommerce/core/api_response.dart';
+import 'package:ecommerce/model/cart.dart';
 import 'package:ecommerce/model/product.dart';
 
 abstract class AdminServices {
@@ -6,6 +7,6 @@ abstract class AdminServices {
   Future<ApiResponse> getProduct();
   Future<ApiResponse> deleteProduct(String id);
   Future<ApiResponse> updateProduct(Product product);
-  Future<ApiResponse> addProductToCart(Product product);
+  Future<ApiResponse> addProductToCart(Cart cart);
   Future<ApiResponse> getProductFromCart();
 }

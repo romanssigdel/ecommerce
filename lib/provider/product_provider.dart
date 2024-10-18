@@ -1,5 +1,6 @@
 import 'package:ecommerce/core/api_response.dart';
 import 'package:ecommerce/core/status_util.dart';
+import 'package:ecommerce/model/cart.dart';
 import 'package:ecommerce/model/product.dart';
 import 'package:ecommerce/services/admin_services.dart';
 import 'package:ecommerce/services/admin_services_impl.dart';
@@ -42,6 +43,16 @@ class ProductProvider extends ChangeNotifier {
   bool? isSuccessfullyProductDeleted;
   TextEditingController? imageTextField;
   List<Product> productslist = [];
+  List<Cart> cartList = [];
+
+//total price calculator of the cart
+  double getTotalPrice() {
+    double total = 0.0;
+    for (var item in cartList) {
+      total += double.tryParse(item.price ?? '0') ?? 0.0;
+    }
+    return total;
+  }
 
   setProductImage(value) {
     imageTextField = TextEditingController(text: value);
@@ -140,6 +151,14 @@ class ProductProvider extends ChangeNotifier {
   StatusUtil? _saveProductToCart = StatusUtil.none;
   StatusUtil? get saveProductToCart => _saveProductToCart;
 
+  StatusUtil? _getProductCart = StatusUtil.none;
+  StatusUtil? get getProductCart => _getProductCart;
+
+  setgetProductCart(StatusUtil statusUtil) {
+    _getProductCart = statusUtil;
+    notifyListeners();
+  }
+
   setSaveProductToCart(StatusUtil statusUtil) {
     _saveProductToCart = statusUtil;
     notifyListeners();
@@ -212,17 +231,31 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> saveProductCart(Product product) async {
+  Future<void> saveProductCart(Cart cart) async {
     if (_saveProductToCart != StatusUtil.loading) {
       setSaveProductToCart(StatusUtil.loading);
     }
-    ApiResponse apiResponse = await adminServices.addProductToCart(product);
+    ApiResponse apiResponse = await adminServices.addProductToCart(cart);
     if (apiResponse.statusUtil == StatusUtil.success) {
       isSuccess = apiResponse.data;
       setSaveProductToCart(StatusUtil.success);
     } else if (apiResponse.statusUtil == StatusUtil.error) {
       errorMessage = apiResponse.errorMessage;
       setSaveProductToCart(StatusUtil.error);
+    }
+  }
+
+  Future<void> getFromProductCart() async {
+    if (_getProductCart != StatusUtil.loading) {
+      setgetProductCart(StatusUtil.loading);
+    }
+    ApiResponse apiResponse = await adminServices.getProductFromCart();
+    if (apiResponse.statusUtil == StatusUtil.success) {
+      cartList = apiResponse.data;
+      setgetProductCart(StatusUtil.success);
+    } else if (apiResponse.statusUtil == StatusUtil.error) {
+      errorMessage = apiResponse.errorMessage;
+      setgetProductCart(StatusUtil.error);
     }
   }
 }

@@ -138,6 +138,7 @@ class UserProvider extends ChangeNotifier {
         isUserExists = true;
 
         final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("userId", userData.id.toString());
         prefs.setString("userName", userData.name.toString());
         prefs.setString("userEmail", userData.email.toString());
         prefs.setString("userRole", userData.role.toString());
