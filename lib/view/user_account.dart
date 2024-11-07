@@ -392,6 +392,25 @@ class _UserAccountState extends State<UserAccount> {
                                           }
                                           return null;
                                         },
+                                        labelText: "Quantity",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10.0, horizontal: 10),
+                                      child: CustomTextFormField(
+                                        initialValue:
+                                            productProvider.productCategory,
+                                        onChanged: (value) {
+                                          productProvider
+                                              .setProductCategory(value);
+                                        },
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return categoryValidationStr;
+                                          }
+                                          return null;
+                                        },
                                         labelText: "Category",
                                       ),
                                     ),
@@ -1212,7 +1231,6 @@ class _UserAccountState extends State<UserAccount> {
     await prefs.remove('userEmail');
     await prefs.remove('userRole');
     Helper.displaySnackbar(context, "Successfully Logged Out!");
-    
   }
 
   createShowDialog(BuildContext context, UserProvider userProvider) {

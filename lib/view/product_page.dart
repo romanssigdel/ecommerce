@@ -92,7 +92,10 @@ class _ProductPageState extends State<ProductPage> {
                             Cart cart = Cart(
                                 userId: userId,
                                 id: widget.data.id!,
-                                name: widget.data.name!);
+                                name: widget.data.name!,
+                                quantity: widget.data.quantity!,
+                                price: widget.data.price!,
+                                image: widget.data.image!);
                             productProvider.saveProductCart(cart);
                             Navigator.pushAndRemoveUntil(
                                 context,

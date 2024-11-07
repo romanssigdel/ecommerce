@@ -1,5 +1,6 @@
 class Cart {
   String? image;
+  String? quantity;
   String? userId;
   String? id;
   String? name;
@@ -20,6 +21,7 @@ class Cart {
   Cart(
       {this.image,
       this.description,
+      this.quantity,
       this.userId,
       this.id,
       this.name,
@@ -39,6 +41,7 @@ class Cart {
   Cart.fromJson(Map<String, dynamic> json) {
     image = json['image'];
     description = json['description'];
+    quantity = json['quantity'];
     id = json['id'];
     userId = json['userId'];
     name = json['name'];
@@ -59,6 +62,7 @@ class Cart {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['description'] = this.description;
+    data['quantity'] = this.quantity;
     data['image'] = this.image;
     data['id'] = this.id;
     data['userId'] = this.userId;

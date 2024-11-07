@@ -1,4 +1,5 @@
 import 'package:ecommerce/core/status_util.dart';
+import 'package:ecommerce/model/product.dart';
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
@@ -22,6 +23,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  TextEditingController _searchController = TextEditingController();
+  List<Product> filteredProducts = [];
+  bool isSearching = false;
+
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -45,307 +50,334 @@ class _HomePageState extends State<HomePage> {
       () async {
         var provider = Provider.of<ProductProvider>(context, listen: false);
         await provider.getProduct();
+        setState(() {
+          filteredProducts = provider.productslist;
+        });
       },
     );
+  }
+
+  void _filteredCars(String query) {
+    final productProvider =
+        Provider.of<ProductProvider>(context, listen: false);
+    List<Product> results = [];
+
+    if (query.isEmpty) {
+      results = productProvider.productslist;
+    } else {
+      results = productProvider.productslist
+          .where((product) =>
+              product.name!.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+    setState(() {
+      filteredProducts = results;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<ProductProvider>(
       builder: (context, productProvider, child) => SafeArea(
-        child: SafeArea(
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: backGroundColor,
-              leadingWidth: 110,
-              leading: Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Row(
-                  children: [
-                    Text(
-                      "Epasal",
-                      style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
-                    ),
-                  ],
+        child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: backGroundColor,
+            leadingWidth: 110,
+            leading: Padding(
+              padding: const EdgeInsets.only(left: 10.0),
+              child: Row(
+                children: [
+                  Text(
+                    "Epasal",
+                    style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+            centerTitle: true,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 30.0),
+                child: Icon(
+                  Icons.chat,
+                  color: Colors.white,
+                  size: 30,
                 ),
               ),
-              centerTitle: true,
-              actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: 30.0),
+                child: Icon(
+                  Icons.notifications_none,
+                  color: Colors.white,
+                  size: 34,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 15.0),
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: AssetImage("assets/images/user.png"),
+                ),
+              )
+            ],
+          ),
+          body: Center(
+            child: SingleChildScrollView(
+              child: Column(children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 30.0),
-                  child: Icon(
-                    Icons.chat,
-                    color: Colors.white,
-                    size: 30,
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.asset(
+                      "assets/images/banner.png",
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 30.0),
-                  child: Icon(
-                    Icons.notifications_none,
-                    color: Colors.white,
-                    size: 34,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 15.0),
-                  child: CircleAvatar(
-                    radius: 20,
-                    backgroundImage: AssetImage("assets/images/user.png"),
-                  ),
-                )
-              ],
-            ),
-            body: Center(
-              child: SingleChildScrollView(
-                child: Column(children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: ClipRRect(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        "assets/images/banner.png",
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.95,
-                      child: SearchBar(
-                        leading: Icon(Icons.search),
-                        hintText: searchProduct,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0, bottom: 5),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Categories",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3), // Shadow position
                         ),
                       ],
                     ),
+                    width: MediaQuery.of(context).size.width * 0.95,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(color: Colors.grey[600]),
+                        prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 14.0),
+                        hintText: "Search...",
+                      ),
+                      onChanged: _filteredCars,
+                    ),
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.18,
-                    width: MediaQuery.of(context).size.width * 0.97,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: productProvider.categoryImages.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProductCategory(
-                                    data: productProvider.categories[index],
-                                  ),
-                                ));
-                          },
-                          child: Card(
-                            child: Column(
-                              children: [
-                                ClipRRect(
-                                  child: Image.asset(
-                                    productProvider.categoryImages[index],
-                                    height: 120,
-                                    width: 150,
-                                    fit: BoxFit.contain,
-                                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0, bottom: 5),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Categories",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.18,
+                  width: MediaQuery.of(context).size.width * 0.97,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: productProvider.categoryImages.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductCategory(
+                                  data: productProvider.categories[index],
                                 ),
-                                Text(productProvider.categories[index])
-                              ],
-                            ),
+                              ));
+                        },
+                        child: Card(
+                          child: Column(
+                            children: [
+                              ClipRRect(
+                                child: Image.asset(
+                                  productProvider.categoryImages[index],
+                                  height: 120,
+                                  width: 150,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              Text(productProvider.categories[index])
+                            ],
                           ),
-                        );
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 5, left: 10.0, bottom: 5),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Products",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0, vertical: 10),
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 1,
-                      width: MediaQuery.of(context).size.width * 1,
-                      child: GridView.count(
-                        crossAxisSpacing: 1,
-                        mainAxisSpacing: 4,
-                        crossAxisCount: 2,
-                        scrollDirection: Axis.vertical,
-                        physics: ScrollPhysics(),
-                        children: List.generate(
-                            productProvider.productslist.length, (index) {
-                          return Center(
-                            child: SizedBox(
-                              height: 200,
-                              width: 300,
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ProductPage(
-                                        data:
-                                            productProvider.productslist[index],
-                                      ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5, left: 10.0, bottom: 5),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Products",
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0, vertical: 10),
+                  child: SizedBox(
+                    height: MediaQuery.of(context).size.height * 1,
+                    width: MediaQuery.of(context).size.width * 1,
+                    child: GridView.count(
+                      crossAxisSpacing: 1,
+                      mainAxisSpacing: 4,
+                      crossAxisCount: 2,
+                      scrollDirection: Axis.vertical,
+                      physics: ScrollPhysics(),
+                      children: List.generate(filteredProducts.length, (index) {
+                        return Center(
+                          child: SizedBox(
+                            height: 200,
+                            width: 300,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProductPage(
+                                      data: productProvider.productslist[index],
                                     ),
-                                  );
-                                },
-                                child: Card(
-                                  child: SizedBox(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        productProvider.productslist[index]
-                                                    .image !=
-                                                null
-                                            ? ClipRRect(
-                                                borderRadius:
-                                                    BorderRadiusDirectional
-                                                        .only(
-                                                            topEnd:
-                                                                Radius.circular(
-                                                                    10),
-                                                            topStart:
-                                                                Radius.circular(
-                                                                    10)),
-                                                child: FadeInImage(
-                                                  placeholder: AssetImage(
-                                                      'assets/images/placeholder.png'), // Use an asset image placeholder or use `Shimmer` widget here
-                                                  image: NetworkImage(
-                                                      productProvider
-                                                          .productslist[index]
-                                                          .image!),
-                                                  height: 120,
-                                                  width: 177,
-                                                  fit: BoxFit.fill,
-                                                  imageErrorBuilder: (context,
-                                                      error, stackTrace) {
-                                                    return Shimmer.fromColors(
-                                                      baseColor: Colors.red,
-                                                      highlightColor:
-                                                          Colors.yellow,
-                                                      child: Container(
-                                                        color: Colors.grey,
-                                                        height: 120,
-                                                        width: 177,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        child: Text(
-                                                          'Image Error',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                            fontSize: 20.0,
-                                                            color: Colors.white,
-                                                          ),
+                                  ),
+                                );
+                              },
+                              child: Card(
+                                child: SizedBox(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      filteredProducts[index].image != null
+                                          ? ClipRRect(
+                                              borderRadius:
+                                                  BorderRadiusDirectional.only(
+                                                      topEnd:
+                                                          Radius.circular(10),
+                                                      topStart:
+                                                          Radius.circular(10)),
+                                              child: FadeInImage(
+                                                placeholder: AssetImage(
+                                                    'assets/images/placeholder.png'), // Use an asset image placeholder or use `Shimmer` widget here
+                                                image: NetworkImage(
+                                                    filteredProducts[index]
+                                                        .image!),
+                                                height: 120,
+                                                width: 177,
+                                                fit: BoxFit.fill,
+                                                imageErrorBuilder: (context,
+                                                    error, stackTrace) {
+                                                  return Shimmer.fromColors(
+                                                    baseColor: Colors.red,
+                                                    highlightColor:
+                                                        Colors.yellow,
+                                                    child: Container(
+                                                      color: Colors.grey,
+                                                      height: 120,
+                                                      width: 177,
+                                                      alignment:
+                                                          Alignment.center,
+                                                      child: Text(
+                                                        'Image Error',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                          fontSize: 20.0,
+                                                          color: Colors.white,
                                                         ),
                                                       ),
-                                                    );
-                                                  },
-                                                  placeholderErrorBuilder:
-                                                      (context, error,
-                                                          stackTrace) {
-                                                    return Shimmer.fromColors(
-                                                      baseColor:
-                                                          Colors.grey[300]!,
-                                                      highlightColor:
-                                                          Colors.grey[100]!,
-                                                      child: Container(
-                                                        color: Colors.white,
-                                                        height: 120,
-                                                        width: 177,
-                                                        alignment:
-                                                            Alignment.center,
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              )
-                                            : Shimmer.fromColors(
-                                                baseColor: Colors.red,
-                                                highlightColor: Colors.yellow,
-                                                child: Container(
-                                                  height: 120,
-                                                  width: 177,
-                                                  alignment: Alignment.center,
-                                                  child: Text(
-                                                    'Shimmer',
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      fontSize: 40.0,
-                                                      fontWeight:
-                                                          FontWeight.bold,
                                                     ),
+                                                  );
+                                                },
+                                                placeholderErrorBuilder:
+                                                    (context, error,
+                                                        stackTrace) {
+                                                  return Shimmer.fromColors(
+                                                    baseColor:
+                                                        Colors.grey[300]!,
+                                                    highlightColor:
+                                                        Colors.grey[100]!,
+                                                    child: Container(
+                                                      color: Colors.white,
+                                                      height: 120,
+                                                      width: 177,
+                                                      alignment:
+                                                          Alignment.center,
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            )
+                                          : Shimmer.fromColors(
+                                              baseColor: Colors.red,
+                                              highlightColor: Colors.yellow,
+                                              child: Container(
+                                                height: 120,
+                                                width: 177,
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  'Shimmer',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                    fontSize: 40.0,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                               ),
+                                            ),
 
-                                        // Image.network(
-                                        //   productProvider
-                                        //       .productslist[index].image!,
-                                        //   height: 120,
-                                        //   width: 177,
-                                        //   fit: BoxFit.cover,
-                                        // ),
-                                        SizedBox(
-                                          height: 5,
+                                      // Image.network(
+                                      //   productProvider
+                                      //       .productslist[index].image!,
+                                      //   height: 120,
+                                      //   width: 177,
+                                      //   fit: BoxFit.cover,
+                                      // ),
+                                      SizedBox(
+                                        height: 5,
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 5.0),
+                                        child:
+                                            Text(filteredProducts[index].name!),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          "Rs." +
+                                              filteredProducts[index].price!,
+                                          style: TextStyle(
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold),
                                         ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 5.0),
-                                          child: Text(productProvider
-                                              .productslist[index].name!),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 8.0),
-                                          child: Text(
-                                            "Rs." +
-                                                productProvider
-                                                    .productslist[index].price!,
-                                            style: TextStyle(
-                                                color: Colors.red,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        )
-                                      ],
-                                    ),
+                                      )
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
-                          );
-                        }),
-                      ),
+                          ),
+                        );
+                      }),
                     ),
-                  )
-                ]),
-              ),
+                  ),
+                )
+              ]),
             ),
           ),
         ),

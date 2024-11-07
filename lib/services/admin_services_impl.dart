@@ -132,4 +132,43 @@ class AdminServicesImpl implements AdminServices {
           statusUtil: StatusUtil.error, data: noInternetConectionStr);
     }
   }
+
+  @override
+  Future<ApiResponse> updateProductQuantity(Cart cart) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection("cart")
+          .doc(cart.id)
+          .update(cart.toJson())
+          .then((value) {
+        isSuccess = true;
+      });
+      return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
+    } catch (e) {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, errorMessage: e.toString());
+    }
+  }
+
+  @override
+  Future<ApiResponse> deleteProductFromCart(String id) async {
+    // TODO: implement deleteProductFromCart
+    if (await Helper().isInternetConnectionAvailable()) {
+      try {
+        await FirebaseFirestore.instance
+            .collection("cart")
+            .doc(id)
+            .delete()
+            .then((value) {
+          isSuccess = true;
+        });
+        return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
+      } catch (e) {
+        return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
+      }
+    } else {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, data: noInternetConectionStr);
+    }
+  }
 }

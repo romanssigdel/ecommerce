@@ -25,6 +25,7 @@ class ProductProvider extends ChangeNotifier {
   String? id,
       productName,
       productDescription,
+      productQuantity,
       productCategory,
       productPrice,
       model,
@@ -40,6 +41,7 @@ class ProductProvider extends ChangeNotifier {
 
   String? errorMessage;
   String? isSuccess;
+  bool? updateSuccess;
   bool? isSuccessfullyProductDeleted;
   TextEditingController? imageTextField;
   List<Product> productslist = [];
@@ -66,6 +68,11 @@ class ProductProvider extends ChangeNotifier {
 
   setProductName(String value) {
     productName = value;
+    notifyListeners();
+  }
+
+  setProductQuantity(String value) {
+    productQuantity = value;
     notifyListeners();
   }
 
@@ -154,6 +161,14 @@ class ProductProvider extends ChangeNotifier {
   StatusUtil? _getProductCart = StatusUtil.none;
   StatusUtil? get getProductCart => _getProductCart;
 
+  StatusUtil? _getUpdateQuantity = StatusUtil.none;
+  StatusUtil? get getUpdateQuantity => _getUpdateQuantity;
+
+  setgetUpdateQuantity(StatusUtil statusUtil) {
+    _getUpdateQuantity = statusUtil;
+    notifyListeners();
+  }
+
   setgetProductCart(StatusUtil statusUtil) {
     _getProductCart = statusUtil;
     notifyListeners();
@@ -181,6 +196,7 @@ class ProductProvider extends ChangeNotifier {
     Product product = Product(
         id: id,
         name: productName,
+        quantity: productQuantity,
         image: imageTextField!.text,
         price: productPrice,
         category: productCategory,
@@ -256,6 +272,34 @@ class ProductProvider extends ChangeNotifier {
     } else if (apiResponse.statusUtil == StatusUtil.error) {
       errorMessage = apiResponse.errorMessage;
       setgetProductCart(StatusUtil.error);
+    }
+  }
+
+  Future<void> updateQuantity(Cart cart) async {
+    if (_getUpdateQuantity != StatusUtil.loading) {
+      setgetUpdateQuantity(StatusUtil.loading);
+    }
+    ApiResponse apiResponse = await adminServices.updateProductQuantity(cart);
+    if (apiResponse.statusUtil == StatusUtil.success) {
+      updateSuccess = apiResponse.data;
+      setgetUpdateQuantity(StatusUtil.success);
+    } else if (apiResponse.statusUtil == StatusUtil.error) {
+      errorMessage = apiResponse.errorMessage;
+      setgetUpdateQuantity(StatusUtil.error);
+    }
+  }
+
+  Future<void> deleteProductCart(String id) async {
+    if (_deleteProductStatus != StatusUtil.loading) {
+      setDeleteStatus(StatusUtil.loading);
+    }
+    ApiResponse apiResponse = await adminServices.deleteProductFromCart(id);
+    if (apiResponse.statusUtil == StatusUtil.success) {
+      isSuccessfullyProductDeleted = apiResponse.data;
+      setDeleteStatus(StatusUtil.success);
+    } else if (apiResponse.statusUtil == StatusUtil.error) {
+      errorMessage = apiResponse.errorMessage;
+      setDeleteStatus(StatusUtil.error);
     }
   }
 }

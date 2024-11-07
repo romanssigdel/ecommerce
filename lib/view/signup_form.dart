@@ -6,6 +6,7 @@ import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
+import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/signin_form.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -190,7 +191,10 @@ class _SignupPageState extends State<SignupPage> {
                                   Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => SigninPage(),
+                                        builder: (context) =>
+                                            CustomBottomNavigationBar(
+                                          initialIndex: 3,
+                                        ),
                                       ),
                                       (route) => false);
                                 }
@@ -289,7 +293,10 @@ class _SignupPageState extends State<SignupPage> {
                                 Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => SigninPage(),
+                                      builder: (context) =>
+                                          CustomBottomNavigationBar(
+                                        initialIndex: 3,
+                                      ),
                                     ),
                                     (route) => false);
                               },
