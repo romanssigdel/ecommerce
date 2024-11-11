@@ -2,6 +2,7 @@ import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/model/cart.dart';
 import 'package:ecommerce/model/product.dart';
 import 'package:ecommerce/provider/product_provider.dart';
+import 'package:ecommerce/services/stripe_service.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -43,6 +44,9 @@ class _AddCartState extends State<AddCart> {
       },
     );
   }
+
+  double totalPrice = 0.0;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -63,9 +67,11 @@ class _AddCartState extends State<AddCart> {
           }).toList();
 
           // Calculate the total price for the user
-          double totalPrice = 0.0;
+
           for (var product in userCartList) {
-            totalPrice += double.tryParse(product.price ?? '0') ?? 0.0;
+            final productPrice = double.tryParse(product.price ?? '0') ?? 0.0;
+            final productQuantity = int.tryParse(product.quantity ?? '1') ?? 1;
+            totalPrice += productPrice * productQuantity;
           }
           return Padding(
             padding: const EdgeInsets.only(left: 10.0, top: 10),
@@ -238,7 +244,11 @@ class _AddCartState extends State<AddCart> {
                         child: CustomButton(
                           backgroundColor: buttonBackgroundColor,
                           foregroundColor: buttonForegroundColor,
-                          onPressed: () {},
+                          onPressed: () {
+                            int amountInCents = (totalPrice * 100).toInt();
+                            StripeService.instance
+                                .makePayment(amountInCents.toString());
+                          },
                           child: Text("Check Out"),
                         ),
                       )

@@ -171,4 +171,26 @@ class AdminServicesImpl implements AdminServices {
           statusUtil: StatusUtil.error, data: noInternetConectionStr);
     }
   }
+
+  @override
+  Future<ApiResponse> checkProductInCart(Cart cart) async {
+    // TODO: implement checkProductInCart
+    bool isProductAlreadyExistInDatabase = false;
+    try {
+      var value = await FirebaseFirestore.instance
+          .collection("cart")
+          .where("id", isEqualTo: cart.id)
+          .where("userId", isEqualTo: cart.userId)
+          .get();
+      if (value.docs.isNotEmpty) {
+        isProductAlreadyExistInDatabase = true;
+      }
+      return ApiResponse(
+          statusUtil: StatusUtil.success,
+          data: isProductAlreadyExistInDatabase);
+    } catch (e) {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, errorMessage: e.toString());
+    }
+  }
 }

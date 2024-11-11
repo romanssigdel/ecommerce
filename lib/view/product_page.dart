@@ -1,7 +1,9 @@
+import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/model/cart.dart';
 import 'package:ecommerce/model/product.dart';
 import 'package:ecommerce/provider/product_provider.dart';
+import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/view/add_cart.dart';
 import 'package:ecommerce/view/custom_bottom_navbar.dart';
@@ -88,7 +90,7 @@ class _ProductPageState extends State<ProductPage> {
                           backgroundColor:
                               const Color.fromARGB(255, 21, 164, 26),
                           foregroundColor: buttonForegroundColor,
-                          onPressed: () {
+                          onPressed: () async {
                             Cart cart = Cart(
                                 userId: userId,
                                 id: widget.data.id!,
@@ -96,16 +98,22 @@ class _ProductPageState extends State<ProductPage> {
                                 quantity: widget.data.quantity!,
                                 price: widget.data.price!,
                                 image: widget.data.image!);
-                            productProvider.saveProductCart(cart);
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      CustomBottomNavigationBar(
-                                    initialIndex: 2,
+                            await productProvider.checkProductInCart(cart);
+                            if (productProvider.isSuccessProductInCart!) {
+                              Helper.displaySnackbar(
+                                  context, "Product is Already in Cart");
+                            } else {
+                              productProvider.saveProductCart(cart);
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        CustomBottomNavigationBar(
+                                      initialIndex: 2,
+                                    ),
                                   ),
-                                ),
-                                (route) => false);
+                                  (route) => false);
+                            }
                           },
                           child: const Text("Add to cart"),
                         ),

@@ -2,6 +2,7 @@ import 'package:ecommerce/model/user.dart';
 import 'package:ecommerce/provider/icons_providers.dart';
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/provider/user_provider.dart';
+import 'package:ecommerce/utils/api_const.dart';
 import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/description_page.dart';
 import 'package:ecommerce/firebase_options.dart';
@@ -12,15 +13,22 @@ import 'package:ecommerce/view/splash_screen.dart';
 import 'package:ecommerce/view/user_account.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
+  await _setup();
   runApp(MyApp());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+}
+
+Future<void> _setup() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = stripePublishableKey;
 }
 
 class MyApp extends StatefulWidget {

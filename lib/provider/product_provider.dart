@@ -41,6 +41,7 @@ class ProductProvider extends ChangeNotifier {
 
   String? errorMessage;
   String? isSuccess;
+  bool? isSuccessProductInCart;
   bool? updateSuccess;
   bool? isSuccessfullyProductDeleted;
   TextEditingController? imageTextField;
@@ -164,6 +165,9 @@ class ProductProvider extends ChangeNotifier {
   StatusUtil? _getUpdateQuantity = StatusUtil.none;
   StatusUtil? get getUpdateQuantity => _getUpdateQuantity;
 
+  StatusUtil? _checkProductsInCart = StatusUtil.none;
+  StatusUtil? get checkProductsInCart => _checkProductsInCart;
+
   setgetUpdateQuantity(StatusUtil statusUtil) {
     _getUpdateQuantity = statusUtil;
     notifyListeners();
@@ -186,6 +190,11 @@ class ProductProvider extends ChangeNotifier {
 
   setGetStatusProduct(StatusUtil statusUtil) {
     _getProductStatus = statusUtil;
+    notifyListeners();
+  }
+
+  setGetProductInCart(StatusUtil statusUtil) {
+    _checkProductsInCart = statusUtil;
     notifyListeners();
   }
 
@@ -300,6 +309,19 @@ class ProductProvider extends ChangeNotifier {
     } else if (apiResponse.statusUtil == StatusUtil.error) {
       errorMessage = apiResponse.errorMessage;
       setDeleteStatus(StatusUtil.error);
+    }
+  }
+
+  Future<void> checkProductInCart(Cart cart) async {
+    if (_checkProductsInCart != StatusUtil.loading) {
+      (StatusUtil.loading);
+    }
+    ApiResponse apiResponse = await adminServices.checkProductInCart(cart);
+    if (apiResponse.statusUtil == StatusUtil.success) {
+      isSuccessProductInCart = apiResponse.data;
+      setGetProductInCart(StatusUtil.success);
+    } else if (apiResponse.statusUtil == StatusUtil.error) {
+      setGetProductInCart(StatusUtil.error);
     }
   }
 }

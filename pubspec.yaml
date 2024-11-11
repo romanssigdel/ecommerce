@@ -45,6 +45,8 @@ dependencies:
   firebase_storage: ^11.6.9
   shimmer: ^3.0.0
   khalti: ^2.0.0
+  flutter_stripe: ^11.2.0
+  dio: ^5.7.0
   
 
 dev_dependencies:
