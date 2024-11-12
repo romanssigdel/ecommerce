@@ -4,6 +4,7 @@ import 'package:ecommerce/model/product.dart';
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/services/stripe_service.dart';
 import 'package:ecommerce/utils/color_const.dart';
+import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,6 +24,14 @@ class _AddCartState extends State<AddCart> {
     super.initState();
     getDataFromCart();
     getValue();
+    getCartProduct();
+    // Listen to changes in the cart list and recalculate the total
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      var provider = Provider.of<ProductProvider>(context, listen: false);
+      provider.addListener(() {
+        getCartProduct();
+      });
+    });
   }
 
   getDataFromCart() {
@@ -45,7 +54,32 @@ class _AddCartState extends State<AddCart> {
     );
   }
 
+  int currentQuantity = 0;
   double totalPrice = 0.0;
+  var userCartList = [];
+  getCartProduct() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId = prefs.getString("userId");
+
+    var provider = Provider.of<ProductProvider>(context, listen: false);
+    userCartList = provider.cartList.where((product) {
+      return product.userId == userId;
+    }).toList();
+
+    calculateTotalPrice(); // Calculate total price after getting the cart products
+  }
+
+  void calculateTotalPrice() {
+    totalPrice = 0.0;
+    for (var product in userCartList) {
+      double productPrice = double.parse(product.price!);
+      int productQuantity = int.parse(product.quantity!);
+      totalPrice += productPrice * productQuantity;
+    }
+    setState(() {
+      totalPrice; // This will trigger a UI update
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,17 +96,6 @@ class _AddCartState extends State<AddCart> {
         ),
         body: Consumer<ProductProvider>(
             builder: (context, productProvider, child) {
-          final userCartList = productProvider.cartList.where((product) {
-            return product.userId == userId; //userId from SharedPreferences
-          }).toList();
-
-          // Calculate the total price for the user
-
-          for (var product in userCartList) {
-            final productPrice = double.tryParse(product.price ?? '0') ?? 0.0;
-            final productQuantity = int.tryParse(product.quantity ?? '1') ?? 1;
-            totalPrice += productPrice * productQuantity;
-          }
           return Padding(
             padding: const EdgeInsets.only(left: 10.0, top: 10),
             child: Column(
@@ -167,8 +190,8 @@ class _AddCartState extends State<AddCart> {
                                                         .cartList[index]
                                                         .quantity!) >
                                                     1) {
-                                                  int currentQuantity =
-                                                      int.parse(productProvider
+                                                  currentQuantity = int.parse(
+                                                      productProvider
                                                           .cartList[index]
                                                           .quantity!);
                                                   currentQuantity--;
@@ -181,6 +204,7 @@ class _AddCartState extends State<AddCart> {
                                                       .updateQuantity(
                                                           productProvider
                                                               .cartList[index]);
+                                                  getCartProduct();
                                                 }
                                               });
                                             },
@@ -196,7 +220,7 @@ class _AddCartState extends State<AddCart> {
                                         ),
                                         IconButton(
                                             onPressed: () {
-                                              int currentQuantity = int.parse(
+                                              currentQuantity = int.parse(
                                                   productProvider
                                                       .cartList[index]
                                                       .quantity!);
@@ -207,8 +231,26 @@ class _AddCartState extends State<AddCart> {
                                               productProvider.updateQuantity(
                                                   productProvider
                                                       .cartList[index]);
+                                              getCartProduct();
                                             },
-                                            icon: Icon(Icons.add))
+                                            icon: Icon(Icons.add)),
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        Text(
+                                          "Rs " +
+                                              (double.parse(productProvider
+                                                          .cartList[index]
+                                                          .price!) *
+                                                      int.parse(productProvider
+                                                          .cartList[index]
+                                                          .quantity!))
+                                                  .toStringAsFixed(2),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold),
+                                        )
                                       ],
                                     )
                                   ],
@@ -228,30 +270,39 @@ class _AddCartState extends State<AddCart> {
                         children: [
                           Text(
                             "Total Price:",
-                            style: TextStyle(fontSize: 16),
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           Text(
                             "\Rs.${totalPrice.toStringAsFixed(2)}",
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red),
                           ),
                         ],
                       ),
                       Spacer(),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.05,
-                        width: MediaQuery.of(context).size.width * 0.40,
-                        child: CustomButton(
-                          backgroundColor: buttonBackgroundColor,
-                          foregroundColor: buttonForegroundColor,
-                          onPressed: () {
-                            int amountInCents = (totalPrice * 100).toInt();
-                            StripeService.instance
-                                .makePayment(amountInCents.toString());
-                          },
-                          child: Text("Check Out"),
-                        ),
-                      )
+                      userId == null || userId!.isEmpty
+                          ? SizedBox()
+                          : SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.05,
+                              width: MediaQuery.of(context).size.width * 0.40,
+                              child: CustomButton(
+                                backgroundColor: Colors.green,
+                                foregroundColor: buttonForegroundColor,
+                                onPressed: () {
+                                  // int amountInCents = (totalPrice * 100).toInt();
+                                  int amountInCents = (totalPrice).round();
+                                  StripeService.instance
+                                      .makePayment(amountInCents);
+                                },
+                                child: Text(
+                                  "Check Out",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            )
                     ],
                   ),
                 ),

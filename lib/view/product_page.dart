@@ -91,28 +91,42 @@ class _ProductPageState extends State<ProductPage> {
                               const Color.fromARGB(255, 21, 164, 26),
                           foregroundColor: buttonForegroundColor,
                           onPressed: () async {
+                            final SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            userId = prefs.getString("userId");
+                            // Ensure userId is fetched before proceeding
+                            if (userId == null || userId!.isEmpty) {
+                              Helper.displaySnackbar(
+                                  context, "Please login to your account!");
+                              return;
+                            }
+
                             Cart cart = Cart(
-                                userId: userId,
-                                id: widget.data.id!,
-                                name: widget.data.name!,
-                                quantity: widget.data.quantity!,
-                                price: widget.data.price!,
-                                image: widget.data.image!);
+                              userId: userId,
+                              id: widget.data.id!,
+                              name: widget.data.name!,
+                              quantity: widget.data.quantity!,
+                              price: widget.data.price!,
+                              image: widget.data.image!,
+                            );
+
                             await productProvider.checkProductInCart(cart);
+
+                            // Check if the product is already in the cart
                             if (productProvider.isSuccessProductInCart!) {
                               Helper.displaySnackbar(
-                                  context, "Product is Already in Cart");
+                                  context, "Product is already in the cart");
                             } else {
                               productProvider.saveProductCart(cart);
                               Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        CustomBottomNavigationBar(
-                                      initialIndex: 2,
-                                    ),
-                                  ),
-                                  (route) => false);
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      CustomBottomNavigationBar(
+                                          initialIndex: 2),
+                                ),
+                                (route) => false,
+                              );
                             }
                           },
                           child: const Text("Add to cart"),
