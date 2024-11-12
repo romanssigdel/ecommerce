@@ -23,6 +23,7 @@ class ProductProvider extends ChangeNotifier {
   ];
 
   String? id,
+      userId,
       productName,
       productDescription,
       productQuantity,
@@ -168,6 +169,12 @@ class ProductProvider extends ChangeNotifier {
   StatusUtil? _checkProductsInCart = StatusUtil.none;
   StatusUtil? get checkProductsInCart => _checkProductsInCart;
 
+  StatusUtil? _saveSoldProductStatus = StatusUtil.none;
+  StatusUtil? get saveSoldProductStatus => _saveSoldProductStatus;
+
+  StatusUtil? _saveDeleteAfterPaymentStatus = StatusUtil.none;
+  StatusUtil? get saveDeleteAfterPaymentStatus => _saveDeleteAfterPaymentStatus;
+
   setgetUpdateQuantity(StatusUtil statusUtil) {
     _getUpdateQuantity = statusUtil;
     notifyListeners();
@@ -195,6 +202,16 @@ class ProductProvider extends ChangeNotifier {
 
   setGetProductInCart(StatusUtil statusUtil) {
     _checkProductsInCart = statusUtil;
+    notifyListeners();
+  }
+
+  setSaveSoldProductToCart(StatusUtil statusUtil) {
+    _saveSoldProductStatus = statusUtil;
+    notifyListeners();
+  }
+
+  setSaveDeleteProductAfterPayment(StatusUtil statusUtil) {
+    _saveDeleteAfterPaymentStatus = statusUtil;
     notifyListeners();
   }
 
@@ -322,6 +339,36 @@ class ProductProvider extends ChangeNotifier {
       setGetProductInCart(StatusUtil.success);
     } else if (apiResponse.statusUtil == StatusUtil.error) {
       setGetProductInCart(StatusUtil.error);
+    }
+  }
+
+  Future<void> saveSoldProduct(
+      List<dynamic> userCartList, String userId, String totalPrice) async {
+    if (_saveSoldProductStatus != StatusUtil.loading) {
+      setSaveSoldProductToCart(StatusUtil.loading);
+    }
+    ApiResponse response = await adminServices.sendUserCartListToFirestore(
+        userCartList, userId, totalPrice);
+    if (response.statusUtil == StatusUtil.success) {
+      setSaveStatusProductName(StatusUtil.success);
+    } else if (response.statusUtil == StatusUtil.error) {
+      setSaveStatusProductName(StatusUtil.error);
+      errorMessage = response.errorMessage;
+    }
+  }
+
+  Future<void> deleteCartAfterPayment(String userId) async {
+    if (_saveDeleteAfterPaymentStatus != StatusUtil.loading) {
+      setSaveDeleteProductAfterPayment(StatusUtil.loading);
+    }
+    ApiResponse apiResponse =
+        await adminServices.deleteCartAfterPayment(userId);
+    if (apiResponse.statusUtil == StatusUtil.success) {
+      isSuccessfullyProductDeleted = apiResponse.data;
+      setDeleteStatus(StatusUtil.success);
+    } else if (apiResponse.statusUtil == StatusUtil.error) {
+      errorMessage = apiResponse.errorMessage;
+      setDeleteStatus(StatusUtil.error);
     }
   }
 }

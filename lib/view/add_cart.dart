@@ -3,6 +3,7 @@ import 'package:ecommerce/model/cart.dart';
 import 'package:ecommerce/model/product.dart';
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/services/stripe_service.dart';
+import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:flutter/material.dart';
@@ -291,11 +292,26 @@ class _AddCartState extends State<AddCart> {
                               child: CustomButton(
                                 backgroundColor: Colors.green,
                                 foregroundColor: buttonForegroundColor,
-                                onPressed: () {
+                                onPressed: () async {
                                   // int amountInCents = (totalPrice * 100).toInt();
                                   int amountInCents = (totalPrice).round();
-                                  StripeService.instance
-                                      .makePayment(amountInCents);
+                                  final isSuccessfulPayment =
+                                      await StripeService.instance
+                                          .makePayment(amountInCents);
+                                  if (isSuccessfulPayment) {
+                                    await productProvider.saveSoldProduct(
+                                        userCartList,
+                                        userId!,
+                                        totalPrice.toString());
+                                    await productProvider
+                                        .deleteCartAfterPayment(userId!);
+                                    getDataFromCart();
+                                    await Helper.displaySnackbar(
+                                        context, "Order Successful");
+                                  } else {
+                                    await Helper.displaySnackbar(
+                                        context, "Payment Failed.");
+                                  }
                                 },
                                 child: Text(
                                   "Check Out",

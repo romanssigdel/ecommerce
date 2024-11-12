@@ -15,4 +15,10 @@ abstract class AdminServices {
   //Checks if the cart doesnot have any redundancy
   // User should not be able to add if the product is already added to the cart.
   Future<ApiResponse> checkProductInCart(Cart cart);
+
+  // Future<ApiResponse> addSoldProductToCart(Cart cart);
+  Future<ApiResponse> sendUserCartListToFirestore(
+      List<dynamic> userCartList, String userId, String totalPrice);
+
+  Future<ApiResponse> deleteCartAfterPayment(String userId);
 }

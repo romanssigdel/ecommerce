@@ -193,4 +193,68 @@ class AdminServicesImpl implements AdminServices {
           statusUtil: StatusUtil.error, errorMessage: e.toString());
     }
   }
+
+  @override
+  Future<ApiResponse> sendUserCartListToFirestore(
+      List<dynamic> userCartList, String userId, String totalPrice) async {
+    try {
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Create a new document in the 'orders' collection
+      DocumentReference orderRef = firestore.collection('orders').doc();
+
+      // Prepare the data to be saved
+      Map<String, dynamic> orderData = {
+        "userId": userId,
+        "totalAmount": totalPrice,
+        "orderDate": DateTime.now(),
+        "products": userCartList
+            .map((product) => {
+                  "id": product.id,
+                  "name": product.name,
+                  "price": product.price,
+                  "quantity": product.quantity,
+                  "image": product.image,
+                })
+            .toList(),
+      };
+
+      // Save the data to Firestore
+      await orderRef.set(orderData);
+
+      return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
+    } catch (e) {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, errorMessage: e.toString());
+    }
+  }
+
+  @override
+  Future<ApiResponse> deleteCartAfterPayment(String userId) async {
+    if (await Helper().isInternetConnectionAvailable()) {
+      try {
+        var querySnapshot = await FirebaseFirestore.instance
+            .collection("cart")
+            .where("userId", isEqualTo: userId)
+            .get();
+
+        // Check if any cart documents match the userId
+        if (querySnapshot.docs.isNotEmpty) {
+          // Loop through the documents and delete them
+          for (var doc in querySnapshot.docs) {
+            await FirebaseFirestore.instance
+                .collection("cart")
+                .doc(doc.id)
+                .delete();
+          }
+        }
+        return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
+      } catch (e) {
+        return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
+      }
+    } else {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, data: noInternetConectionStr);
+    }
+  }
 }

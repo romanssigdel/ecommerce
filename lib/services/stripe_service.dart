@@ -9,19 +9,19 @@ class StripeService {
 
   static final StripeService instance = StripeService._();
 
-  Future<void> makePayment(int amount) async {
+  Future<bool> makePayment(int amount) async {
     try {
       // Retrieve user email from SharedPreferences
       await getValueOfUserFromSharedPreference();
 
       // Create a customer first
       String? customerId = await _createCustomer(userEmail!);
-      if (customerId == null) return;
+      if (customerId == null) return false;
 
       // Create the payment intent for the customer
       String? paymentIntentClientSecret =
           await _createPaymentIntent(amount, "npr", customerId);
-      if (paymentIntentClientSecret == null) return;
+      if (paymentIntentClientSecret == null) return false;
 
       // Initialize Stripe Payment Sheet with email and customer ID
       await Stripe.instance.initPaymentSheet(
@@ -41,9 +41,12 @@ class StripeService {
           ),
         ),
       );
-      await _processPayment();
+      await Stripe.instance.presentPaymentSheet();
+      // await Stripe.instance.confirmPaymentSheetPayment();
+      return true;
     } catch (e) {
       print("Error in makePayment: $e");
+      return false;
     }
   }
 
@@ -106,14 +109,14 @@ class StripeService {
     return null;
   }
 
-  Future<void> _processPayment() async {
-    try {
-      await Stripe.instance.presentPaymentSheet();
-      await Stripe.instance.confirmPaymentSheetPayment();
-    } catch (e) {
-      print(e);
-    }
-  }
+  // Future<void> _processPayment() async {
+  //   try {
+  //     await Stripe.instance.presentPaymentSheet();
+  //     await Stripe.instance.confirmPaymentSheetPayment();
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   String _calculateAmount(int amount) {
     final calculatedAmount = amount * 100;
