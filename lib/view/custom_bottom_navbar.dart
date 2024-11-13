@@ -2,7 +2,7 @@ import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
 import 'package:ecommerce/view/add_cart.dart';
 import 'package:ecommerce/view/home_page.dart';
-import 'package:ecommerce/view/my_wishlist.dart';
+import 'package:ecommerce/view/history.dart';
 import 'package:ecommerce/view/signin_form.dart';
 import 'package:ecommerce/view/user_account.dart';
 import 'package:flutter/foundation.dart';
@@ -46,7 +46,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   List<Widget> getItemList() {
     return [
       HomePage(),
-      MyWishlist(),
+      OrderHistory(),
       AddCart(),
       isLogin == true ? UserAccount() : SigninPage(), // Conditional logic
     ];
@@ -62,7 +62,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             selectedItemColor: backGroundColor,
             unselectedItemColor: Colors.grey,
             // showUnselectedLabels: true,
-            // showSelectedLabels: false,
+            showSelectedLabels: false,
             onTap: (value) {
               selectedIndex = value;
               setState(() {
@@ -72,7 +72,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             items: [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
               BottomNavigationBarItem(
-                  icon: Icon(Icons.favorite), label: "My WishList"),
+                  icon: Icon(Icons.history), label: "History"),
               BottomNavigationBarItem(
                   icon: Icon(Icons.add_shopping_cart), label: "Cart"),
               BottomNavigationBarItem(

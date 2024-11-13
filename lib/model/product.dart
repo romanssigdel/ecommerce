@@ -77,4 +77,6 @@ class Product {
     data['warranty'] = this.warranty;
     return data;
   }
+
+  static fromFirestore(product) {}
 }

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce/core/api_response.dart';
 import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/model/cart.dart';
+import 'package:ecommerce/model/order.dart';
 import 'package:ecommerce/model/product.dart';
 import 'package:ecommerce/services/admin_services.dart';
 import 'package:ecommerce/utils/Helper.dart';
@@ -120,9 +121,7 @@ class AdminServicesImpl implements AdminServices {
       try {
         var value = await FirebaseFirestore.instance.collection("cart").get();
         var cartList = value.docs.map((e) => Cart.fromJson(e.data())).toList();
-        for (int i = 0; i < cartList.length; i++) {
-          cartList[i].id = value.docs[i].id;
-        }
+
         return ApiResponse(statusUtil: StatusUtil.success, data: cartList);
       } catch (e) {
         return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
@@ -249,6 +248,26 @@ class AdminServicesImpl implements AdminServices {
           }
         }
         return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
+      } catch (e) {
+        return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
+      }
+    } else {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, data: noInternetConectionStr);
+    }
+  }
+
+  @override
+  Future<ApiResponse> getUserOrdersFromFirestore() async {
+    if (await Helper().isInternetConnectionAvailable()) {
+      try {
+        var value = await FirebaseFirestore.instance.collection("orders").get();
+        var ordersList =
+            value.docs.map((e) => Orders.fromJson(e.data())).toList();
+        for (int i = 0; i < ordersList.length; i++) {
+          ordersList[i].orderId = value.docs[i].id;
+        }
+        return ApiResponse(statusUtil: StatusUtil.success, data: ordersList);
       } catch (e) {
         return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
       }

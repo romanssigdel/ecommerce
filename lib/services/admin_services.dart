@@ -21,4 +21,5 @@ abstract class AdminServices {
       List<dynamic> userCartList, String userId, String totalPrice);
 
   Future<ApiResponse> deleteCartAfterPayment(String userId);
+  Future<ApiResponse> getUserOrdersFromFirestore();
 }

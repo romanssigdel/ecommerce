@@ -1,6 +1,7 @@
 import 'package:ecommerce/core/api_response.dart';
 import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/model/cart.dart';
+import 'package:ecommerce/model/order.dart';
 import 'package:ecommerce/model/product.dart';
 import 'package:ecommerce/services/admin_services.dart';
 import 'package:ecommerce/services/admin_services_impl.dart';
@@ -48,6 +49,7 @@ class ProductProvider extends ChangeNotifier {
   TextEditingController? imageTextField;
   List<Product> productslist = [];
   List<Cart> cartList = [];
+  List<Orders> orderList = [];
 
 //total price calculator of the cart
   double getTotalPrice() {
@@ -175,6 +177,9 @@ class ProductProvider extends ChangeNotifier {
   StatusUtil? _saveDeleteAfterPaymentStatus = StatusUtil.none;
   StatusUtil? get saveDeleteAfterPaymentStatus => _saveDeleteAfterPaymentStatus;
 
+  StatusUtil? _getOrderFromCart = StatusUtil.none;
+  StatusUtil? get getOrderFromCart => _getOrderFromCart;
+
   setgetUpdateQuantity(StatusUtil statusUtil) {
     _getUpdateQuantity = statusUtil;
     notifyListeners();
@@ -212,6 +217,11 @@ class ProductProvider extends ChangeNotifier {
 
   setSaveDeleteProductAfterPayment(StatusUtil statusUtil) {
     _saveDeleteAfterPaymentStatus = statusUtil;
+    notifyListeners();
+  }
+
+  setGetOrderFromCart(StatusUtil statusUtil) {
+    _getOrderFromCart = statusUtil;
     notifyListeners();
   }
 
@@ -369,6 +379,25 @@ class ProductProvider extends ChangeNotifier {
     } else if (apiResponse.statusUtil == StatusUtil.error) {
       errorMessage = apiResponse.errorMessage;
       setDeleteStatus(StatusUtil.error);
+    }
+  }
+
+  Future<void> getOrdersFromCart() async {
+    if (_getOrderFromCart != StatusUtil.loading) {
+      setGetOrderFromCart(StatusUtil.loading);
+    }
+    try {
+      ApiResponse apiResponse =
+          await adminServices.getUserOrdersFromFirestore();
+      if (apiResponse.statusUtil == StatusUtil.success) {
+        orderList = apiResponse.data;
+        setgetProductCart(StatusUtil.success);
+      } else if (apiResponse.statusUtil == StatusUtil.error) {
+        errorMessage = apiResponse.errorMessage;
+        setgetProductCart(StatusUtil.error);
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 }

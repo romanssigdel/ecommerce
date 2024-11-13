@@ -196,34 +196,46 @@ class _ProductPageState extends State<ProductPage> {
                   padding: const EdgeInsets.only(
                       top: 10.0, left: 10, right: 10, bottom: 10),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        child: CustomButton(
-                          backgroundColor: buttonBackgroundColor,
-                          foregroundColor: buttonForegroundColor,
-                          onPressed: () {},
-                          child: Text("Rate Product"),
-                        ),
-                      ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.45,
                         child: CustomButton(
                           backgroundColor: Colors.redAccent,
                           foregroundColor: buttonForegroundColor,
                           onPressed: () {},
-                          child: const Row(children: [
-                            Icon(
-                              Icons.favorite,
-                            ),
-                            SizedBox(
-                              width: 1,
-                            ),
-                            Text("Add to favorites")
-                          ]),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.star,
+                                size: 18,
+                                color: Colors.yellowAccent,
+                              ),
+                              SizedBox(
+                                width: 4,
+                              ),
+                              Text("Rate Product"),
+                            ],
+                          ),
                         ),
-                      )
+                      ),
+                      // SizedBox(
+                      //   width: MediaQuery.of(context).size.width * 0.45,
+                      //   child: CustomButton(
+                      //     backgroundColor: Colors.redAccent,
+                      //     foregroundColor: buttonForegroundColor,
+                      //     onPressed: () {},
+                      //     child: const Row(children: [
+                      //       Icon(
+                      //         Icons.favorite,
+                      //       ),
+                      //       SizedBox(
+                      //         width: 1,
+                      //       ),
+                      //       Text("Add to favorites")
+                      //     ]),
+                      //   ),
+                      // )
                     ],
                   ),
                 )
