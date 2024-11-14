@@ -324,6 +324,10 @@ class _ProductPageState extends State<ProductPage> {
                                                 builder: (context) =>
                                                     ProductPage(
                                                   data: widget.data,
+                                                  averageRating:
+                                                      widget.averageRating,
+                                                  totalCounts:
+                                                      widget.totalCounts,
                                                 ),
                                               ));
                                         } else {

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/model/product.dart';
 import 'package:ecommerce/provider/product_provider.dart';
@@ -50,6 +51,12 @@ class _HomePageState extends State<HomePage> {
       () async {
         var provider = Provider.of<ProductProvider>(context, listen: false);
         await provider.getProduct();
+
+        for (var product in provider.productslist) {
+          await provider.calculateAverageRating(product.id!);
+        }
+
+        bubbleSortProductsByRating(provider.productslist, provider);
         setState(() {
           filteredProducts = provider.productslist;
         });
@@ -73,6 +80,29 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       filteredProducts = results;
     });
+  }
+
+  void bubbleSortProductsByRating(
+      List<Product> products, ProductProvider productProvider) {
+    int n = products.length;
+    for (int i = 0; i < n - 1; i++) {
+      for (int j = 0; j < n - i - 1; j++) {
+        // Get the average ratings for the cars
+        double ratingA =
+            productProvider.productRatings[products[j].id]?['average'] ?? 0.0;
+        double ratingB = productProvider.productRatings[products[j + 1].id]
+                ?['average'] ??
+            0.0;
+
+        // Swap if the car at j has a lower rating than the car at j+1
+        if (ratingA < ratingB) {
+          // Swap cars
+          Product temp = products[j];
+          products[j] = products[j + 1];
+          products[j + 1] = temp;
+        }
+      }
+    }
   }
 
   @override
@@ -403,7 +433,7 @@ class _HomePageState extends State<HomePage> {
                                             width: 4,
                                           ),
                                           Text(
-                                              "${(averageRating.toStringAsFixed(1))}/5 (${(totalReviews.toStringAsFixed(1))})")
+                                              "${(averageRating.toStringAsFixed(1))}/5 (${(totalReviews.toStringAsFixed(0))})")
                                         ],
                                       ),
                                     )
