@@ -274,6 +274,8 @@ class _HomePageState extends State<HomePage> {
                                 MaterialPageRoute(
                                   builder: (context) => ProductPage(
                                     data: productProvider.productslist[index],
+                                    averageRating: averageRating,
+                                    totalCounts: totalReviews,
                                   ),
                                 ),
                               );

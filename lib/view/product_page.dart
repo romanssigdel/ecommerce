@@ -15,8 +15,8 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductPage extends StatefulWidget {
-  var data;
-  ProductPage({super.key, this.data});
+  var data, averageRating, totalCounts;
+  ProductPage({super.key, this.data, this.averageRating, this.totalCounts});
 
   @override
   State<ProductPage> createState() => _ProductPageState();
@@ -175,10 +175,37 @@ class _ProductPageState extends State<ProductPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("${widget.data.name!}",
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w900)),
+                                Row(
+                                  children: [
+                                    Text("${widget.data.name!}",
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w900)),
+                                    Spacer(),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10.0, right: 10),
+                                      child: Row(
+                                        children: [
+                                          Text("Ratings: ",
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w900)),
+                                          Icon(
+                                            Icons.star,
+                                            color: Colors.orange,
+                                            size: 16,
+                                          ),
+                                          SizedBox(
+                                            width: 4,
+                                          ),
+                                          Text(
+                                              "${(widget.averageRating.toStringAsFixed(1))}/5 (${(widget.totalCounts.toStringAsFixed(1))})")
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 const Text("Specification",
                                     style: TextStyle(
                                         fontSize: 18,
