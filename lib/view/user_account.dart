@@ -956,20 +956,21 @@ class _UserAccountState extends State<UserAccount> {
                                                                           color:
                                                                               Colors.green,
                                                                         )),
-                                                                    productProvider.deleteProductStatus ==
-                                                                            StatusUtil
-                                                                                .loading
-                                                                        ? CircularProgressIndicator()
-                                                                        : IconButton(
-                                                                            onPressed:
-                                                                                () async {
-                                                                              deleteShowDialog(context, productProvider, productProvider.productslist[index].id!);
-                                                                            },
-                                                                            icon:
-                                                                                Icon(
-                                                                              Icons.delete,
-                                                                              color: Colors.redAccent,
-                                                                            )),
+                                                                    IconButton(
+                                                                        onPressed:
+                                                                            () async {
+                                                                          deleteShowDialog(
+                                                                              context,
+                                                                              productProvider,
+                                                                              productProvider.productslist[index].id!);
+                                                                        },
+                                                                        icon:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .delete,
+                                                                          color:
+                                                                              Colors.redAccent,
+                                                                        )),
                                                                   ],
                                                                 ),
                                                               ],
@@ -1404,6 +1405,7 @@ class _UserAccountState extends State<UserAccount> {
 
   logoutUserFromSharedPreference() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove("userId");
     await prefs.remove('isLogin');
     await prefs.remove('userName');
     await prefs.remove('userEmail');
@@ -1460,7 +1462,7 @@ class _UserAccountState extends State<UserAccount> {
           actions: [
             TextButton(
               onPressed: () async {
-                logoutUserFromSharedPreference();
+                await logoutUserFromSharedPreference();
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(

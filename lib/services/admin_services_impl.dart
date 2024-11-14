@@ -4,6 +4,7 @@ import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/model/cart.dart';
 import 'package:ecommerce/model/order.dart';
 import 'package:ecommerce/model/product.dart';
+import 'package:ecommerce/model/rate.dart';
 import 'package:ecommerce/services/admin_services.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/string_const.dart';
@@ -135,14 +136,21 @@ class AdminServicesImpl implements AdminServices {
   @override
   Future<ApiResponse> updateProductQuantity(Cart cart) async {
     try {
-      await FirebaseFirestore.instance
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("cart")
-          .doc(cart.id)
-          .update(cart.toJson())
-          .then((value) {
-        isSuccess = true;
-      });
-      return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
+          .where("id", isEqualTo: cart.id)
+          .where("userId", isEqualTo: cart.userId)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        String docId = querySnapshot.docs.first.id;
+
+        await FirebaseFirestore.instance
+            .collection("cart")
+            .doc(docId)
+            .update(cart.toJson());
+      }
+      return ApiResponse(statusUtil: StatusUtil.success, data: true);
     } catch (e) {
       return ApiResponse(
           statusUtil: StatusUtil.error, errorMessage: e.toString());
@@ -150,18 +158,27 @@ class AdminServicesImpl implements AdminServices {
   }
 
   @override
-  Future<ApiResponse> deleteProductFromCart(String id) async {
+  Future<ApiResponse> deleteProductFromCart(String id, String userId) async {
     // TODO: implement deleteProductFromCart
     if (await Helper().isInternetConnectionAvailable()) {
       try {
-        await FirebaseFirestore.instance
+        // await FirebaseFirestore.instance.collection("cart").doc(id).delete();
+        QuerySnapshot querySnapshot = await FirebaseFirestore.instance
             .collection("cart")
-            .doc(id)
-            .delete()
-            .then((value) {
-          isSuccess = true;
-        });
-        return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
+            .where('id', isEqualTo: id)
+            .where("userId", isEqualTo: userId)
+            .get();
+
+        if (querySnapshot.docs.isNotEmpty) {
+          for (var doc in querySnapshot.docs) {
+            await FirebaseFirestore.instance
+                .collection("cart")
+                .doc(doc.id)
+                .delete();
+          }
+        }
+
+        return ApiResponse(statusUtil: StatusUtil.success, data: true);
       } catch (e) {
         return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
       }
@@ -268,6 +285,44 @@ class AdminServicesImpl implements AdminServices {
           ordersList[i].orderId = value.docs[i].id;
         }
         return ApiResponse(statusUtil: StatusUtil.success, data: ordersList);
+      } catch (e) {
+        return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
+      }
+    } else {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, data: noInternetConectionStr);
+    }
+  }
+
+  @override
+  Future<ApiResponse> addRatingToProduct(Rate rate) async {
+    if (await Helper().isInternetConnectionAvailable()) {
+      try {
+        await FirebaseFirestore.instance
+            .collection("rating")
+            .add(rate.toJson())
+            .then((value) {
+          isSuccess = true;
+        });
+        return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
+      } catch (e) {
+        return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
+      }
+    } else {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, data: noInternetConectionStr);
+    }
+  }
+
+  @override
+  Future<ApiResponse> getRatingOfProduct() async {
+    if (await Helper().isInternetConnectionAvailable()) {
+      try {
+        var value = await FirebaseFirestore.instance.collection("rating").get();
+        var ratingList =
+            value.docs.map((e) => Rate.fromJson(e.data())).toList();
+
+        return ApiResponse(statusUtil: StatusUtil.success, data: ratingList);
       } catch (e) {
         return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
       }

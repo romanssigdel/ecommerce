@@ -83,7 +83,10 @@ class _OrderHistoryState extends State<OrderHistory> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
                                       "Order Date: ${order.orderDate?.toLocal().toString().split(' ')[0] ?? ''}",
-                                      style: TextStyle(fontSize: 16),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ),
                                   Padding(
@@ -91,9 +94,9 @@ class _OrderHistoryState extends State<OrderHistory> {
                                     child: Text(
                                       "Total Amount: \Rs.${double.parse(order.totalAmount!).toStringAsFixed(2) ?? '0.00'}",
                                       style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red),
                                     ),
                                   ),
                                   Divider(),

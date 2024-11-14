@@ -1,6 +1,7 @@
 import 'package:ecommerce/core/api_response.dart';
 import 'package:ecommerce/model/cart.dart';
 import 'package:ecommerce/model/product.dart';
+import 'package:ecommerce/model/rate.dart';
 
 abstract class AdminServices {
   Future<ApiResponse> saveProduct(Product product);
@@ -10,7 +11,7 @@ abstract class AdminServices {
   Future<ApiResponse> addProductToCart(Cart cart);
   Future<ApiResponse> getProductFromCart();
   Future<ApiResponse> updateProductQuantity(Cart cart);
-  Future<ApiResponse> deleteProductFromCart(String id);
+  Future<ApiResponse> deleteProductFromCart(String id,String userId);
 
   //Checks if the cart doesnot have any redundancy
   // User should not be able to add if the product is already added to the cart.
@@ -22,4 +23,9 @@ abstract class AdminServices {
 
   Future<ApiResponse> deleteCartAfterPayment(String userId);
   Future<ApiResponse> getUserOrdersFromFirestore();
+
+  // Adding rating to the product
+  Future<ApiResponse> addRatingToProduct(Rate rate);
+
+  Future<ApiResponse> getRatingOfProduct();
 }

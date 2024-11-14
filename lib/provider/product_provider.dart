@@ -3,6 +3,7 @@ import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/model/cart.dart';
 import 'package:ecommerce/model/order.dart';
 import 'package:ecommerce/model/product.dart';
+import 'package:ecommerce/model/rate.dart';
 import 'package:ecommerce/services/admin_services.dart';
 import 'package:ecommerce/services/admin_services_impl.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,6 @@ class ProductProvider extends ChangeNotifier {
   ];
 
   String? id,
-      userId,
       productName,
       productDescription,
       productQuantity,
@@ -40,7 +40,6 @@ class ProductProvider extends ChangeNotifier {
       wirelessConnectivity,
       camera,
       warranty;
-
   String? errorMessage;
   String? isSuccess;
   bool? isSuccessProductInCart;
@@ -50,6 +49,15 @@ class ProductProvider extends ChangeNotifier {
   List<Product> productslist = [];
   List<Cart> cartList = [];
   List<Orders> orderList = [];
+  List<Rate> ratingList = [];
+
+  // Rating controller text
+  TextEditingController ratingController = TextEditingController();
+
+  void setRating(String value) {
+    ratingController.text = value;
+    notifyListeners();
+  }
 
 //total price calculator of the cart
   double getTotalPrice() {
@@ -171,6 +179,9 @@ class ProductProvider extends ChangeNotifier {
   StatusUtil? _checkProductsInCart = StatusUtil.none;
   StatusUtil? get checkProductsInCart => _checkProductsInCart;
 
+  StatusUtil? _deleteProductsInCart = StatusUtil.none;
+  StatusUtil? get deleteProductsInCart => _deleteProductsInCart;
+
   StatusUtil? _saveSoldProductStatus = StatusUtil.none;
   StatusUtil? get saveSoldProductStatus => _saveSoldProductStatus;
 
@@ -179,6 +190,12 @@ class ProductProvider extends ChangeNotifier {
 
   StatusUtil? _getOrderFromCart = StatusUtil.none;
   StatusUtil? get getOrderFromCart => _getOrderFromCart;
+
+  StatusUtil? _addRatingToProduct = StatusUtil.none;
+  StatusUtil? get addRatingToProduct => _addRatingToProduct;
+
+  StatusUtil? _getRatingOfProduct = StatusUtil.none;
+  StatusUtil? get getRatingOfProduct => _getRatingOfProduct;
 
   setgetUpdateQuantity(StatusUtil statusUtil) {
     _getUpdateQuantity = statusUtil;
@@ -192,6 +209,11 @@ class ProductProvider extends ChangeNotifier {
 
   setSaveProductToCart(StatusUtil statusUtil) {
     _saveProductToCart = statusUtil;
+    notifyListeners();
+  }
+
+  setDeleteProductFromCart(StatusUtil statusUtil) {
+    _deleteProductsInCart = statusUtil;
     notifyListeners();
   }
 
@@ -222,6 +244,16 @@ class ProductProvider extends ChangeNotifier {
 
   setGetOrderFromCart(StatusUtil statusUtil) {
     _getOrderFromCart = statusUtil;
+    notifyListeners();
+  }
+
+  setAddRatingToProduct(StatusUtil statusUtil) {
+    _addRatingToProduct = statusUtil;
+    notifyListeners();
+  }
+
+  setGetRatingOfProduct(StatusUtil statusUtil) {
+    _getRatingOfProduct = statusUtil;
     notifyListeners();
   }
 
@@ -325,23 +357,24 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteProductCart(String id) async {
-    if (_deleteProductStatus != StatusUtil.loading) {
+  Future<void> deleteProductCart(String id,String userId) async {
+    if (_deleteProductsInCart != StatusUtil.loading) {
       setDeleteStatus(StatusUtil.loading);
     }
-    ApiResponse apiResponse = await adminServices.deleteProductFromCart(id);
+    ApiResponse apiResponse = await adminServices.deleteProductFromCart(id,userId);
     if (apiResponse.statusUtil == StatusUtil.success) {
       isSuccessfullyProductDeleted = apiResponse.data;
-      setDeleteStatus(StatusUtil.success);
+      setDeleteProductFromCart(StatusUtil.success);
+      notifyListeners();
     } else if (apiResponse.statusUtil == StatusUtil.error) {
       errorMessage = apiResponse.errorMessage;
-      setDeleteStatus(StatusUtil.error);
+      setDeleteProductFromCart(StatusUtil.error);
     }
   }
 
   Future<void> checkProductInCart(Cart cart) async {
     if (_checkProductsInCart != StatusUtil.loading) {
-      (StatusUtil.loading);
+      setGetProductInCart(StatusUtil.loading);
     }
     ApiResponse apiResponse = await adminServices.checkProductInCart(cart);
     if (apiResponse.statusUtil == StatusUtil.success) {
@@ -360,9 +393,9 @@ class ProductProvider extends ChangeNotifier {
     ApiResponse response = await adminServices.sendUserCartListToFirestore(
         userCartList, userId, totalPrice);
     if (response.statusUtil == StatusUtil.success) {
-      setSaveStatusProductName(StatusUtil.success);
+      setSaveSoldProductToCart(StatusUtil.success);
     } else if (response.statusUtil == StatusUtil.error) {
-      setSaveStatusProductName(StatusUtil.error);
+      setSaveSoldProductToCart(StatusUtil.error);
       errorMessage = response.errorMessage;
     }
   }
@@ -375,10 +408,10 @@ class ProductProvider extends ChangeNotifier {
         await adminServices.deleteCartAfterPayment(userId);
     if (apiResponse.statusUtil == StatusUtil.success) {
       isSuccessfullyProductDeleted = apiResponse.data;
-      setDeleteStatus(StatusUtil.success);
+      setSaveDeleteProductAfterPayment(StatusUtil.success);
     } else if (apiResponse.statusUtil == StatusUtil.error) {
       errorMessage = apiResponse.errorMessage;
-      setDeleteStatus(StatusUtil.error);
+      setSaveDeleteProductAfterPayment(StatusUtil.error);
     }
   }
 
@@ -391,13 +424,41 @@ class ProductProvider extends ChangeNotifier {
           await adminServices.getUserOrdersFromFirestore();
       if (apiResponse.statusUtil == StatusUtil.success) {
         orderList = apiResponse.data;
-        setgetProductCart(StatusUtil.success);
+        setGetOrderFromCart(StatusUtil.success);
       } else if (apiResponse.statusUtil == StatusUtil.error) {
         errorMessage = apiResponse.errorMessage;
-        setgetProductCart(StatusUtil.error);
+        setGetOrderFromCart(StatusUtil.error);
       }
     } catch (e) {
       print(e.toString());
+    }
+  }
+
+  Future<void> addRatingToProducts(Rate rate) async {
+    if (_addRatingToProduct != StatusUtil.loading) {
+      setAddRatingToProduct(StatusUtil.loading);
+    }
+    ApiResponse response = await adminServices.addRatingToProduct(rate);
+    if (response.statusUtil == StatusUtil.success) {
+      setAddRatingToProduct(StatusUtil.success);
+    } else if (response.statusUtil == StatusUtil.error) {
+      setAddRatingToProduct(StatusUtil.error);
+      errorMessage = response.errorMessage;
+    }
+  }
+
+  Future<void> getRatingOfProducts() async {
+    if (_getRatingOfProduct != StatusUtil.loading) {
+      setGetRatingOfProduct(StatusUtil.loading);
+    }
+    ApiResponse response = await adminServices.getRatingOfProduct();
+
+    if (response.statusUtil == StatusUtil.success) {
+      ratingList = response.data;
+      setGetRatingOfProduct(StatusUtil.success);
+    } else if (response.statusUtil == StatusUtil.error) {
+      setGetRatingOfProduct(StatusUtil.error);
+      errorMessage = response.errorMessage;
     }
   }
 }

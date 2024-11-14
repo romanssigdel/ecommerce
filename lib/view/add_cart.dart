@@ -1,3 +1,4 @@
+import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/model/cart.dart';
 import 'package:ecommerce/model/product.dart';
@@ -166,13 +167,22 @@ class _AddCartState extends State<AddCart> {
                                         Row(
                                           children: [
                                             IconButton(
-                                                onPressed: () {
-                                                  productProvider
+                                                onPressed: () async {
+                                                  await productProvider
                                                       .deleteProductCart(
                                                           productProvider
                                                               .cartList[index]
-                                                              .id!);
-                                                  getDataFromCart();
+                                                              .id!,productProvider.cartList[index].userId!);
+                                                  if (productProvider
+                                                          .deleteProductsInCart ==
+                                                      StatusUtil.success) {
+                                                    getDataFromCart();
+                                                  } else {
+                                                    Helper.displaySnackbar(
+                                                        context,
+                                                        "Deletion failed");
+                                                  }
+                                                  // getCartProduct();
                                                 },
                                                 icon: Icon(
                                                   Icons.delete,
@@ -185,29 +195,25 @@ class _AddCartState extends State<AddCart> {
                                     Row(
                                       children: [
                                         IconButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                if (int.parse(productProvider
+                                            onPressed: () async {
+                                              if (int.parse(productProvider
+                                                      .cartList[index]
+                                                      .quantity!) >
+                                                  1) {
+                                                currentQuantity = int.parse(
+                                                    productProvider
                                                         .cartList[index]
-                                                        .quantity!) >
-                                                    1) {
-                                                  currentQuantity = int.parse(
+                                                        .quantity!);
+                                                currentQuantity--;
+                                                productProvider.cartList[index]
+                                                        .quantity =
+                                                    currentQuantity.toString();
+                                              }
+                                              await productProvider
+                                                  .updateQuantity(
                                                       productProvider
-                                                          .cartList[index]
-                                                          .quantity!);
-                                                  currentQuantity--;
-                                                  productProvider
-                                                          .cartList[index]
-                                                          .quantity =
-                                                      currentQuantity
-                                                          .toString();
-                                                  productProvider
-                                                      .updateQuantity(
-                                                          productProvider
-                                                              .cartList[index]);
-                                                  getCartProduct();
-                                                }
-                                              });
+                                                          .cartList[index]);
+                                              getCartProduct();
                                             },
                                             icon: Icon(Icons.remove)),
                                         Container(
@@ -220,18 +226,21 @@ class _AddCartState extends State<AddCart> {
                                           ),
                                         ),
                                         IconButton(
-                                            onPressed: () {
-                                              currentQuantity = int.parse(
-                                                  productProvider
-                                                      .cartList[index]
-                                                      .quantity!);
-                                              currentQuantity++;
-                                              productProvider.cartList[index]
-                                                      .quantity =
-                                                  currentQuantity.toString();
-                                              productProvider.updateQuantity(
-                                                  productProvider
-                                                      .cartList[index]);
+                                            onPressed: () async {
+                                              setState(() {
+                                                currentQuantity = int.parse(
+                                                    productProvider
+                                                        .cartList[index]
+                                                        .quantity!);
+                                                currentQuantity++;
+                                                productProvider.cartList[index]
+                                                        .quantity =
+                                                    currentQuantity.toString();
+                                              });
+                                              await productProvider
+                                                  .updateQuantity(
+                                                      productProvider
+                                                          .cartList[index]);
                                               getCartProduct();
                                             },
                                             icon: Icon(Icons.add)),

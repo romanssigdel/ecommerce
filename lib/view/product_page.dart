@@ -2,12 +2,14 @@ import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/model/cart.dart';
 import 'package:ecommerce/model/product.dart';
+import 'package:ecommerce/model/rate.dart';
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/view/add_cart.dart';
 import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,6 +36,16 @@ class _ProductPageState extends State<ProductPage> {
       () async {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         userId = prefs.getString("userId");
+      },
+    );
+  }
+
+  getUserData() async {
+    Future.delayed(
+      Duration.zero,
+      () async {
+        var provider = Provider.of<ProductProvider>(context, listen: false);
+        await provider.getRatingOfProducts();
       },
     );
   }
@@ -199,11 +211,44 @@ class _ProductPageState extends State<ProductPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.45,
+                        width: MediaQuery.of(context).size.width * 0.39,
                         child: CustomButton(
                           backgroundColor: Colors.redAccent,
                           foregroundColor: buttonForegroundColor,
-                          onPressed: () {},
+                          onPressed: () async {
+                            Rate rate = Rate(
+                              productId: widget.data.id,
+                              isRated: true,
+                              userId: userId,
+                              rating: productProvider.ratingController.text,
+                              image: widget.data.image,
+                              name: widget.data.name,
+                              category: widget.data.category,
+                              price: widget.data.price,
+                              model: widget.data.model,
+                              cpu: widget.data.cpu,
+                              operatingSystem: widget.data.operatingSystem,
+                              memory: widget.data.memory,
+                              storage: widget.data.storage,
+                              screen: widget.data.screen,
+                              graphics: widget.data.graphics,
+                              wirelessConnectivity:
+                                  widget.data.wirelessConnectivity,
+                              camera: widget.data.camera,
+                              warranty: widget.data.warranty,
+                              description: widget.data.description,
+                            );
+                            
+                            await productProvider.addRatingToProducts(rate);
+                            if (productProvider.addRatingToProduct ==
+                                StatusUtil.success) {
+                              Helper.displaySnackbar(
+                                  context, "Product Successfully Rated");
+                            } else {
+                              Helper.displaySnackbar(
+                                  context, "Product Rating Failed!");
+                            }
+                          },
                           child: Row(
                             children: [
                               Icon(
@@ -219,23 +264,27 @@ class _ProductPageState extends State<ProductPage> {
                           ),
                         ),
                       ),
-                      // SizedBox(
-                      //   width: MediaQuery.of(context).size.width * 0.45,
-                      //   child: CustomButton(
-                      //     backgroundColor: Colors.redAccent,
-                      //     foregroundColor: buttonForegroundColor,
-                      //     onPressed: () {},
-                      //     child: const Row(children: [
-                      //       Icon(
-                      //         Icons.favorite,
-                      //       ),
-                      //       SizedBox(
-                      //         width: 1,
-                      //       ),
-                      //       Text("Add to favorites")
-                      //     ]),
-                      //   ),
-                      // )
+                      SizedBox(
+                        width: 3,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.55,
+                        child: RatingBar.builder(
+                          initialRating: 3,
+                          minRating: 1,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemBuilder: (context, _) => Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                          ),
+                          onRatingUpdate: (rating) {
+                            productProvider.setRating(rating.toString());
+                          },
+                          ignoreGestures: false,
+                        ),
+                      ),
                     ],
                   ),
                 )
