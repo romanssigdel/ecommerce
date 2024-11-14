@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _filteredCars(String query) {
+  void _filteredProducts(String query) {
     final productProvider =
         Provider.of<ProductProvider>(context, listen: false);
     List<Product> results = [];
@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> {
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey[200],
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
                       boxShadow: [
                         BoxShadow(
@@ -161,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                         contentPadding: EdgeInsets.symmetric(vertical: 14.0),
                         hintText: "Search...",
                       ),
-                      onChanged: _filteredCars,
+                      onChanged: _filteredProducts,
                     ),
                   ),
                 ),
@@ -179,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.18,
+                  height: 100,
                   width: MediaQuery.of(context).size.width * 0.97,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
@@ -196,18 +196,25 @@ class _HomePageState extends State<HomePage> {
                               ));
                         },
                         child: Card(
-                          child: Column(
-                            children: [
-                              ClipRRect(
-                                child: Image.asset(
-                                  productProvider.categoryImages[index],
-                                  height: 120,
-                                  width: 150,
-                                  fit: BoxFit.contain,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              // border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.white,
+                            ),
+                            child: Column(
+                              children: [
+                                ClipRRect(
+                                  child: Image.asset(
+                                    productProvider.categoryImages[index],
+                                    height: 70,
+                                    width: 115,
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
-                              ),
-                              Text(productProvider.categories[index])
-                            ],
+                                Text(productProvider.categories[index])
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -235,139 +242,170 @@ class _HomePageState extends State<HomePage> {
                     width: MediaQuery.of(context).size.width * 1,
                     child: GridView.count(
                       crossAxisSpacing: 1,
-                      mainAxisSpacing: 4,
+                      mainAxisSpacing: 6,
                       crossAxisCount: 2,
+                      childAspectRatio: 0.7,
                       scrollDirection: Axis.vertical,
-                      physics: ScrollPhysics(),
+                      physics: const ScrollPhysics(),
                       children: List.generate(filteredProducts.length, (index) {
-                        return Center(
-                          child: SizedBox(
-                            height: 200,
-                            width: 300,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProductPage(
-                                      data: productProvider.productslist[index],
-                                    ),
+                        var product = filteredProducts[index];
+                        productProvider.calculateAverageRating(product.id!);
+                        double averageRating = 0.0;
+                        int totalReviews = 0;
+
+                        // Check if ratings exist for this product in the provider
+                        if (productProvider.productRatings
+                            .containsKey(product.id)) {
+                          averageRating = productProvider
+                                  .productRatings[product.id]?['average'] ??
+                              0.0;
+                          totalReviews = productProvider
+                                  .productRatings[product.id]?['count'] ??
+                              0;
+                        }
+
+                        return SizedBox(
+                          height: 300,
+                          width: 300,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProductPage(
+                                    data: productProvider.productslist[index],
                                   ),
-                                );
-                              },
-                              child: Card(
-                                child: SizedBox(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      filteredProducts[index].image != null
-                                          ? ClipRRect(
-                                              borderRadius:
-                                                  BorderRadiusDirectional.only(
-                                                      topEnd:
-                                                          Radius.circular(10),
-                                                      topStart:
-                                                          Radius.circular(10)),
-                                              child: FadeInImage(
-                                                placeholder: AssetImage(
-                                                    'assets/images/placeholder.png'), // Use an asset image placeholder or use `Shimmer` widget here
-                                                image: NetworkImage(
-                                                    filteredProducts[index]
-                                                        .image!),
-                                                height: 120,
-                                                width: 177,
-                                                fit: BoxFit.fill,
-                                                imageErrorBuilder: (context,
-                                                    error, stackTrace) {
-                                                  return Shimmer.fromColors(
-                                                    baseColor: Colors.red,
-                                                    highlightColor:
-                                                        Colors.yellow,
-                                                    child: Container(
-                                                      color: Colors.grey,
-                                                      height: 120,
-                                                      width: 177,
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Text(
-                                                        'Image Error',
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                          fontSize: 20.0,
-                                                          color: Colors.white,
-                                                        ),
+                                ),
+                              );
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 5.0, vertical: 5),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      spreadRadius: 2,
+                                      blurRadius: 3,
+                                      offset: Offset(0, 3), // Shadow position
+                                    ),
+                                  ],
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.white,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    filteredProducts[index].image != null
+                                        ? ClipRRect(
+                                            borderRadius:
+                                                BorderRadiusDirectional.only(
+                                                    topEnd: Radius.circular(10),
+                                                    topStart:
+                                                        Radius.circular(10)),
+                                            child: FadeInImage(
+                                              placeholder: AssetImage(
+                                                  'assets/images/placeholder.png'), // Use an asset image placeholder or use `Shimmer` widget here
+                                              image: NetworkImage(
+                                                  filteredProducts[index]
+                                                      .image!),
+                                              height: 180,
+                                              width: 220,
+                                              fit: BoxFit.fill,
+                                              imageErrorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Shimmer.fromColors(
+                                                  baseColor: Colors.red,
+                                                  highlightColor: Colors.yellow,
+                                                  child: Container(
+                                                    color: Colors.grey,
+                                                    height: 180,
+                                                    width: 220,
+                                                    alignment: Alignment.center,
+                                                    child: Text(
+                                                      'Image Error',
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: TextStyle(
+                                                        fontSize: 20.0,
+                                                        color: Colors.white,
                                                       ),
                                                     ),
-                                                  );
-                                                },
-                                                placeholderErrorBuilder:
-                                                    (context, error,
-                                                        stackTrace) {
-                                                  return Shimmer.fromColors(
-                                                    baseColor:
-                                                        Colors.grey[300]!,
-                                                    highlightColor:
-                                                        Colors.grey[100]!,
-                                                    child: Container(
-                                                      color: Colors.white,
-                                                      height: 120,
-                                                      width: 177,
-                                                      alignment:
-                                                          Alignment.center,
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            )
-                                          : Shimmer.fromColors(
-                                              baseColor: Colors.red,
-                                              highlightColor: Colors.yellow,
-                                              child: Container(
-                                                height: 120,
-                                                width: 177,
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  'Shimmer',
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                    fontSize: 40.0,
-                                                    fontWeight: FontWeight.bold,
                                                   ),
+                                                );
+                                              },
+                                              placeholderErrorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Shimmer.fromColors(
+                                                  baseColor: Colors.grey[300]!,
+                                                  highlightColor:
+                                                      Colors.grey[100]!,
+                                                  child: Container(
+                                                    color: Colors.white,
+                                                    height: 180,
+                                                    width: 220,
+                                                    alignment: Alignment.center,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          )
+                                        : Shimmer.fromColors(
+                                            baseColor: Colors.red,
+                                            highlightColor: Colors.yellow,
+                                            child: Container(
+                                              height: 180,
+                                              width: 220,
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                'Shimmer',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontSize: 40.0,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
-
-                                      // Image.network(
-                                      //   productProvider
-                                      //       .productslist[index].image!,
-                                      //   height: 120,
-                                      //   width: 177,
-                                      //   fit: BoxFit.cover,
-                                      // ),
-                                      SizedBox(
-                                        height: 5,
+                                          ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 10.0),
+                                      child:
+                                          Text(filteredProducts[index].name!),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 10.0),
+                                      child: Text(
+                                        "Rs." + filteredProducts[index].price!,
+                                        style: TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.bold),
                                       ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 5.0),
-                                        child:
-                                            Text(filteredProducts[index].name!),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 10.0),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.star,
+                                            color: Colors.orange,
+                                            size: 16,
+                                          ),
+                                          SizedBox(
+                                            width: 4,
+                                          ),
+                                          Text(
+                                              "${(averageRating.toStringAsFixed(1))}/5 (${(totalReviews.toStringAsFixed(1))})")
+                                        ],
                                       ),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 8.0),
-                                        child: Text(
-                                          "Rs." +
-                                              filteredProducts[index].price!,
-                                          style: TextStyle(
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                    )
+                                  ],
                                 ),
                               ),
                             ),

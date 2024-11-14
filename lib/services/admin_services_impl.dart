@@ -315,14 +315,33 @@ class AdminServicesImpl implements AdminServices {
   }
 
   @override
-  Future<ApiResponse> getRatingOfProduct() async {
+  Future<ApiResponse> checkRatingOfProduct(String id, String userId) async {
+    if (id.isEmpty || userId.isEmpty) {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, data: "Invalid product or user ID");
+    }
+
     if (await Helper().isInternetConnectionAvailable()) {
       try {
-        var value = await FirebaseFirestore.instance.collection("rating").get();
-        var ratingList =
-            value.docs.map((e) => Rate.fromJson(e.data())).toList();
+        // Fetch the documents that match both id and userId
+        var value = await FirebaseFirestore.instance
+            .collection("rating")
+            .where("productId", isEqualTo: id)
+            .where("userId", isEqualTo: userId)
+            .get();
 
-        return ApiResponse(statusUtil: StatusUtil.success, data: ratingList);
+        // Debug: Check how many documents are returned
+        print("Documents found: ${value.docs.length}");
+
+        // If any document is found, it means the user has already rated the product
+        if (value.docs.isNotEmpty) {
+          // Debug: Print the data of the first document found
+          print("Rating found: ${value.docs.first.data()}");
+
+          return ApiResponse(statusUtil: StatusUtil.success, data: true);
+        } else {
+          return ApiResponse(statusUtil: StatusUtil.success, data: false);
+        }
       } catch (e) {
         return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
       }
@@ -331,4 +350,23 @@ class AdminServicesImpl implements AdminServices {
           statusUtil: StatusUtil.error, data: noInternetConectionStr);
     }
   }
+
+  // @override
+  // Future<ApiResponse> getUserRatingOfProducts() async {
+  //   if (await Helper().isInternetConnectionAvailable()) {
+  //     try {
+  //       var value = await FirebaseFirestore.instance.collection("rating").get();
+  //       var ratingList =
+  //           value.docs.map((e) => Rate.fromJson(e.data())).toList();
+        
+  //       return ApiResponse(statusUtil: StatusUtil.success, data: ratingList);
+  //     } catch (e) {
+  //       return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
+  //     }
+  //   } else {
+  //     return ApiResponse(
+  //         statusUtil: StatusUtil.error, data: noInternetConectionStr);
+  //   }
+  // }
+  
 }

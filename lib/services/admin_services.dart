@@ -11,7 +11,7 @@ abstract class AdminServices {
   Future<ApiResponse> addProductToCart(Cart cart);
   Future<ApiResponse> getProductFromCart();
   Future<ApiResponse> updateProductQuantity(Cart cart);
-  Future<ApiResponse> deleteProductFromCart(String id,String userId);
+  Future<ApiResponse> deleteProductFromCart(String id, String userId);
 
   //Checks if the cart doesnot have any redundancy
   // User should not be able to add if the product is already added to the cart.
@@ -27,5 +27,7 @@ abstract class AdminServices {
   // Adding rating to the product
   Future<ApiResponse> addRatingToProduct(Rate rate);
 
-  Future<ApiResponse> getRatingOfProduct();
+  Future<ApiResponse> checkRatingOfProduct(String id, String userId);
+
+  // Future<ApiResponse> getUserRatingOfProducts();
 }

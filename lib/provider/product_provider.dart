@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce/core/api_response.dart';
 import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/model/cart.dart';
@@ -44,12 +45,18 @@ class ProductProvider extends ChangeNotifier {
   String? isSuccess;
   bool? isSuccessProductInCart;
   bool? updateSuccess;
+  bool? isAlreadyRated;
+
   bool? isSuccessfullyProductDeleted;
   TextEditingController? imageTextField;
   List<Product> productslist = [];
   List<Cart> cartList = [];
   List<Orders> orderList = [];
-  List<Rate> ratingList = [];
+
+  // Map<String, List<double>> ratingList = {};
+  // Map<String, List<int>> totalNoOfRatings = {};
+
+  Map<String, Map<String, dynamic>> productRatings = {};
 
   // Rating controller text
   TextEditingController ratingController = TextEditingController();
@@ -194,6 +201,9 @@ class ProductProvider extends ChangeNotifier {
   StatusUtil? _addRatingToProduct = StatusUtil.none;
   StatusUtil? get addRatingToProduct => _addRatingToProduct;
 
+  StatusUtil? _checkRatingOfProduct = StatusUtil.none;
+  StatusUtil? get checkRatingOfProduct => _checkRatingOfProduct;
+
   StatusUtil? _getRatingOfProduct = StatusUtil.none;
   StatusUtil? get getRatingOfProduct => _getRatingOfProduct;
 
@@ -249,6 +259,11 @@ class ProductProvider extends ChangeNotifier {
 
   setAddRatingToProduct(StatusUtil statusUtil) {
     _addRatingToProduct = statusUtil;
+    notifyListeners();
+  }
+
+  setCheckRatingOfProduct(StatusUtil statusUtil) {
+    _checkRatingOfProduct = statusUtil;
     notifyListeners();
   }
 
@@ -357,11 +372,12 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteProductCart(String id,String userId) async {
+  Future<void> deleteProductCart(String id, String userId) async {
     if (_deleteProductsInCart != StatusUtil.loading) {
       setDeleteStatus(StatusUtil.loading);
     }
-    ApiResponse apiResponse = await adminServices.deleteProductFromCart(id,userId);
+    ApiResponse apiResponse =
+        await adminServices.deleteProductFromCart(id, userId);
     if (apiResponse.statusUtil == StatusUtil.success) {
       isSuccessfullyProductDeleted = apiResponse.data;
       setDeleteProductFromCart(StatusUtil.success);
@@ -447,18 +463,75 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getRatingOfProducts() async {
-    if (_getRatingOfProduct != StatusUtil.loading) {
-      setGetRatingOfProduct(StatusUtil.loading);
+  Future<void> checkRatingOfProducts(String id, String userId) async {
+    if (_checkRatingOfProduct != StatusUtil.loading) {
+      setCheckRatingOfProduct(StatusUtil.loading);
     }
-    ApiResponse response = await adminServices.getRatingOfProduct();
+    ApiResponse response = await adminServices.checkRatingOfProduct(id, userId);
 
     if (response.statusUtil == StatusUtil.success) {
-      ratingList = response.data;
-      setGetRatingOfProduct(StatusUtil.success);
+      isAlreadyRated = response.data;
+      setCheckRatingOfProduct(StatusUtil.success);
     } else if (response.statusUtil == StatusUtil.error) {
-      setGetRatingOfProduct(StatusUtil.error);
+      setCheckRatingOfProduct(StatusUtil.error);
       errorMessage = response.errorMessage;
+    }
+  }
+
+  // Future<void> getRatingOfProducts() async {
+  //   if (_getRatingOfProduct != StatusUtil.loading) {
+  //     setGetRatingOfProduct(StatusUtil.loading);
+  //   }
+  //   ApiResponse response = await adminServices.getUserRatingOfProducts();
+
+  //   if (response.statusUtil == StatusUtil.success) {
+  //     ratingList = response.data;
+  //     setGetRatingOfProduct(StatusUtil.success);
+  //   } else if (response.statusUtil == StatusUtil.error) {
+  //     setGetRatingOfProduct(StatusUtil.error);
+  //     errorMessage = response.errorMessage;
+  //   }
+  // }
+
+  Future<void> calculateAverageRating(String productId) async {
+    try {
+      // Fetch ratings for the specific product
+      QuerySnapshot ratingSnapshot = await FirebaseFirestore.instance
+          .collection("rating")
+          .where("productId", isEqualTo: productId)
+          .get();
+
+      if (ratingSnapshot.docs.isNotEmpty) {
+        double totalRating = 0;
+        int count = 0;
+
+        // Calculate total rating and count the number of ratings
+        for (var doc in ratingSnapshot.docs) {
+          var data = doc.data() as Map<String, dynamic>;
+          totalRating += double.parse(data["rating"]);
+          count++;
+        }
+
+        // Calculate average rating
+        double average = totalRating / count;
+
+        // Store the average and total number of reviews in the productRatings map
+        productRatings[productId] = {
+          'average': average, // Store average rating
+          'count': count, // Store the number of ratings
+        };
+      } else {
+        // Default values if no ratings are available
+        productRatings[productId] = {
+          'average': 0.0, // Default average
+          'count': 0, // Default count
+        };
+      }
+
+      // Notify listeners to update the UI
+      notifyListeners();
+    } catch (e) {
+      print("Error calculating average rating: $e");
     }
   }
 }

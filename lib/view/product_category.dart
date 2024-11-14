@@ -57,7 +57,7 @@ class _ProductCategoryState extends State<ProductCategory> {
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height * 1,
                     width: MediaQuery.of(context).size.width * 1,
-                    child: GridView.count(
+                  child: GridView.count(
                       crossAxisSpacing: 1,
                       mainAxisSpacing: 4,
                       crossAxisCount: 2,
