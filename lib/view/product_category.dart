@@ -1,3 +1,4 @@
+import 'package:ecommerce/model/product.dart';
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/view/product_page.dart';
@@ -15,14 +16,13 @@ class ProductCategory extends StatefulWidget {
 
 class _ProductCategoryState extends State<ProductCategory> {
   @override
-  List<dynamic> filteredList = [];
-
   void initState() {
     // TODO: implement initState
     super.initState();
     getProductData();
   }
 
+  List<dynamic> filteredList = [];
   getProductData() {
     Future.delayed(
       Duration.zero,
@@ -32,8 +32,30 @@ class _ProductCategoryState extends State<ProductCategory> {
         filteredList = provider.productslist
             .where((product) => product.category == widget.data)
             .toList();
+        // bubbleSortProductsByRating(filteredList, provider);
+        // setState(() {});
       },
     );
+  }
+
+  void bubbleSortProductsByRating(
+      List<Product> products, ProductProvider productProvider) {
+    int n = products.length;
+    for (int i = 0; i < n - 1; i++) {
+      for (int j = 0; j < n - i - 1; j++) {
+        double ratingA =
+            productProvider.productRatings[products[j].id]?['average'] ?? 0.0;
+        double ratingB = productProvider.productRatings[products[j + 1].id]
+                ?['average'] ??
+            0.0;
+
+        if (ratingA < ratingB) {
+          Product temp = products[j];
+          products[j] = products[j + 1];
+          products[j + 1] = temp;
+        }
+      }
+    }
   }
 
   Widget build(BuildContext context) {

@@ -165,6 +165,11 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  setUpdateProduct(StatusUtil statusUtil) {
+    _updateProductStatus = statusUtil;
+    notifyListeners();
+  }
+
   StatusUtil? _saveProductStatus = StatusUtil.none;
   StatusUtil? get saveProductStatus => _saveProductStatus;
 
@@ -173,6 +178,9 @@ class ProductProvider extends ChangeNotifier {
 
   StatusUtil? _deleteProductStatus = StatusUtil.none;
   StatusUtil? get deleteProductStatus => _deleteProductStatus;
+
+  StatusUtil? _updateProductStatus = StatusUtil.none;
+  StatusUtil? get updateProductStatus => _updateProductStatus;
 
   StatusUtil? _saveProductToCart = StatusUtil.none;
   StatusUtil? get saveProductToCart => _saveProductToCart;
@@ -292,12 +300,44 @@ class ProductProvider extends ChangeNotifier {
         graphics: graphics,
         wirelessConnectivity: wirelessConnectivity,
         camera: camera,
-        warranty: warranty);
+        warranty: warranty,
+        description: productDescription);
     ApiResponse response = await adminServices.saveProduct(product);
     if (response.statusUtil == StatusUtil.success) {
       setSaveStatusProductName(StatusUtil.success);
     } else if (response.statusUtil == StatusUtil.error) {
       setSaveStatusProductName(StatusUtil.error);
+      errorMessage = response.errorMessage;
+    }
+  }
+
+  Future<void> updateProduct(String id) async {
+    if (_updateProductStatus != StatusUtil.loading) {
+      setUpdateProduct(StatusUtil.loading);
+    }
+    Product product = Product(
+        id: id,
+        name: productName,
+        quantity: productQuantity,
+        image: imageTextField!.text,
+        price: productPrice,
+        category: productCategory,
+        model: model,
+        cpu: cpu,
+        operatingSystem: opertingSystem,
+        memory: memory,
+        storage: storage,
+        screen: screen,
+        graphics: graphics,
+        wirelessConnectivity: wirelessConnectivity,
+        camera: camera,
+        warranty: warranty,
+        description: productDescription);
+    ApiResponse response = await adminServices.updateProduct(id, product);
+    if (response.statusUtil == StatusUtil.success) {
+      setUpdateProduct(StatusUtil.success);
+    } else if (response.statusUtil == StatusUtil.error) {
+      setUpdateProduct(StatusUtil.error);
       errorMessage = response.errorMessage;
     }
   }

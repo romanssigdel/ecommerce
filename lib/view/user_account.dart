@@ -13,6 +13,7 @@ import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
 import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/signin_form.dart';
+import 'package:ecommerce/view/update_product.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -65,26 +66,26 @@ class _UserAccountState extends State<UserAccount> {
 
   @override
   void initState() {
-    if (widget.product != null) {
-      var provider = Provider.of<ProductProvider>(context, listen: false);
-      provider.setProductId(widget.product!.id ?? "");
-      provider.setProductName(widget.product!.name ?? "");
-      provider.setProductPrice(widget.product!.price ?? "");
-      provider.setCamera(widget.product!.camera ?? "");
-      provider.setProductCategory(widget.product!.category ?? "");
-      provider.setCpu(widget.product!.cpu ?? "");
-      provider.setProductDescription(widget.product!.description ?? "");
-      provider.setGraphics(widget.product!.graphics ?? "");
-      provider.setProductImage(widget.product!.image ?? "");
-      provider.setMemory(widget.product!.memory ?? "");
-      provider.setModel(widget.product!.model ?? "");
-      provider.setOperatingSystem(widget.product!.operatingSystem ?? "");
-      provider.setScreen(widget.product!.screen ?? "");
-      provider.setStorage(widget.product!.storage ?? "");
-      provider.setWaranty(widget.product!.warranty ?? "");
-      provider
-          .setWirelessConnectivity(widget.product!.wirelessConnectivity ?? "");
-    }
+    // if (widget.product != null) {
+    //   var provider = Provider.of<ProductProvider>(context, listen: false);
+    //   provider.setProductId(widget.product!.id ?? "");
+    //   provider.setProductName(widget.product!.name ?? "");
+    //   provider.setProductPrice(widget.product!.price ?? "");
+    //   provider.setCamera(widget.product!.camera ?? "");
+    //   provider.setProductCategory(widget.product!.category ?? "");
+    //   provider.setCpu(widget.product!.cpu ?? "");
+    //   provider.setProductDescription(widget.product!.description ?? "");
+    //   provider.setGraphics(widget.product!.graphics ?? "");
+    //   provider.setProductImage(widget.product!.image ?? "");
+    //   provider.setMemory(widget.product!.memory ?? "");
+    //   provider.setModel(widget.product!.model ?? "");
+    //   provider.setOperatingSystem(widget.product!.operatingSystem ?? "");
+    //   provider.setScreen(widget.product!.screen ?? "");
+    //   provider.setStorage(widget.product!.storage ?? "");
+    //   provider.setWaranty(widget.product!.warranty ?? "");
+    //   provider
+    //       .setWirelessConnectivity(widget.product!.wirelessConnectivity ?? "");
+    // }
     // TODO: implement initState
     super.initState();
     getValue();
@@ -132,32 +133,32 @@ class _UserAccountState extends State<UserAccount> {
   }
 
   File file = File("");
+  final _formKey = GlobalKey<FormState>();
   String? downloadUrl;
   bool loader = false;
-  final _formKey = GlobalKey<FormState>();
   String? productName, description, category;
   Double? price;
 
-  void clearForm(ProductProvider productProvider) {
-    _formKey.currentState?.reset(); // Resets the form's state
+  // void clearForm(ProductProvider productProvider) {
+  //   _formKey.currentState?.reset(); // Resets the form's state
 
-    // Clear product data in provider
-    productProvider.setProductName("");
-    productProvider.setProductPrice("");
-    productProvider.setProductCategory("");
-    productProvider.setModel("");
-    productProvider.setCpu("");
-    productProvider.setOperatingSystem("");
-    productProvider.setMemory("");
-    productProvider.setStorage("");
-    productProvider.setScreen("");
-    productProvider.setGraphics("");
-    productProvider.setWirelessConnectivity("");
-    productProvider.setCamera("");
-    productProvider.setWaranty("");
-    productProvider.setProductDescription("");
-    setState(() {});
-  }
+  //   // Clear product data in provider
+  //   productProvider.setProductName("");
+  //   productProvider.setProductPrice("");
+  //   productProvider.setProductCategory("");
+  //   productProvider.setModel("");
+  //   productProvider.setCpu("");
+  //   productProvider.setOperatingSystem("");
+  //   productProvider.setMemory("");
+  //   productProvider.setStorage("");
+  //   productProvider.setScreen("");
+  //   productProvider.setGraphics("");
+  //   productProvider.setWirelessConnectivity("");
+  //   productProvider.setCamera("");
+  //   productProvider.setWaranty("");
+  //   productProvider.setProductDescription("");
+  //   setState(() {});
+  // }
 
   getOrderFromCart() async {
     Future.delayed(
@@ -337,8 +338,8 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue:
-                                            productProvider.productName,
+                                        // initialValue:
+                                        //     productProvider.productName,
                                         onChanged: (value) {
                                           productProvider.setProductName(value);
                                         },
@@ -371,8 +372,8 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue:
-                                            productProvider.productPrice,
+                                        // initialValue:
+                                        //     productProvider.productPrice,
                                         keyboardType: TextInputType.number,
                                         onChanged: (value) {
                                           productProvider
@@ -391,11 +392,11 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue:
-                                            productProvider.productCategory,
+                                        // initialValue:
+                                        //     productProvider.productCategory,
                                         onChanged: (value) {
                                           productProvider
-                                              .setProductCategory(value);
+                                              .setProductQuantity(value);
                                         },
                                         validator: (value) {
                                           if (value!.isEmpty) {
@@ -410,8 +411,8 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue:
-                                            productProvider.productCategory,
+                                        // initialValue:
+                                        //     productProvider.productCategory,
                                         onChanged: (value) {
                                           productProvider
                                               .setProductCategory(value);
@@ -429,7 +430,7 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue: productProvider.model,
+                                        // initialValue: productProvider.model,
                                         onChanged: (value) {
                                           productProvider.setModel(value);
                                         },
@@ -446,7 +447,7 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue: productProvider.cpu,
+                                        // initialValue: productProvider.cpu,
                                         onChanged: (value) {
                                           productProvider.setCpu(value);
                                         },
@@ -457,8 +458,8 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue:
-                                            productProvider.opertingSystem,
+                                        // initialValue:
+                                        //     productProvider.opertingSystem,
                                         onChanged: (value) {
                                           productProvider
                                               .setOperatingSystem(value);
@@ -470,7 +471,7 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue: productProvider.memory,
+                                        // initialValue: productProvider.memory,
                                         onChanged: (value) {
                                           productProvider.setMemory(value);
                                         },
@@ -481,7 +482,7 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue: productProvider.storage,
+                                        // initialValue: productProvider.storage,
                                         onChanged: (value) {
                                           productProvider.setStorage(value);
                                         },
@@ -492,7 +493,7 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue: productProvider.screen,
+                                        // initialValue: productProvider.screen,
                                         onChanged: (value) {
                                           productProvider.setScreen(value);
                                         },
@@ -503,7 +504,7 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue: productProvider.graphics,
+                                        // initialValue: productProvider.graphics,
                                         onChanged: (value) {
                                           productProvider.setGraphics(value);
                                         },
@@ -514,8 +515,8 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue: productProvider
-                                            .wirelessConnectivity,
+                                        // initialValue: productProvider
+                                        //     .wirelessConnectivity,
                                         onChanged: (value) {
                                           productProvider
                                               .setWirelessConnectivity(value);
@@ -527,7 +528,7 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue: productProvider.camera,
+                                        // initialValue: productProvider.camera,
                                         onChanged: (value) {
                                           productProvider.setCamera(value);
                                         },
@@ -538,7 +539,7 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 10.0, horizontal: 10),
                                       child: CustomTextFormField(
-                                        initialValue: productProvider.warranty,
+                                        // initialValue: productProvider.warranty,
                                         onChanged: (value) {
                                           productProvider.setWaranty(value);
                                         },
@@ -549,8 +550,8 @@ class _UserAccountState extends State<UserAccount> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 8.0, horizontal: 10),
                                       child: TextFormField(
-                                        initialValue:
-                                            productProvider.productDescription,
+                                        // initialValue:
+                                        //     productProvider.productDescription,
                                         onChanged: (value) {
                                           productProvider
                                               .setProductDescription(value);
@@ -1528,15 +1529,19 @@ class _UserAccountState extends State<UserAccount> {
           actions: [
             TextButton(
               onPressed: () async {
-                Navigator.pushAndRemoveUntil(
+                // Navigator.pushAndRemoveUntil(
+                //     context,
+                //     MaterialPageRoute(
+                //       builder: (context) => UpdateProduct(
+
+                //       ),
+                //     ),
+                //     (route) => false);
+                Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => UserAccount(
-                        product: product,
-                      ),
-                    ),
-                    (route) => false);
-
+                      builder: (context) => UpdateProduct(data: product),
+                    ));
                 // Perform delete operation here
                 // Navigator.of(context).pop(); // Close the dialog
               },

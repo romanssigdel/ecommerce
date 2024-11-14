@@ -75,16 +75,32 @@ class AdminServicesImpl implements AdminServices {
   }
 
   @override
-  Future<ApiResponse> updateProduct(Product product) async {
+  Future<ApiResponse> updateProduct(String id, Product product) async {
     if (await Helper().isInternetConnectionAvailable()) {
       try {
+        // Fetch existing product data
+        DocumentSnapshot existingProductSnapshot = await FirebaseFirestore
+            .instance
+            .collection("products")
+            .doc(id)
+            .get();
+
+        // Convert the existing data to a map
+        Map<String, dynamic> existingData =
+            existingProductSnapshot.data() as Map<String, dynamic>;
+
+        // Update the existing data with new values from `product.toJson()`
+        existingData.addAll(product.toJson());
+
+        // Save the updated data back to Firestore
         await FirebaseFirestore.instance
             .collection("products")
-            .doc(product.id)
-            .update(product.toJson())
+            .doc(id)
+            .update(existingData)
             .then((value) {
           isSuccess = true;
         });
+
         return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
       } catch (e) {
         return ApiResponse(
@@ -350,23 +366,4 @@ class AdminServicesImpl implements AdminServices {
           statusUtil: StatusUtil.error, data: noInternetConectionStr);
     }
   }
-
-  // @override
-  // Future<ApiResponse> getUserRatingOfProducts() async {
-  //   if (await Helper().isInternetConnectionAvailable()) {
-  //     try {
-  //       var value = await FirebaseFirestore.instance.collection("rating").get();
-  //       var ratingList =
-  //           value.docs.map((e) => Rate.fromJson(e.data())).toList();
-        
-  //       return ApiResponse(statusUtil: StatusUtil.success, data: ratingList);
-  //     } catch (e) {
-  //       return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
-  //     }
-  //   } else {
-  //     return ApiResponse(
-  //         statusUtil: StatusUtil.error, data: noInternetConectionStr);
-  //   }
-  // }
-  
 }

@@ -59,18 +59,7 @@ class _ProductPageState extends State<ProductPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              icon: IconButton(
-                  onPressed: () {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CustomBottomNavigationBar(
-                            initialIndex: 0,
-                          ),
-                        ),
-                        (route) => false);
-                  },
-                  icon: Icon(Icons.arrow_back))),
+              icon: Icon(Icons.arrow_back)),
           backgroundColor: backGroundColor,
           foregroundColor: buttonForegroundColor,
         ),
@@ -131,7 +120,7 @@ class _ProductPageState extends State<ProductPage> {
                                     userId: userId,
                                     id: widget.data.id!,
                                     name: widget.data.name!,
-                                    quantity: widget.data.quantity!,
+                                    quantity: "1",
                                     price: widget.data.price!,
                                     image: widget.data.image!,
                                   );

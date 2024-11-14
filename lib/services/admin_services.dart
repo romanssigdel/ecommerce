@@ -7,7 +7,7 @@ abstract class AdminServices {
   Future<ApiResponse> saveProduct(Product product);
   Future<ApiResponse> getProduct();
   Future<ApiResponse> deleteProduct(String id);
-  Future<ApiResponse> updateProduct(Product product);
+  Future<ApiResponse> updateProduct(String id, Product product);
   Future<ApiResponse> addProductToCart(Cart cart);
   Future<ApiResponse> getProductFromCart();
   Future<ApiResponse> updateProductQuantity(Cart cart);
@@ -21,7 +21,7 @@ abstract class AdminServices {
   Future<ApiResponse> sendUserCartListToFirestore(
       List<dynamic> userCartList, String userId, String totalPrice);
 
-  Future<ApiResponse> deleteCartAfterPayment(String userId);
+  Future<ApiResponse> deleteCartAfterPayment(String useraId);
   Future<ApiResponse> getUserOrdersFromFirestore();
 
   // Adding rating to the product
