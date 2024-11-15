@@ -29,5 +29,8 @@ abstract class AdminServices {
 
   Future<ApiResponse> checkRatingOfProduct(String id, String userId);
 
-  // Future<ApiResponse> getUserRatingOfProducts();
+  Future<ApiResponse> checkIfUserPurchasedProduct(
+      String productId, String userId);
+
+  Future<ApiResponse> getUserEmailForOrders(String userId);
 }

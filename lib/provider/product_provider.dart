@@ -42,10 +42,13 @@ class ProductProvider extends ChangeNotifier {
       camera,
       warranty;
   String? errorMessage;
+  String? userEmailforOrder;
+
   String? isSuccess;
   bool? isSuccessProductInCart;
   bool? updateSuccess;
   bool? isAlreadyRated;
+  bool? hasPurchasedProduct;
 
   bool? isSuccessfullyProductDeleted;
   TextEditingController? imageTextField;
@@ -212,8 +215,11 @@ class ProductProvider extends ChangeNotifier {
   StatusUtil? _checkRatingOfProduct = StatusUtil.none;
   StatusUtil? get checkRatingOfProduct => _checkRatingOfProduct;
 
-  StatusUtil? _getRatingOfProduct = StatusUtil.none;
-  StatusUtil? get getRatingOfProduct => _getRatingOfProduct;
+  StatusUtil? _checkOrderForBoughtProduct = StatusUtil.none;
+  StatusUtil? get checkOrderForBoughtProduct => _checkOrderForBoughtProduct;
+
+  StatusUtil? _getUserEmailForOrder = StatusUtil.none;
+  StatusUtil? get getUserEmailForOrder => _getUserEmailForOrder;
 
   setgetUpdateQuantity(StatusUtil statusUtil) {
     _getUpdateQuantity = statusUtil;
@@ -275,8 +281,13 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  setGetRatingOfProduct(StatusUtil statusUtil) {
-    _getRatingOfProduct = statusUtil;
+  setCheckForBoughtProduct(StatusUtil statusUtil) {
+    _checkOrderForBoughtProduct = statusUtil;
+    notifyListeners();
+  }
+
+  setGetUserEmailForOrder(StatusUtil statusUtil) {
+    _getUserEmailForOrder = statusUtil;
     notifyListeners();
   }
 
@@ -518,20 +529,36 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  // Future<void> getRatingOfProducts() async {
-  //   if (_getRatingOfProduct != StatusUtil.loading) {
-  //     setGetRatingOfProduct(StatusUtil.loading);
-  //   }
-  //   ApiResponse response = await adminServices.getUserRatingOfProducts();
+  Future<void> checkOrderForBoughtProducts(
+      String productId, String userId) async {
+    if (_checkOrderForBoughtProduct != StatusUtil.loading) {
+      setCheckForBoughtProduct(StatusUtil.loading);
+    }
+    ApiResponse response =
+        await adminServices.checkIfUserPurchasedProduct(productId, userId);
 
-  //   if (response.statusUtil == StatusUtil.success) {
-  //     ratingList = response.data;
-  //     setGetRatingOfProduct(StatusUtil.success);
-  //   } else if (response.statusUtil == StatusUtil.error) {
-  //     setGetRatingOfProduct(StatusUtil.error);
-  //     errorMessage = response.errorMessage;
-  //   }
-  // }
+    if (response.statusUtil == StatusUtil.success) {
+      hasPurchasedProduct = response.data;
+      setCheckForBoughtProduct(StatusUtil.success);
+    } else if (response.statusUtil == StatusUtil.error) {
+      setCheckForBoughtProduct(StatusUtil.error);
+      errorMessage = response.errorMessage;
+    }
+  }
+
+  Future<void> getUserEmailForOrders(String userId) async {
+    if (_getUserEmailForOrder != StatusUtil.loading) {
+      setGetUserEmailForOrder(StatusUtil.loading);
+    }
+    ApiResponse response = await adminServices.getUserEmailForOrders(userId);
+    if (response.statusUtil == StatusUtil.success) {
+      userEmailforOrder = response.data;
+      setGetUserEmailForOrder(StatusUtil.success);
+    } else if (response.statusUtil == StatusUtil.error) {
+      setGetUserEmailForOrder(StatusUtil.error);
+      errorMessage = response.errorMessage;
+    }
+  }
 
   Future<void> calculateAverageRating(String productId) async {
     try {

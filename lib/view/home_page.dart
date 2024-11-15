@@ -45,16 +45,16 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  getProductData() async {
+  Future<void> getProductData() async {
     Future.delayed(
       Duration.zero,
       () async {
         var provider = Provider.of<ProductProvider>(context, listen: false);
         await provider.getProduct();
 
-        // for (var product in provider.productslist) {
-        //   await provider.calculateAverageRating(product.id!);
-        // }
+        await Future.forEach(provider.productslist, (product) async {
+          await provider.calculateAverageRating(product.id!);
+        });
 
         bubbleSortProductsByRating(provider.productslist, provider);
         setState(() {
@@ -296,16 +296,31 @@ class _HomePageState extends State<HomePage> {
                           width: 300,
                           child: GestureDetector(
                             onTap: () {
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //     builder: (context) => ProductPage(
+                              //       data: productProvider.productslist[index],
+                              //       averageRating: averageRating,
+                              //       totalCounts: totalReviews,
+                              //     ),
+                              //   ),
+                              // );
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ProductPage(
-                                    data: productProvider.productslist[index],
+                                    data: product,
                                     averageRating: averageRating,
                                     totalCounts: totalReviews,
                                   ),
                                 ),
-                              );
+                              ).then((shouldRefresh) {
+                                if (shouldRefresh == true) {
+                                  // Refresh products and sort them by their new ratings
+                                  getProductData();
+                                }
+                              });
                             },
                             child: Padding(
                               padding: const EdgeInsets.symmetric(

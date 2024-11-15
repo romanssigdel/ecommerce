@@ -689,6 +689,11 @@ class _UserAccountState extends State<UserAccount> {
                                     Column(
                                   children: [
                                     SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.50,
+                                      width: MediaQuery.of(context).size.width *
+                                          0.95,
                                       child: ListView.builder(
                                         scrollDirection: Axis.vertical,
                                         itemCount:
@@ -696,6 +701,10 @@ class _UserAccountState extends State<UserAccount> {
                                         itemBuilder: (context, orderIndex) {
                                           final order = productProvider
                                               .orderList[orderIndex];
+                                          productProvider.getUserEmailForOrders(
+                                              order.userId!);
+                                          final userEmail =
+                                              productProvider.userEmailforOrder;
                                           return Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 10.0, vertical: 10),
@@ -722,9 +731,24 @@ class _UserAccountState extends State<UserAccount> {
                                                         const EdgeInsets.all(
                                                             8.0),
                                                     child: Text(
+                                                      "User Email: $userEmail",
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Text(
                                                       "Order Date: ${order.orderDate?.toLocal().toString().split(' ')[0] ?? ''}",
                                                       style: TextStyle(
-                                                          fontSize: 16),
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold),
                                                     ),
                                                   ),
                                                   Padding(

@@ -24,6 +24,8 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   String? userId;
+  String? userRole;
+  bool? canRateProduct;
 
   @override
   void initState() {
@@ -35,15 +37,25 @@ class _ProductPageState extends State<ProductPage> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       userId = prefs.getString("userId");
+      userRole = prefs.getString("userRole");
     });
     if (userId != null) {
       await checkUserRatingOfProductData(widget.data.id, userId!);
+      await checkUserPurchase(widget.data.id, userId!);
     }
   }
 
   checkUserRatingOfProductData(String id, String userId) async {
     var provider = Provider.of<ProductProvider>(context, listen: false);
     await provider.checkRatingOfProducts(id, userId);
+  }
+
+  checkUserPurchase(String productId, String userId) async {
+    var provider = Provider.of<ProductProvider>(context, listen: false);
+    await provider.checkOrderForBoughtProducts(productId, userId);
+    setState(() {
+      canRateProduct = provider.hasPurchasedProduct;
+    });
   }
 
   @override
@@ -57,7 +69,7 @@ class _ProductPageState extends State<ProductPage> {
           ),
           leading: IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(context, true);
               },
               icon: Icon(Icons.arrow_back)),
           backgroundColor: backGroundColor,
@@ -66,10 +78,11 @@ class _ProductPageState extends State<ProductPage> {
         body: Consumer<ProductProvider>(
           builder: (context, productProvider, child) {
             // If loading, show the CircularProgressIndicator centered on the screen
-            if (productProvider.checkRatingOfProduct == StatusUtil.loading) {
+            if (productProvider.checkRatingOfProduct == StatusUtil.loading ||
+                productProvider.checkOrderForBoughtProduct ==
+                    StatusUtil.loading) {
               return Center(child: CircularProgressIndicator());
             }
-
             return Stack(
               children: [
                 SingleChildScrollView(
@@ -110,9 +123,15 @@ class _ProductPageState extends State<ProductPage> {
                                   final SharedPreferences prefs =
                                       await SharedPreferences.getInstance();
                                   userId = prefs.getString("userId");
+                                  userRole = prefs.getString("userRole");
                                   if (userId == null || userId!.isEmpty) {
                                     Helper.displaySnackbar(context,
                                         "Please login to your account!");
+                                    return;
+                                  }
+                                  if (userRole == "admin") {
+                                    Helper.displaySnackbar(context,
+                                        "Admin cannot add product to the cart!");
                                     return;
                                   }
 
@@ -262,111 +281,123 @@ class _ProductPageState extends State<ProductPage> {
                                 ),
                               ),
                             )
-                          : Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 10.0, left: 10, right: 10, bottom: 10),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.39,
-                                    child: CustomButton(
-                                      backgroundColor: Colors.redAccent,
-                                      foregroundColor: buttonForegroundColor,
-                                      onPressed: () async {
-                                        Rate rate = Rate(
-                                          productId: widget.data.id,
-                                          isRated: true,
-                                          userId: userId,
-                                          rating: productProvider
-                                              .ratingController.text,
-                                          image: widget.data.image,
-                                          name: widget.data.name,
-                                          category: widget.data.category,
-                                          price: widget.data.price,
-                                          model: widget.data.model,
-                                          cpu: widget.data.cpu,
-                                          operatingSystem:
-                                              widget.data.operatingSystem,
-                                          memory: widget.data.memory,
-                                          storage: widget.data.storage,
-                                          screen: widget.data.screen,
-                                          graphics: widget.data.graphics,
-                                          wirelessConnectivity:
-                                              widget.data.wirelessConnectivity,
-                                          camera: widget.data.camera,
-                                          warranty: widget.data.warranty,
-                                          description: widget.data.description,
-                                        );
+                          : userId == null ||
+                                  userRole == "admin" ||
+                                  canRateProduct == false
+                              ? const SizedBox()
+                              : Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 10.0,
+                                      left: 10,
+                                      right: 10,
+                                      bottom: 10),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.39,
+                                        child: CustomButton(
+                                          backgroundColor: Colors.redAccent,
+                                          foregroundColor:
+                                              buttonForegroundColor,
+                                          onPressed: () async {
+                                            Rate rate = Rate(
+                                              productId: widget.data.id,
+                                              isRated: true,
+                                              userId: userId,
+                                              rating: productProvider
+                                                  .ratingController.text,
+                                              image: widget.data.image,
+                                              name: widget.data.name,
+                                              category: widget.data.category,
+                                              price: widget.data.price,
+                                              model: widget.data.model,
+                                              cpu: widget.data.cpu,
+                                              operatingSystem:
+                                                  widget.data.operatingSystem,
+                                              memory: widget.data.memory,
+                                              storage: widget.data.storage,
+                                              screen: widget.data.screen,
+                                              graphics: widget.data.graphics,
+                                              wirelessConnectivity: widget
+                                                  .data.wirelessConnectivity,
+                                              camera: widget.data.camera,
+                                              warranty: widget.data.warranty,
+                                              description:
+                                                  widget.data.description,
+                                            );
 
-                                        await productProvider
-                                            .addRatingToProducts(rate);
-                                        if (productProvider
-                                                .addRatingToProduct ==
-                                            StatusUtil.success) {
-                                          Helper.displaySnackbar(context,
-                                              "Product Successfully Rated");
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    ProductPage(
-                                                  data: widget.data,
-                                                  averageRating:
-                                                      widget.averageRating,
-                                                  totalCounts:
-                                                      widget.totalCounts,
-                                                ),
-                                              ));
-                                        } else {
-                                          Helper.displaySnackbar(context,
-                                              "Product Rating Failed!");
-                                        }
-                                      },
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.star,
-                                            size: 18,
-                                            color: Colors.yellowAccent,
+                                            await productProvider
+                                                .addRatingToProducts(rate);
+                                            if (productProvider
+                                                    .addRatingToProduct ==
+                                                StatusUtil.success) {
+                                              Helper.displaySnackbar(context,
+                                                  "Product Successfully Rated");
+                                              // Navigator.push(
+                                              //     context,
+                                              //     MaterialPageRoute(
+                                              //       builder: (context) =>
+                                              //           ProductPage(
+                                              //         data: widget.data,
+                                              //         averageRating:
+                                              //             widget.averageRating,
+                                              //         totalCounts:
+                                              //             widget.totalCounts,
+                                              //       ),
+                                              //     ));
+                                              // Navigator.pop(context, true);
+                                            } else {
+                                              Helper.displaySnackbar(context,
+                                                  "Product Rating Failed!");
+                                            }
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.star,
+                                                size: 18,
+                                                color: Colors.yellowAccent,
+                                              ),
+                                              SizedBox(width: 4),
+                                              Text("Rate Product"),
+                                            ],
                                           ),
-                                          SizedBox(width: 4),
-                                          Text("Rate Product"),
-                                        ],
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 3),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.55,
-                                    child: RatingBar.builder(
-                                      initialRating: 3,
-                                      minRating: 1,
-                                      direction: Axis.horizontal,
-                                      allowHalfRating: true,
-                                      itemCount: 5,
-                                      itemBuilder: (context, _) => Icon(
-                                        Icons.star,
-                                        color: Colors.amber,
+                                      SizedBox(width: 3),
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.55,
+                                        child: RatingBar.builder(
+                                          initialRating: 3,
+                                          minRating: 1,
+                                          direction: Axis.horizontal,
+                                          allowHalfRating: true,
+                                          itemCount: 5,
+                                          itemBuilder: (context, _) => Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                          ),
+                                          onRatingUpdate: (rating) {
+                                            productProvider
+                                                .setRating(rating.toString());
+                                          },
+                                          ignoreGestures: false,
+                                        ),
                                       ),
-                                      onRatingUpdate: (rating) {
-                                        productProvider
-                                            .setRating(rating.toString());
-                                      },
-                                      ignoreGestures: false,
-                                    ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                            )
+                                )
                     ],
                   ),
                 ),
                 // Loading indicator centered on the screen
-                if (productProvider.checkRatingOfProduct != StatusUtil.success)
-                  Center(child: CircularProgressIndicator()),
+                // if (productProvider.checkRatingOfProduct != StatusUtil.success)
+                //   Center(child: CircularProgressIndicator()),
               ],
             );
           },

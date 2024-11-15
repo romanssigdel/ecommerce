@@ -366,4 +366,95 @@ class AdminServicesImpl implements AdminServices {
           statusUtil: StatusUtil.error, data: noInternetConectionStr);
     }
   }
+
+  // @override
+  // Future<ApiResponse> checkIfUserPurchasedProduct(
+  //     String productId, String userId) async {
+  //   try {
+  //     final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  //     // Query the orders collection to check if the user has purchased the product
+  //     QuerySnapshot querySnapshot = await firestore
+  //         .collection('orders')
+  //         .where('userId', isEqualTo: userId)
+  //         .where('items.products.id', arrayContains: productId)
+  //         .get();
+
+  //     // Check if any orders contain the product
+  //     bool hasPurchasedProduct = querySnapshot.docs.isNotEmpty;
+  //     print(querySnapshot.docs);
+  //     return ApiResponse(
+  //       statusUtil: StatusUtil.success,
+  //       data: hasPurchasedProduct,
+  //     );
+  //   } catch (e) {
+  //     return ApiResponse(
+  //       statusUtil: StatusUtil.error,
+  //       errorMessage: e.toString(),
+  //     );
+  //   }
+  // }
+  @override
+  Future<ApiResponse> checkIfUserPurchasedProduct(
+      String productId, String userId) async {
+    try {
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+      // Query Firestore to get all orders for the specified userId
+      QuerySnapshot querySnapshot = await firestore
+          .collection('orders')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      // Check if any order contains the productId in the products array
+      List<QueryDocumentSnapshot> matchingOrders = [];
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+        // Check if 'products' field exists and is a list
+        if (data['products'] != null && data['products'] is List) {
+          List<dynamic> products = data['products'];
+
+          // Check if any product in the list has the matching productId
+          bool productFound = products.any((product) =>
+              product is Map<String, dynamic> && product['id'] == productId);
+
+          if (productFound) {
+            matchingOrders.add(doc);
+          }
+        }
+      }
+
+      // Return the result as ApiResponse
+      bool hasPurchasedProduct = matchingOrders.isNotEmpty;
+
+      return ApiResponse(
+        statusUtil: StatusUtil.success,
+        data: hasPurchasedProduct,
+      );
+    } catch (e) {
+      return ApiResponse(
+        statusUtil: StatusUtil.error,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
+  @override
+  Future<ApiResponse> getUserEmailForOrders(String userId) async {
+    String? email;
+    try {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+      if (userDoc.exists) {
+        email = userDoc['email'];
+      }
+      return ApiResponse(statusUtil: StatusUtil.success, data: email);
+    } catch (e) {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, errorMessage: e.toString());
+    }
+  }
 }
