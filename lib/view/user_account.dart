@@ -703,8 +703,8 @@ class _UserAccountState extends State<UserAccount> {
                                               .orderList[orderIndex];
                                           productProvider.getUserEmailForOrders(
                                               order.userId!);
-                                          final userEmail =
-                                              productProvider.userEmailforOrder;
+                                          // final userEmail =
+                                          //     productProvider.userEmailforOrder;
                                           return Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 10.0, vertical: 10),
@@ -726,19 +726,19 @@ class _UserAccountState extends State<UserAccount> {
                                                       ),
                                                     ),
                                                   ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Text(
-                                                      "User Email: $userEmail",
-                                                      style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  ),
+                                                  // Padding(
+                                                  //   padding:
+                                                  //       const EdgeInsets.all(
+                                                  //           8.0),
+                                                  //   child: Text(
+                                                  //     "User Email: $userEmail",
+                                                  //     style: TextStyle(
+                                                  //       fontSize: 16,
+                                                  //       fontWeight:
+                                                  //           FontWeight.bold,
+                                                  //     ),
+                                                  //   ),
+                                                  // ),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.all(

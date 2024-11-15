@@ -172,7 +172,10 @@ class _AddCartState extends State<AddCart> {
                                                       .deleteProductCart(
                                                           productProvider
                                                               .cartList[index]
-                                                              .id!,productProvider.cartList[index].userId!);
+                                                              .id!,
+                                                          productProvider
+                                                              .cartList[index]
+                                                              .userId!);
                                                   if (productProvider
                                                           .deleteProductsInCart ==
                                                       StatusUtil.success) {
@@ -312,6 +315,12 @@ class _AddCartState extends State<AddCart> {
                                         userCartList,
                                         userId!,
                                         totalPrice.toString());
+
+                                    for (var product in userCartList) {
+                                      await productProvider.updateProductStock(
+                                          product.id,
+                                          int.parse(product.quantity!));
+                                    }
                                     await productProvider
                                         .deleteCartAfterPayment(userId!);
                                     getDataFromCart();

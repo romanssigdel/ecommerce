@@ -601,4 +601,38 @@ class ProductProvider extends ChangeNotifier {
       print("Error calculating average rating: $e");
     }
   }
+
+  Future<void> updateProductStock(
+      String productId, int purchasedQuantity) async {
+    try {
+      final FirebaseFirestore firestore = FirebaseFirestore.instance;
+      // Get the document for the specific product
+      DocumentSnapshot productSnapshot =
+          await firestore.collection('products').doc(productId).get();
+
+      // Check if the product exists
+      if (productSnapshot.exists) {
+        Map<String, dynamic> productData =
+            productSnapshot.data() as Map<String, dynamic>;
+
+        // Get the current stock quantity
+        int currentStock =
+            int.tryParse(productData['quantity'].toString()) ?? 0;
+
+        // Calculate the new quantity
+        int newStock = currentStock - purchasedQuantity;
+
+        // Ensure stock doesn't go below zero
+        if (newStock < 0) newStock = 0;
+
+        // Update the product quantity in Firestore
+        await firestore
+            .collection('products')
+            .doc(productId)
+            .update({'quantity': newStock.toString()});
+      }
+    } catch (e) {
+      print('Error updating product stock: $e');
+    }
+  }
 }
