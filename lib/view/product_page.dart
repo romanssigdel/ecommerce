@@ -25,6 +25,7 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   String? userId;
   String? userRole;
+  String? userEmail;
   bool? canRateProduct;
 
   @override
@@ -38,6 +39,7 @@ class _ProductPageState extends State<ProductPage> {
     setState(() {
       userId = prefs.getString("userId");
       userRole = prefs.getString("userRole");
+      userEmail = prefs.getString("userEmail");
     });
     if (userId != null) {
       await checkUserRatingOfProductData(widget.data.id, userId!);
@@ -137,6 +139,7 @@ class _ProductPageState extends State<ProductPage> {
 
                                   Cart cart = Cart(
                                     userId: userId,
+                                    userEmail: userEmail,
                                     id: widget.data.id!,
                                     name: widget.data.name!,
                                     quantity: "1",
@@ -190,76 +193,192 @@ class _ProductPageState extends State<ProductPage> {
                                             fontSize: 20,
                                             fontWeight: FontWeight.w900)),
                                     Spacer(),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 10.0, right: 10),
-                                      child: Row(
-                                        children: [
-                                          Text("Ratings: ",
-                                              style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w900)),
-                                          Icon(
-                                            Icons.star,
-                                            color: Colors.orange,
-                                            size: 16,
-                                          ),
-                                          SizedBox(
-                                            width: 4,
-                                          ),
-                                          Text(
-                                              "${(widget.averageRating.toStringAsFixed(1))}/5 (${(widget.totalCounts.toStringAsFixed(1))})")
-                                        ],
-                                      ),
-                                    ),
                                   ],
                                 ),
-                                const Text("Specification",
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.star,
+                                      color: Colors.orange,
+                                      size: 20,
+                                    ),
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    Text(
+                                        "${(widget.averageRating.toStringAsFixed(1))}/5 (${(widget.totalCounts.toStringAsFixed(1))})"),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "In Stock:",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                    Text(" ${(widget.data.quantity!)}")
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                const Text("Specifications",
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w900)),
-                                Text("Model: ${widget.data.model!}",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w900)),
-                                Text("Cpu: ${widget.data.cpu!}",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w900)),
-                                Text(
-                                    "Operating System: ${widget.data.operatingSystem!}",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w900)),
-                                Text("Memory: ${widget.data.memory!}",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w900)),
-                                Text("Storage: ${widget.data.storage!}",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w900)),
-                                Text("Camera: ${widget.data.camera!}",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w900)),
-                                Text("Storage: ${widget.data.storage!}",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w900)),
-                                Text("Screen: ${widget.data.screen!}",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w900)),
-                                Text("Warranty: ${widget.data.warranty!}",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w900)),
-                                Text(
-                                    "Wireless Connectivity: ${widget.data.wirelessConnectivity!}",
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w900)),
+                                Row(
+                                  children: [
+                                    Text("Model:",
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w900)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${widget.data.model!}",
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text("Cpu:",
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w900)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${widget.data.cpu!}",
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text("OS:",
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w900)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text("${widget.data.operatingSystem!}")
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text("Memory:",
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w900)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${widget.data.memory!}",
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text("Storage: ",
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w900)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${widget.data.storage!}",
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text("Camera:",
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w900)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${widget.data.camera!}",
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text("Graphics:",
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w900)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${widget.data.graphics!}",
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text("Screen:",
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w900)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${widget.data.screen!}",
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text("Warranty:",
+                                        style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w900)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${widget.data.warranty!}",
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text("Wireless Connectivity:",
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w900)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${widget.data.wirelessConnectivity!}",
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text("Description:",
+                                        style: const TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w900)),
+                                    SizedBox(
+                                      width: 5,
+                                    ),
+                                    Text(
+                                      "${widget.data.description!}",
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),

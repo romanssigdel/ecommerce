@@ -18,8 +18,8 @@ class ProductProvider extends ChangeNotifier {
     "assets/images/smartwatch.png",
   ];
   List<String> categories = [
-    "mobilephone",
-    "laptop",
+    "Mobilephone",
+    "Laptop",
     "Printer",
     "Earbuds",
     "Smart Watches"
@@ -43,6 +43,7 @@ class ProductProvider extends ChangeNotifier {
       warranty;
   String? errorMessage;
   String? userEmailforOrder;
+  String? availableQuantity;
 
   String? isSuccess;
   bool? isSuccessProductInCart;
@@ -452,13 +453,13 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> saveSoldProduct(
-      List<dynamic> userCartList, String userId, String totalPrice) async {
+  Future<void> saveSoldProduct(List<dynamic> userCartList, String userId,
+      String userEmail, String totalPrice) async {
     if (_saveSoldProductStatus != StatusUtil.loading) {
       setSaveSoldProductToCart(StatusUtil.loading);
     }
     ApiResponse response = await adminServices.sendUserCartListToFirestore(
-        userCartList, userId, totalPrice);
+        userCartList, userId, userEmail, totalPrice);
     if (response.statusUtil == StatusUtil.success) {
       setSaveSoldProductToCart(StatusUtil.success);
     } else if (response.statusUtil == StatusUtil.error) {
@@ -633,6 +634,16 @@ class ProductProvider extends ChangeNotifier {
       }
     } catch (e) {
       print('Error updating product stock: $e');
+    }
+  }
+
+  Future<void> getAvailableQuantity(String productId) async {
+    ApiResponse apiResponse =
+        await adminServices.getAvailableProductQuantity(productId);
+    if (apiResponse.statusUtil == StatusUtil.success) {
+      availableQuantity = apiResponse.data;
+    } else {
+      errorMessage = apiResponse.errorMessage;
     }
   }
 }

@@ -21,6 +21,7 @@ class AddCart extends StatefulWidget {
 class _AddCartState extends State<AddCart> {
   @override
   String? userId;
+  String? userEmail;
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -52,6 +53,7 @@ class _AddCartState extends State<AddCart> {
       () async {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         userId = prefs.getString("userId");
+        userEmail = prefs.getString("userEmail");
       },
     );
   }
@@ -230,21 +232,36 @@ class _AddCartState extends State<AddCart> {
                                         ),
                                         IconButton(
                                             onPressed: () async {
-                                              setState(() {
-                                                currentQuantity = int.parse(
-                                                    productProvider
-                                                        .cartList[index]
-                                                        .quantity!);
-                                                currentQuantity++;
-                                                productProvider.cartList[index]
-                                                        .quantity =
-                                                    currentQuantity.toString();
-                                              });
                                               await productProvider
-                                                  .updateQuantity(
+                                                  .getAvailableQuantity(
                                                       productProvider
-                                                          .cartList[index]);
-                                              getCartProduct();
+                                                          .cartList[index].id!);
+                                              int availableQuantity = int.parse(
+                                                  productProvider
+                                                      .availableQuantity!);
+                                              currentQuantity = int.parse(
+                                                  productProvider
+                                                      .cartList[index]
+                                                      .quantity!);
+                                              if (currentQuantity <
+                                                  availableQuantity) {
+                                                setState(() {
+                                                  currentQuantity++;
+                                                  productProvider
+                                                          .cartList[index]
+                                                          .quantity =
+                                                      currentQuantity
+                                                          .toString();
+                                                });
+                                                await productProvider
+                                                    .updateQuantity(
+                                                        productProvider
+                                                            .cartList[index]);
+                                                getCartProduct();
+                                              } else {
+                                                Helper.displaySnackbar(context,
+                                                    "Only $availableQuantity items available in stock");
+                                              }
                                             },
                                             icon: Icon(Icons.add)),
                                         SizedBox(
@@ -314,6 +331,7 @@ class _AddCartState extends State<AddCart> {
                                     await productProvider.saveSoldProduct(
                                         userCartList,
                                         userId!,
+                                        userEmail!,
                                         totalPrice.toString());
 
                                     for (var product in userCartList) {

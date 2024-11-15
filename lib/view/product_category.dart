@@ -29,9 +29,11 @@ class _ProductCategoryState extends State<ProductCategory> {
       () async {
         var provider = Provider.of<ProductProvider>(context, listen: false);
         await provider.getProduct();
-        filteredList = provider.productslist
-            .where((product) => product.category == widget.data)
-            .toList();
+        setState(() {
+          filteredList = provider.productslist
+              .where((product) => product.category == widget.data)
+              .toList();
+        });
         // bubbleSortProductsByRating(filteredList, provider);
         // setState(() {});
       },
@@ -213,16 +215,13 @@ class _ProductCategoryState extends State<ProductCategory> {
                                     Padding(
                                       padding:
                                           const EdgeInsets.only(left: 10.0),
-                                      child: Text(productProvider
-                                          .productslist[index].name!),
+                                      child: Text(filteredList[index].name!),
                                     ),
                                     Padding(
                                       padding:
                                           const EdgeInsets.only(left: 10.0),
                                       child: Text(
-                                        "Rs." +
-                                            productProvider
-                                                .productslist[index].price!,
+                                        "Rs." + filteredList[index].price!,
                                         style: TextStyle(
                                             color: Colors.red,
                                             fontWeight: FontWeight.bold),

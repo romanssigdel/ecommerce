@@ -94,7 +94,7 @@ class _UserAccountState extends State<UserAccount> {
     getOrderFromCart();
   }
 
-  String? userName, userEmail, userRole;
+  String? userName, userRole;
   bool isLoading = true;
   getValue() {
     Future.delayed(
@@ -102,7 +102,6 @@ class _UserAccountState extends State<UserAccount> {
       () async {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         userName = prefs.getString("userName");
-        userEmail = prefs.getString("userEmail");
         userRole = prefs.getString("userRole");
         setState(() {
           // user = User(email: userEmail, name: userName, role: userRole);
@@ -691,9 +690,9 @@ class _UserAccountState extends State<UserAccount> {
                                     SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              0.50,
+                                              0.8,
                                       width: MediaQuery.of(context).size.width *
-                                          0.95,
+                                          0.97,
                                       child: ListView.builder(
                                         scrollDirection: Axis.vertical,
                                         itemCount:
@@ -701,10 +700,7 @@ class _UserAccountState extends State<UserAccount> {
                                         itemBuilder: (context, orderIndex) {
                                           final order = productProvider
                                               .orderList[orderIndex];
-                                          productProvider.getUserEmailForOrders(
-                                              order.userId!);
-                                          // final userEmail =
-                                          //     productProvider.userEmailforOrder;
+
                                           return Padding(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 10.0, vertical: 10),
@@ -726,19 +722,19 @@ class _UserAccountState extends State<UserAccount> {
                                                       ),
                                                     ),
                                                   ),
-                                                  // Padding(
-                                                  //   padding:
-                                                  //       const EdgeInsets.all(
-                                                  //           8.0),
-                                                  //   child: Text(
-                                                  //     "User Email: $userEmail",
-                                                  //     style: TextStyle(
-                                                  //       fontSize: 16,
-                                                  //       fontWeight:
-                                                  //           FontWeight.bold,
-                                                  //     ),
-                                                  //   ),
-                                                  // ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Text(
+                                                      "User Email: ${order.userEmail}",
+                                                      style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
                                                   Padding(
                                                     padding:
                                                         const EdgeInsets.all(
@@ -938,13 +934,13 @@ class _UserAccountState extends State<UserAccount> {
                                                                         Text(
                                                                             "Name: ",
                                                                             style:
-                                                                                TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                                                                TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                                                                         Text(
                                                                           productProvider
                                                                               .productslist[index]
                                                                               .name!,
                                                                           style:
-                                                                              TextStyle(fontSize: 16),
+                                                                              TextStyle(fontSize: 12),
                                                                         ),
                                                                       ],
                                                                     ),
@@ -953,13 +949,13 @@ class _UserAccountState extends State<UserAccount> {
                                                                         Text(
                                                                             "Price: ",
                                                                             style:
-                                                                                TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                                                                                TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                                                                         Text(
                                                                           productProvider
                                                                               .productslist[index]
                                                                               .price!,
                                                                           style:
-                                                                              TextStyle(fontSize: 16),
+                                                                              TextStyle(fontSize: 12),
                                                                         ),
                                                                       ],
                                                                     ),
@@ -1059,9 +1055,45 @@ class _UserAccountState extends State<UserAccount> {
                   ],
                 ),
                 drawer: Drawer(
-                  child: Text(
-                    "hello",
-                    style: TextStyle(color: Colors.black),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "",
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.70,
+                          child: CustomButton(
+                            backgroundColor: buttonBackgroundColor,
+                            foregroundColor: buttonForegroundColor,
+                            onPressed: () {
+                              logoutShowDialog(context, userProvider);
+                            },
+                            child: Text("Logout"),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.70,
+                          child: CustomButton(
+                            backgroundColor: buttonBackgroundColor,
+                            foregroundColor: buttonForegroundColor,
+                            onPressed: () async {
+                              createShowDialog(context, userProvider);
+                            },
+                            child: userProvider.getDeleteUserStatus ==
+                                    StatusUtil.loading
+                                ? CircularProgressIndicator()
+                                : Text("Delete Account"),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 body: Column(
@@ -1403,24 +1435,34 @@ class _UserAccountState extends State<UserAccount> {
                     SizedBox(
                       height: 20,
                     ),
-                    CustomButton(
-                      onPressed: () {
-                        logoutShowDialog(context, userProvider);
-                      },
-                      child: Text("Logout"),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    CustomButton(
-                      onPressed: () async {
-                        createShowDialog(context, userProvider);
-                      },
-                      child:
-                          userProvider.getDeleteUserStatus == StatusUtil.loading
-                              ? CircularProgressIndicator()
-                              : Text("Delete"),
-                    )
+                    // SizedBox(
+                    //   width: MediaQuery.of(context).size.width * 0.70,
+                    //   child: CustomButton(
+                    //     backgroundColor: buttonBackgroundColor,
+                    //     foregroundColor: buttonForegroundColor,
+                    //     onPressed: () {
+                    //       logoutShowDialog(context, userProvider);
+                    //     },
+                    //     child: Text("Logout"),
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 20,
+                    // ),
+                    // SizedBox(
+                    //   width: MediaQuery.of(context).size.width * 0.70,
+                    //   child: CustomButton(
+                    //     backgroundColor: buttonBackgroundColor,
+                    //     foregroundColor: buttonForegroundColor,
+                    //     onPressed: () async {
+                    //       createShowDialog(context, userProvider);
+                    //     },
+                    //     child: userProvider.getDeleteUserStatus ==
+                    //             StatusUtil.loading
+                    //         ? CircularProgressIndicator()
+                    //         : Text("Delete Account"),
+                    //   ),
+                    // )
                   ],
                 ),
               ),

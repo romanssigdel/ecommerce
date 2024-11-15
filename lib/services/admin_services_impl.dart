@@ -227,8 +227,8 @@ class AdminServicesImpl implements AdminServices {
   }
 
   @override
-  Future<ApiResponse> sendUserCartListToFirestore(
-      List<dynamic> userCartList, String userId, String totalPrice) async {
+  Future<ApiResponse> sendUserCartListToFirestore(List<dynamic> userCartList,
+      String userId, String userEmail, String totalPrice) async {
     try {
       final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -238,6 +238,7 @@ class AdminServicesImpl implements AdminServices {
       // Prepare the data to be saved
       Map<String, dynamic> orderData = {
         "userId": userId,
+        "userEmail": userEmail,
         "totalAmount": totalPrice,
         "orderDate": DateTime.now(),
         "products": userCartList
@@ -455,6 +456,40 @@ class AdminServicesImpl implements AdminServices {
     } catch (e) {
       return ApiResponse(
           statusUtil: StatusUtil.error, errorMessage: e.toString());
+    }
+  }
+
+  @override
+  Future<ApiResponse> getAvailableProductQuantity(String productId) async {
+    // Check if there is an internet connection available
+    if (await Helper().isInternetConnectionAvailable()) {
+      try {
+        // Fetch the specific product document using its ID
+        var documentSnapshot = await FirebaseFirestore.instance
+            .collection("products")
+            .doc(productId)
+            .get();
+
+        // Check if the document exists
+        if (documentSnapshot.exists) {
+          // Extract the quantity field from the product document
+          String quantity = documentSnapshot.data()?['quantity'] ?? 0;
+
+          // Return a success response with the quantity
+          return ApiResponse(statusUtil: StatusUtil.success, data: quantity);
+        } else {
+          // If the product doesn't exist, return an error message
+          return ApiResponse(
+              statusUtil: StatusUtil.error, data: "Product not found");
+        }
+      } catch (e) {
+        // Return an error response in case of an exception
+        return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
+      }
+    } else {
+      // Return an error response if there is no internet connection
+      return ApiResponse(
+          statusUtil: StatusUtil.error, data: "No internet connection");
     }
   }
 }

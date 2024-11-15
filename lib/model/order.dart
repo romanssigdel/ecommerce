@@ -3,12 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Orders {
   String? orderId;
   String? userId;
+  String? userEmail;
   String? totalAmount;
   DateTime? orderDate;
   List<Products>? products;
 
   Orders(
       {this.orderId,
+      this.userEmail,
       this.userId,
       this.totalAmount,
       this.orderDate,
@@ -17,6 +19,7 @@ class Orders {
   Orders.fromJson(Map<String, dynamic> json) {
     orderId = json['orderId'];
     userId = json['userId'];
+    userEmail = json['userEmail'];
     totalAmount = json['totalAmount'];
     orderDate = json['orderDate'] is Timestamp
         ? (json['orderDate'] as Timestamp).toDate()
@@ -32,6 +35,7 @@ class Orders {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['orderId'] = this.orderId;
+    data['userEmail'] = this.userEmail;
     data['userId'] = this.userId;
     data['totalAmount'] = this.totalAmount;
     data['orderDate'] = this.orderDate;

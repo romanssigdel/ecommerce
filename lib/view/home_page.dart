@@ -126,29 +126,29 @@ class _HomePageState extends State<HomePage> {
             ),
             centerTitle: true,
             actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 30.0),
-                child: Icon(
-                  Icons.chat,
-                  color: Colors.white,
-                  size: 30,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 30.0),
-                child: Icon(
-                  Icons.notifications_none,
-                  color: Colors.white,
-                  size: 34,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 15.0),
-                child: CircleAvatar(
-                  radius: 20,
-                  backgroundImage: AssetImage("assets/images/user.png"),
-                ),
-              )
+              // Padding(
+              //   padding: const EdgeInsets.only(right: 30.0),
+              //   child: Icon(
+              //     Icons.chat,
+              //     color: Colors.white,
+              //     size: 30,
+              //   ),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.only(right: 30.0),
+              //   child: Icon(
+              //     Icons.notifications_none,
+              //     color: Colors.white,
+              //     size: 34,
+              //   ),
+              // ),
+              // Padding(
+              //   padding: const EdgeInsets.only(right: 15.0),
+              //   child: CircleAvatar(
+              //     radius: 20,
+              //     backgroundImage: AssetImage("assets/images/user.png"),
+              //   ),
+              // )
             ],
           ),
           body: Center(
@@ -265,7 +265,7 @@ class _HomePageState extends State<HomePage> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10.0, vertical: 10),
                   child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 1,
+                    height: MediaQuery.of(context).size.height * 1.6,
                     width: MediaQuery.of(context).size.width * 1,
                     child: GridView.count(
                       crossAxisSpacing: 1,
@@ -273,7 +273,7 @@ class _HomePageState extends State<HomePage> {
                       crossAxisCount: 2,
                       childAspectRatio: 0.7,
                       scrollDirection: Axis.vertical,
-                      physics: const ScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       children: List.generate(filteredProducts.length, (index) {
                         var product = filteredProducts[index];
                         productProvider.calculateAverageRating(product.id!);
