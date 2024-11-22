@@ -10,8 +10,11 @@ import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/home_page.dart';
 import 'package:ecommerce/view/signup_form.dart';
 import 'package:ecommerce/view/user_account.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -193,35 +196,45 @@ class _SigninPageState extends State<SigninPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            // SizedBox(
+                            //   height: 70,
+                            //   width: 100,
+                            //   child: ElevatedButton(
+                            //       style: ElevatedButton.styleFrom(
+                            //           shape: RoundedRectangleBorder(
+                            //               borderRadius:
+                            //                   BorderRadius.circular(10))),
+                            //       onPressed: () {},
+                            //       child: Icon(
+                            //         Icons.facebook,
+                            //         size: 45,
+                            //         color: Colors.blue,
+                            //       )),
+                            // ),
+                            // SizedBox(
+                            //   width: 10,
+                            // ),
                             SizedBox(
-                              height: 70,
-                              width: 100,
+                              height: 50,
+                              width: MediaQuery.of(context).size.width * 0.55,
                               child: ElevatedButton(
                                   style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10))),
-                                  onPressed: () {},
-                                  child: Icon(
-                                    Icons.facebook,
-                                    size: 45,
-                                    color: Colors.blue,
+                                  onPressed: () {
+                                    googleLogin();
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Text("Signin with Google"),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      Image.asset("assets/images/google.png"),
+                                    ],
                                   )),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            SizedBox(
-                              height: 70,
-                              width: 100,
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10))),
-                                  onPressed: () {},
-                                  child:
-                                      Image.asset("assets/images/google.png")),
                             ),
                           ],
                         ),
@@ -270,5 +283,58 @@ class _SigninPageState extends State<SigninPage> {
         ),
       ),
     );
+  }
+
+  googleLogin() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    User? user;
+
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
+
+    if (googleSignInAccount != null) {
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleSignInAuthentication.accessToken,
+        idToken: googleSignInAuthentication.idToken,
+      );
+
+      try {
+        final UserCredential userCredential =
+            await auth.signInWithCredential(credential);
+
+        user = userCredential.user;
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'account-exists-with-different-credential') {
+          // handle the error here
+        } else if (e.code == 'invalid-credential') {
+          // handle the error here
+        }
+      } catch (e) {
+        // handle the error here
+      }
+    }
+
+    print(user);
+    String? token = await user?.getIdToken();
+    if (token!.isNotEmpty) {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool("isLogin", true);
+      prefs.setString("userId", user!.uid);
+      prefs.setString("authenticationType", "google");
+      prefs.setString("userName", user.displayName!);
+      prefs.setString("userEmail", user.email!);
+      prefs.setString("userRole", "user");
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CustomBottomNavigationBar(),
+          ),
+          (route) => false);
+    }
   }
 }

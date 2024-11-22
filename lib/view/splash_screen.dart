@@ -40,7 +40,10 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
                 child: Image.asset("assets/images/logo.png")),
             Text(
               "Epasal",
-              style: TextStyle(color: Colors.black, fontSize: 35),
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold),
             )
           ],
         ),

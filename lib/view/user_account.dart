@@ -14,7 +14,11 @@ import 'package:ecommerce/utils/string_const.dart';
 import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/signin_form.dart';
 import 'package:ecommerce/view/update_product.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,7 +33,7 @@ class UserAccount extends StatefulWidget {
 }
 
 class _UserAccountState extends State<UserAccount> {
-  User? user;
+  // User? user;
 
   List<String> adminFunctions = [
     "Add Product",
@@ -94,13 +98,14 @@ class _UserAccountState extends State<UserAccount> {
     getOrderFromCart();
   }
 
-  String? userName, userRole;
+  String? userName, userRole, authenticationType;
   bool isLoading = true;
   getValue() {
     Future.delayed(
       Duration.zero,
       () async {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
+        authenticationType = prefs.getString("authenticationType");
         userName = prefs.getString("userName");
         userRole = prefs.getString("userRole");
         setState(() {
@@ -137,27 +142,6 @@ class _UserAccountState extends State<UserAccount> {
   bool loader = false;
   String? productName, description, category;
   Double? price;
-
-  // void clearForm(ProductProvider productProvider) {
-  //   _formKey.currentState?.reset(); // Resets the form's state
-
-  //   // Clear product data in provider
-  //   productProvider.setProductName("");
-  //   productProvider.setProductPrice("");
-  //   productProvider.setProductCategory("");
-  //   productProvider.setModel("");
-  //   productProvider.setCpu("");
-  //   productProvider.setOperatingSystem("");
-  //   productProvider.setMemory("");
-  //   productProvider.setStorage("");
-  //   productProvider.setScreen("");
-  //   productProvider.setGraphics("");
-  //   productProvider.setWirelessConnectivity("");
-  //   productProvider.setCamera("");
-  //   productProvider.setWaranty("");
-  //   productProvider.setProductDescription("");
-  //   setState(() {});
-  // }
 
   getOrderFromCart() async {
     Future.delayed(
@@ -1070,7 +1054,11 @@ class _UserAccountState extends State<UserAccount> {
                             backgroundColor: buttonBackgroundColor,
                             foregroundColor: buttonForegroundColor,
                             onPressed: () {
-                              logoutShowDialog(context, userProvider);
+                              if (authenticationType == "google") {
+                                googleSignOut();
+                              } else {
+                                logoutShowDialog(context, userProvider);
+                              }
                             },
                             child: Text("Logout"),
                           ),
@@ -1625,6 +1613,28 @@ class _UserAccountState extends State<UserAccount> {
     );
   }
 
+  googleSignOut() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    try {
+      if (!kIsWeb) {
+        await googleSignIn.signOut();
+      }
+      await FirebaseAuth.instance.signOut();
+      Helper.displaySnackbar(context, "Google Signout Successful");
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CustomBottomNavigationBar(
+              initialIndex: 0,
+            ),
+          ),
+          (route) => false);
+    } catch (e) {
+      Helper.displaySnackbar(context, "Google Signout UnSuccessful");
+    }
+  }
+
   pickImage() async {
     final ImagePicker picker = ImagePicker();
 // Pick an image.
@@ -1652,4 +1662,26 @@ class _UserAccountState extends State<UserAccount> {
       });
     }
   }
+
+  // googleSignOut() async {
+  //   final GoogleSignIn googleSignIn = GoogleSignIn();
+
+  //   try {
+  //     if (!kIsWeb) {
+  //       await googleSignIn.signOut();
+  //     }
+  //     await FirebaseAuth.instance.signOut();
+  //     Helper.displaySnackbar(context, "Google Signout Successful");
+  //     Navigator.pushAndRemoveUntil(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => CustomBottomNavigationBar(
+  //             initialIndex: 3,
+  //           ),
+  //         ),
+  //         (route) => false);
+  //   } catch (e) {
+  //     Helper.displaySnackbar(context, "Google Signout UnSuccessful");
+  //   }
+  // }
 }

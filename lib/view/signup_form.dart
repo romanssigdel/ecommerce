@@ -237,41 +237,41 @@ class _SignupPageState extends State<SignupPage> {
                         SizedBox(
                           height: 30,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 70,
-                              width: 100,
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10))),
-                                  onPressed: () {},
-                                  child: Icon(
-                                    Icons.facebook,
-                                    size: 45,
-                                    color: Colors.blue,
-                                  )),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            SizedBox(
-                              height: 70,
-                              width: 100,
-                              child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10))),
-                                  onPressed: () {},
-                                  child:
-                                      Image.asset("assets/images/google.png")),
-                            ),
-                          ],
-                        ),
+                        // Row(
+                        //   mainAxisAlignment: MainAxisAlignment.center,
+                        //   children: [
+                        //     SizedBox(
+                        //       height: 70,
+                        //       width: 100,
+                        //       child: ElevatedButton(
+                        //           style: ElevatedButton.styleFrom(
+                        //               shape: RoundedRectangleBorder(
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(10))),
+                        //           onPressed: () {},
+                        //           child: Icon(
+                        //             Icons.facebook,
+                        //             size: 45,
+                        //             color: Colors.blue,
+                        //           )),
+                        //     ),
+                        //     SizedBox(
+                        //       width: 10,
+                        //     ),
+                        //     SizedBox(
+                        //       height: 70,
+                        //       width: 100,
+                        //       child: ElevatedButton(
+                        //           style: ElevatedButton.styleFrom(
+                        //               shape: RoundedRectangleBorder(
+                        //                   borderRadius:
+                        //                       BorderRadius.circular(10))),
+                        //           onPressed: () {},
+                        //           child:
+                        //               Image.asset("assets/images/google.png")),
+                        //     ),
+                        //   ],
+                        // ),
                         SizedBox(
                           height: 25,
                         ),
