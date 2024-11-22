@@ -34,12 +34,17 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("assets/images/logo.png"),
-            Image.asset("assets/images/EPasal.png")
+            SizedBox(
+                height: 150,
+                width: 150,
+                child: Image.asset("assets/images/logo.png")),
+            Text(
+              "Epasal",
+              style: TextStyle(color: Colors.black, fontSize: 35),
+            )
           ],
         ),
       ),
     );
   }
-
 }
