@@ -228,11 +228,11 @@ class _SigninPageState extends State<SigninPage> {
                                   },
                                   child: Row(
                                     children: [
+                                      Image.asset("assets/images/google.png"),
                                       Text("Signin with Google"),
                                       SizedBox(
                                         width: 10,
                                       ),
-                                      Image.asset("assets/images/google.png"),
                                     ],
                                   )),
                             ),

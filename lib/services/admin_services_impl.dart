@@ -232,10 +232,8 @@ class AdminServicesImpl implements AdminServices {
     try {
       final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-      // Create a new document in the 'orders' collection
       DocumentReference orderRef = firestore.collection('orders').doc();
 
-      // Prepare the data to be saved
       Map<String, dynamic> orderData = {
         "userId": userId,
         "userEmail": userEmail,
@@ -252,7 +250,6 @@ class AdminServicesImpl implements AdminServices {
             .toList(),
       };
 
-      // Save the data to Firestore
       await orderRef.set(orderData);
 
       return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
@@ -340,19 +337,15 @@ class AdminServicesImpl implements AdminServices {
 
     if (await Helper().isInternetConnectionAvailable()) {
       try {
-        // Fetch the documents that match both id and userId
         var value = await FirebaseFirestore.instance
             .collection("rating")
             .where("productId", isEqualTo: id)
             .where("userId", isEqualTo: userId)
             .get();
 
-        // Debug: Check how many documents are returned
-        print("Documents found: ${value.docs.length}");
+        // print("Documents found: ${value.docs.length}");
 
-        // If any document is found, it means the user has already rated the product
         if (value.docs.isNotEmpty) {
-          // Debug: Print the data of the first document found
           print("Rating found: ${value.docs.first.data()}");
 
           return ApiResponse(statusUtil: StatusUtil.success, data: true);
@@ -368,33 +361,6 @@ class AdminServicesImpl implements AdminServices {
     }
   }
 
-  // @override
-  // Future<ApiResponse> checkIfUserPurchasedProduct(
-  //     String productId, String userId) async {
-  //   try {
-  //     final FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-  //     // Query the orders collection to check if the user has purchased the product
-  //     QuerySnapshot querySnapshot = await firestore
-  //         .collection('orders')
-  //         .where('userId', isEqualTo: userId)
-  //         .where('items.products.id', arrayContains: productId)
-  //         .get();
-
-  //     // Check if any orders contain the product
-  //     bool hasPurchasedProduct = querySnapshot.docs.isNotEmpty;
-  //     print(querySnapshot.docs);
-  //     return ApiResponse(
-  //       statusUtil: StatusUtil.success,
-  //       data: hasPurchasedProduct,
-  //     );
-  //   } catch (e) {
-  //     return ApiResponse(
-  //       statusUtil: StatusUtil.error,
-  //       errorMessage: e.toString(),
-  //     );
-  //   }
-  // }
   @override
   Future<ApiResponse> checkIfUserPurchasedProduct(
       String productId, String userId) async {
@@ -461,33 +427,30 @@ class AdminServicesImpl implements AdminServices {
 
   @override
   Future<ApiResponse> getAvailableProductQuantity(String productId) async {
-    // Check if there is an internet connection available
+    
     if (await Helper().isInternetConnectionAvailable()) {
       try {
-        // Fetch the specific product document using its ID
+       
         var documentSnapshot = await FirebaseFirestore.instance
             .collection("products")
             .doc(productId)
             .get();
 
-        // Check if the document exists
+        
         if (documentSnapshot.exists) {
-          // Extract the quantity field from the product document
+          
           String quantity = documentSnapshot.data()?['quantity'] ?? 0;
 
-          // Return a success response with the quantity
           return ApiResponse(statusUtil: StatusUtil.success, data: quantity);
         } else {
-          // If the product doesn't exist, return an error message
+          
           return ApiResponse(
               statusUtil: StatusUtil.error, data: "Product not found");
         }
       } catch (e) {
-        // Return an error response in case of an exception
         return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
       }
     } else {
-      // Return an error response if there is no internet connection
       return ApiResponse(
           statusUtil: StatusUtil.error, data: "No internet connection");
     }

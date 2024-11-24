@@ -104,193 +104,244 @@ class _AddCartState extends State<AddCart> {
             padding: const EdgeInsets.only(left: 10.0, top: 10),
             child: Column(
               children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.75,
-                  width: MediaQuery.of(context).size.width * 0.95,
-                  child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemCount: productProvider.cartList.length,
-                    itemBuilder: (context, index) {
-                      return userId == productProvider.cartList[index].userId
-                          ? Card(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0, vertical: 10),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        ClipRRect(
-                                          child: Image.network(
-                                            productProvider
-                                                .cartList[index].image!,
-                                            height: 70,
-                                            width: 70,
-                                            fit: BoxFit.fill,
-                                          ),
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text("Name: ",
-                                                    style: TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold)),
-                                                Text(
-                                                  productProvider
-                                                      .cartList[index].name!,
-                                                  style:
-                                                      TextStyle(fontSize: 16),
-                                                ),
-                                              ],
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text("Price: ",
-                                                    style: TextStyle(
-                                                        fontSize: 20,
-                                                        fontWeight:
-                                                            FontWeight.bold)),
-                                                Text(
-                                                  productProvider
-                                                      .cartList[index].price!,
-                                                  style:
-                                                      TextStyle(fontSize: 16),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        Spacer(),
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                                onPressed: () async {
-                                                  await productProvider
-                                                      .deleteProductCart(
-                                                          productProvider
-                                                              .cartList[index]
-                                                              .id!,
-                                                          productProvider
-                                                              .cartList[index]
-                                                              .userId!);
-                                                  if (productProvider
-                                                          .deleteProductsInCart ==
-                                                      StatusUtil.success) {
-                                                    getDataFromCart();
-                                                  } else {
-                                                    Helper.displaySnackbar(
-                                                        context,
-                                                        "Deletion failed");
-                                                  }
-                                                  // getCartProduct();
-                                                },
-                                                icon: Icon(
-                                                  Icons.delete,
-                                                  color: Colors.red,
-                                                )),
-                                          ],
-                                        )
-                                      ],
+                userCartList.isEmpty
+                    ? Expanded(
+                        child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  backgroundColor: buttonBackgroundColor,
+                                  foregroundColor: buttonForegroundColor),
+                              onPressed: () {
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CustomBottomNavigationBar(
+                                        initialIndex: 0,
+                                      ),
                                     ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                            onPressed: () async {
-                                              if (int.parse(productProvider
-                                                      .cartList[index]
-                                                      .quantity!) >
-                                                  1) {
-                                                currentQuantity = int.parse(
-                                                    productProvider
-                                                        .cartList[index]
-                                                        .quantity!);
-                                                currentQuantity--;
-                                                productProvider.cartList[index]
-                                                        .quantity =
-                                                    currentQuantity.toString();
-                                              }
-                                              await productProvider
-                                                  .updateQuantity(
-                                                      productProvider
-                                                          .cartList[index]);
-                                              getCartProduct();
-                                            },
-                                            icon: Icon(Icons.remove)),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 12.0),
-                                          child: Text(
-                                            productProvider
-                                                .cartList[index].quantity!,
-                                            style: TextStyle(fontSize: 18),
-                                          ),
-                                        ),
-                                        IconButton(
-                                            onPressed: () async {
-                                              await productProvider
-                                                  .getAvailableQuantity(
-                                                      productProvider
-                                                          .cartList[index].id!);
-                                              int availableQuantity = int.parse(
+                                    (route) => false);
+                              },
+                              child: Text(
+                                "Continue Shopping",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18),
+                              )),
+                        ],
+                      ))
+                    : SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.75,
+                        width: MediaQuery.of(context).size.width * 0.95,
+                        child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          itemCount: productProvider.cartList.length,
+                          itemBuilder: (context, index) {
+                            return userId ==
+                                    productProvider.cartList[index].userId
+                                ? Card(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10.0, vertical: 10),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              ClipRRect(
+                                                child: Image.network(
                                                   productProvider
-                                                      .availableQuantity!);
-                                              currentQuantity = int.parse(
-                                                  productProvider
-                                                      .cartList[index]
-                                                      .quantity!);
-                                              if (currentQuantity <
-                                                  availableQuantity) {
-                                                setState(() {
-                                                  currentQuantity++;
-                                                  productProvider
-                                                          .cartList[index]
-                                                          .quantity =
-                                                      currentQuantity
-                                                          .toString();
-                                                });
-                                                await productProvider
-                                                    .updateQuantity(
+                                                      .cartList[index].image!,
+                                                  height: 70,
+                                                  width: 70,
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text("Name: ",
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                      Text(
                                                         productProvider
-                                                            .cartList[index]);
-                                                getCartProduct();
-                                              } else {
-                                                Helper.displaySnackbar(context,
-                                                    "Only $availableQuantity items available in stock");
-                                              }
-                                            },
-                                            icon: Icon(Icons.add)),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        Text(
-                                          "Rs " +
-                                              (double.parse(productProvider
-                                                          .cartList[index]
-                                                          .price!) *
-                                                      int.parse(productProvider
-                                                          .cartList[index]
-                                                          .quantity!))
-                                                  .toStringAsFixed(2),
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.red,
-                                              fontWeight: FontWeight.bold),
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            )
-                          : const SizedBox();
-                    },
-                  ),
-                ),
+                                                            .cartList[index]
+                                                            .name!,
+                                                        style: TextStyle(
+                                                            fontSize: 16),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text("Price: ",
+                                                          style: TextStyle(
+                                                              fontSize: 20,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                      Text(
+                                                        productProvider
+                                                            .cartList[index]
+                                                            .price!,
+                                                        style: TextStyle(
+                                                            fontSize: 16),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              Spacer(),
+                                              Row(
+                                                children: [
+                                                  IconButton(
+                                                      onPressed: () async {
+                                                        await productProvider
+                                                            .deleteProductCart(
+                                                                productProvider
+                                                                    .cartList[
+                                                                        index]
+                                                                    .id!,
+                                                                productProvider
+                                                                    .cartList[
+                                                                        index]
+                                                                    .userId!);
+                                                        if (productProvider
+                                                                .deleteProductsInCart ==
+                                                            StatusUtil
+                                                                .success) {
+                                                          getDataFromCart();
+                                                        } else {
+                                                          Helper.displaySnackbar(
+                                                              context,
+                                                              "Deletion failed");
+                                                        }
+                                                        // getCartProduct();
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red,
+                                                      )),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                          Row(
+                                            children: [
+                                              IconButton(
+                                                  onPressed: () async {
+                                                    if (int.parse(
+                                                            productProvider
+                                                                .cartList[index]
+                                                                .quantity!) >
+                                                        1) {
+                                                      currentQuantity = int
+                                                          .parse(productProvider
+                                                              .cartList[index]
+                                                              .quantity!);
+                                                      currentQuantity--;
+                                                      productProvider
+                                                              .cartList[index]
+                                                              .quantity =
+                                                          currentQuantity
+                                                              .toString();
+                                                    }
+                                                    await productProvider
+                                                        .updateQuantity(
+                                                            productProvider
+                                                                    .cartList[
+                                                                index]);
+                                                    getCartProduct();
+                                                  },
+                                                  icon: Icon(Icons.remove)),
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 12.0),
+                                                child: Text(
+                                                  productProvider
+                                                      .cartList[index]
+                                                      .quantity!,
+                                                  style:
+                                                      TextStyle(fontSize: 18),
+                                                ),
+                                              ),
+                                              IconButton(
+                                                  onPressed: () async {
+                                                    await productProvider
+                                                        .getAvailableQuantity(
+                                                            productProvider
+                                                                .cartList[index]
+                                                                .id!);
+                                                    int availableQuantity = int
+                                                        .parse(productProvider
+                                                            .availableQuantity!);
+                                                    currentQuantity = int.parse(
+                                                        productProvider
+                                                            .cartList[index]
+                                                            .quantity!);
+                                                    if (currentQuantity <
+                                                        availableQuantity) {
+                                                      setState(() {
+                                                        currentQuantity++;
+                                                        productProvider
+                                                                .cartList[index]
+                                                                .quantity =
+                                                            currentQuantity
+                                                                .toString();
+                                                      });
+                                                      await productProvider
+                                                          .updateQuantity(
+                                                              productProvider
+                                                                      .cartList[
+                                                                  index]);
+                                                      getCartProduct();
+                                                    } else {
+                                                      Helper.displaySnackbar(
+                                                          context,
+                                                          "Only $availableQuantity items available in stock");
+                                                    }
+                                                  },
+                                                  icon: Icon(Icons.add)),
+                                              SizedBox(
+                                                width: 20,
+                                              ),
+                                              Text(
+                                                "Rs " +
+                                                    (double.parse(
+                                                                productProvider
+                                                                    .cartList[
+                                                                        index]
+                                                                    .price!) *
+                                                            int.parse(
+                                                                productProvider
+                                                                    .cartList[
+                                                                        index]
+                                                                    .quantity!))
+                                                        .toStringAsFixed(2),
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    color: Colors.red,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox();
+                          },
+                        ),
+                      ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(

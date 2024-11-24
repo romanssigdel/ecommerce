@@ -585,14 +585,14 @@ class ProductProvider extends ChangeNotifier {
 
         // Store the average and total number of reviews in the productRatings map
         productRatings[productId] = {
-          'average': average, // Store average rating
-          'count': count, // Store the number of ratings
+          'average': average,
+          'count': count, 
         };
       } else {
         // Default values if no ratings are available
         productRatings[productId] = {
-          'average': 0.0, // Default average
-          'count': 0, // Default count
+          'average': 0.0,
+          'count': 0, 
         };
       }
 

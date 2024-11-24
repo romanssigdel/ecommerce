@@ -71,7 +71,13 @@ class _ProductPageState extends State<ProductPage> {
           ),
           leading: IconButton(
               onPressed: () {
-                Navigator.pop(context, true);
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          CustomBottomNavigationBar(initialIndex: 0),
+                    ),
+                    (route) => false);
               },
               icon: Icon(Icons.arrow_back)),
           backgroundColor: backGroundColor,

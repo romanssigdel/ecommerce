@@ -6,6 +6,7 @@ import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
+import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/product_category.dart';
 import 'package:ecommerce/view/product_page.dart';
 import 'package:ecommerce/view/signin_form.dart';
@@ -31,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getValue();
+    // getValue();
     getProductData();
   }
 
@@ -52,9 +53,14 @@ class _HomePageState extends State<HomePage> {
         var provider = Provider.of<ProductProvider>(context, listen: false);
         await provider.getProduct();
 
-        await Future.forEach(provider.productslist, (product) async {
-          await provider.calculateAverageRating(product.id!);
-        });
+        // await Future.forEach(provider.productslist, (product) async {
+        //   await provider.calculateAverageRating(product.id!);
+        // });
+        await Future.wait(
+          provider.productslist.map((product) async {
+            await provider.calculateAverageRating(product.id!);
+          }),
+        );
 
         bubbleSortProductsByRating(provider.productslist, provider);
         setState(() {
@@ -126,29 +132,29 @@ class _HomePageState extends State<HomePage> {
             ),
             centerTitle: true,
             actions: [
-              // Padding(
-              //   padding: const EdgeInsets.only(right: 30.0),
-              //   child: Icon(
-              //     Icons.chat,
-              //     color: Colors.white,
-              //     size: 30,
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.only(right: 30.0),
-              //   child: Icon(
-              //     Icons.notifications_none,
-              //     color: Colors.white,
-              //     size: 34,
-              //   ),
-              // ),
-              // Padding(
-              //   padding: const EdgeInsets.only(right: 15.0),
-              //   child: CircleAvatar(
-              //     radius: 20,
-              //     backgroundImage: AssetImage("assets/images/user.png"),
-              //   ),
-              // )
+              Padding(
+                padding: const EdgeInsets.only(right: 30.0),
+                child: Icon(
+                  Icons.chat,
+                  color: Colors.white,
+                  size: 30,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 30.0),
+                child: Icon(
+                  Icons.notifications_none,
+                  color: Colors.white,
+                  size: 34,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 15.0),
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundImage: AssetImage("assets/images/user.png"),
+                ),
+              )
             ],
           ),
           body: Center(
@@ -296,16 +302,6 @@ class _HomePageState extends State<HomePage> {
                           width: 300,
                           child: GestureDetector(
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => ProductPage(
-                              //       data: productProvider.productslist[index],
-                              //       averageRating: averageRating,
-                              //       totalCounts: totalReviews,
-                              //     ),
-                              //   ),
-                              // );
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -315,12 +311,7 @@ class _HomePageState extends State<HomePage> {
                                     totalCounts: totalReviews,
                                   ),
                                 ),
-                              ).then((shouldRefresh) {
-                                if (shouldRefresh == true) {
-                                  // Refresh products and sort them by their new ratings
-                                  getProductData();
-                                }
-                              });
+                              );
                             },
                             child: Padding(
                               padding: const EdgeInsets.symmetric(

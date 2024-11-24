@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/flutterapps/ecommerce/ecommerce/windows/runner"
+    "cmake.sourceDirectory": "C:/flutterapps/ecommerce/ecommerce/windows/runner",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

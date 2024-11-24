@@ -1054,11 +1054,7 @@ class _UserAccountState extends State<UserAccount> {
                             backgroundColor: buttonBackgroundColor,
                             foregroundColor: buttonForegroundColor,
                             onPressed: () {
-                              if (authenticationType == "google") {
-                                googleSignOut();
-                              } else {
-                                logoutShowDialog(context, userProvider);
-                              }
+                              logoutShowDialog(context, userProvider);
                             },
                             child: Text("Logout"),
                           ),
@@ -1460,6 +1456,7 @@ class _UserAccountState extends State<UserAccount> {
 
   logoutUserFromSharedPreference() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove("");
     await prefs.remove("userId");
     await prefs.remove('isLogin');
     await prefs.remove('userName');
@@ -1583,14 +1580,6 @@ class _UserAccountState extends State<UserAccount> {
           actions: [
             TextButton(
               onPressed: () async {
-                // Navigator.pushAndRemoveUntil(
-                //     context,
-                //     MaterialPageRoute(
-                //       builder: (context) => UpdateProduct(
-
-                //       ),
-                //     ),
-                //     (route) => false);
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -1662,26 +1651,4 @@ class _UserAccountState extends State<UserAccount> {
       });
     }
   }
-
-  // googleSignOut() async {
-  //   final GoogleSignIn googleSignIn = GoogleSignIn();
-
-  //   try {
-  //     if (!kIsWeb) {
-  //       await googleSignIn.signOut();
-  //     }
-  //     await FirebaseAuth.instance.signOut();
-  //     Helper.displaySnackbar(context, "Google Signout Successful");
-  //     Navigator.pushAndRemoveUntil(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (context) => CustomBottomNavigationBar(
-  //             initialIndex: 3,
-  //           ),
-  //         ),
-  //         (route) => false);
-  //   } catch (e) {
-  //     Helper.displaySnackbar(context, "Google Signout UnSuccessful");
-  //   }
-  // }
 }
