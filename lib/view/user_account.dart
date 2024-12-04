@@ -12,8 +12,10 @@ import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
 import 'package:ecommerce/view/custom_bottom_navbar.dart';
+import 'package:ecommerce/view/edit_user.dart';
 import 'package:ecommerce/view/signin_form.dart';
 import 'package:ecommerce/view/update_product.dart';
+import 'package:ecommerce/view/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -98,7 +100,7 @@ class _UserAccountState extends State<UserAccount> {
     getOrderFromCart();
   }
 
-  String? userName, userRole, authenticationType;
+  String? userName, userRole, authenticationType, userPassword, userEmail;
   bool isLoading = true;
   getValue() {
     Future.delayed(
@@ -108,6 +110,8 @@ class _UserAccountState extends State<UserAccount> {
         authenticationType = prefs.getString("authenticationType");
         userName = prefs.getString("userName");
         userRole = prefs.getString("userRole");
+        userPassword = prefs.getString("userPassword");
+        userEmail = prefs.getString("userEmail");
         setState(() {
           // user = User(email: userEmail, name: userName, role: userRole);
           isLoading = false;
@@ -1021,7 +1025,9 @@ class _UserAccountState extends State<UserAccount> {
                     Row(
                       children: [
                         IconButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              
+                            },
                             icon: Icon(
                               Icons.settings,
                               size: 30,
@@ -1029,10 +1035,19 @@ class _UserAccountState extends State<UserAccount> {
                             )),
                         Padding(
                           padding: const EdgeInsets.only(right: 20),
-                          child: CircleAvatar(
-                              radius: 20,
-                              backgroundImage:
-                                  AssetImage("assets/images/user.png")),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UserProfile(),
+                                  ));
+                            },
+                            child: CircleAvatar(
+                                radius: 20,
+                                backgroundImage:
+                                    AssetImage("assets/images/user.png")),
+                          ),
                         ),
                       ],
                     )

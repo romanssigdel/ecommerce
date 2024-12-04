@@ -5,6 +5,7 @@ import 'package:ecommerce/model/user.dart';
 import 'package:ecommerce/services/user_services.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/string_const.dart';
+import 'package:firebase_auth/firebase_auth.dart' as user;
 
 class UserServicesImplementation extends UserServices {
   List<User> userList = [];
@@ -18,6 +19,29 @@ class UserServicesImplementation extends UserServices {
         await FirebaseFirestore.instance
             .collection("users")
             .add(user.toJson())
+            .then((value) {
+          isSuccess = true;
+        });
+        return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
+      } catch (e) {
+        return ApiResponse(
+            statusUtil: StatusUtil.error, errorMessage: e.toString());
+      }
+    } else {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, errorMessage: noInternetConectionStr);
+    }
+  }
+
+  @override
+  Future<ApiResponse> updateUserData(User user) async {
+    bool isSuccess = false;
+    if (await Helper().isInternetConnectionAvailable()) {
+      try {
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(user.id)
+            .update(user.toJson())
             .then((value) {
           isSuccess = true;
         });

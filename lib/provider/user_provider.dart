@@ -38,6 +38,10 @@ class UserProvider extends ChangeNotifier {
     roleTextField = TextEditingController(text: value);
   }
 
+  setId(value) {
+    id = value;
+  }
+
   setName(value) {
     name = value;
   }
@@ -59,6 +63,14 @@ class UserProvider extends ChangeNotifier {
 
   setSaveUserStatus(StatusUtil statusUtil) {
     _saveUserStatus = statusUtil;
+    notifyListeners();
+  }
+
+  StatusUtil _updateUserStatus = StatusUtil.none;
+  StatusUtil get updateUserStatus => _updateUserStatus;
+
+  setUpdateUserStatus(StatusUtil statusUtil) {
+    _updateUserStatus = statusUtil;
     notifyListeners();
   }
 
@@ -110,6 +122,29 @@ class UserProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> updateStudentData() async {
+    if (_updateUserStatus != StatusUtil.loading) {
+      setUpdateUserStatus(StatusUtil.loading);
+    }
+
+    User user = User(
+        id: id,
+        name: name,
+        email: email,
+        password: password,
+        role: roleTextField?.text);
+
+    ApiResponse apiResponse = await userServices.updateUserData(user);
+
+    if (apiResponse.statusUtil == StatusUtil.success) {
+      isSuccess = apiResponse.data;
+      setUpdateUserStatus(StatusUtil.success);
+    } else if (apiResponse.statusUtil == StatusUtil.error) {
+      errorMessage = apiResponse.errorMessage;
+      setUpdateUserStatus(StatusUtil.error);
+    }
+  }
+
   Future<void> getUser() async {
     if (_getUserStatus != StatusUtil.loading) {
       setGetUserStatus(StatusUtil.loading);
@@ -141,6 +176,7 @@ class UserProvider extends ChangeNotifier {
         prefs.setString("userId", userData.id.toString());
         prefs.setString("userName", userData.name.toString());
         prefs.setString("userEmail", userData.email.toString());
+        prefs.setString("userPassword", userData.password.toString());
         prefs.setString("userRole", userData.role.toString());
       }
       setGetLoginUserStatus(StatusUtil.success);

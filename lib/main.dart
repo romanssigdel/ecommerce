@@ -28,6 +28,7 @@ void main() async {
 
 Future<void> _setup() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   Stripe.publishableKey = stripePublishableKey;
 }
 

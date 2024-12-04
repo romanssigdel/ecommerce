@@ -14,6 +14,7 @@ String passwordMatchValidationStr =
 
 String signUpButtonStr = "Sign Up";
 String signInButtonStr = "Sign In";
+String updateButtonStr = "Update";
 
 String dividerOrStr = "or";
 
@@ -23,6 +24,7 @@ String dontHaveAccountStr = "Don't have an Account?";
 String noInternetConectionStr = "No Internet Available!";
 
 String dataSuccessfullySavedStr = "Data Successfully Saved.";
+String dataSuccessfullyUpdatedStr = "Data Successfully Updated.";
 String dataNotSavedStr = "Data Saving Unsuccessful.";
 
 String loginAccountStr = "Let's\nSign In!";
