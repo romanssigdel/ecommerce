@@ -1,3 +1,4 @@
+import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/view/description_page.dart';
 import 'package:ecommerce/view/signup_form.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        color: Color(0xff1161FC),
+        color: backGroundColor,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -39,7 +40,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
                 width: 150,
                 child: Image.asset("assets/images/logo.png")),
             Text(
-              "Epasal",
+              "Shopizo",
               style: TextStyle(
                   color: Colors.black,
                   fontSize: 35,

@@ -1,8 +1,15 @@
+import 'package:ecommerce/provider/auth_provider.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
+import 'package:ecommerce/view/admin_function.dart';
+import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/edit_user.dart';
+import 'package:ecommerce/view/reset_password.dart';
+import 'package:ecommerce/view/user_setttings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,7 +27,33 @@ class _UserProfileState extends State<UserProfile> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getValue();
+    // getValue();
+    getUserId();
+    initializeUserData();
+  }
+
+  String? uId, userRole;
+  // getUserRole(String uId) async {
+  //   var provider = Provider.of<AuthenticationProvider>(context, listen: false);
+  //   userRole = await provider.getUserRole(uId);
+  //   return userRole;
+  // }
+
+  Future<String?> getUserId() async {
+    var provider = Provider.of<AuthenticationProvider>(context, listen: false);
+    uId = provider.currentUser!.uid;
+    return uId;
+  }
+
+  void initializeUserData() async {
+    var provider = Provider.of<AuthenticationProvider>(context, listen: false);
+
+    uId = provider.currentUser?.uid;
+
+    if (uId != null) {
+      userRole = await provider.getUserRole(uId!);
+      setState(() {}); // Refresh UI after data is fetched
+    }
   }
 
   String? id, name, email, role, password;
@@ -48,123 +81,164 @@ class _UserProfileState extends State<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(
-      builder: (context, userProvider, child) => Scaffold(
-        backgroundColor: buttonBackgroundColor,
+    return Consumer<AuthenticationProvider>(
+      builder: (context, authProvider, child) => Scaffold(
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 45, bottom: 20),
-                child: Center(
-                  child: Text(
-                    "User Profile",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
+              SizedBox(
+                height: 70,
               ),
+              // Padding(
+              //   padding: const EdgeInsets.only(top: 45, bottom: 20),
+              //   child: Center(
+              //     child: Text(
+              //       "User Profile",
+              //       style: TextStyle(
+              //           color: Colors.black,
+              //           fontSize: 30,
+              //           fontWeight: FontWeight.bold),
+              //     ),
+              //   ),
+              // ),
               Center(
                 child: CircleAvatar(
-                  radius: 65,
-                  backgroundImage: AssetImage(
-                    "assets/images/user.png",
-                  ),
+                  radius: 55,
+                  backgroundImage: authProvider.currentUser?.photoURL != null
+                      ? NetworkImage(authProvider.currentUser!.photoURL!)
+                      : AssetImage("assets/images/user.png") as ImageProvider,
                 ),
+              ),
+              SizedBox(
+                height: 10,
               ),
               // if (user != null)
               Text(
-                name ?? "",
+                authProvider.currentUser!.displayName ?? "",
                 // "",
                 style: TextStyle(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontSize: 25,
                     fontWeight: FontWeight.bold),
               ),
+              SizedBox(
+                height: 5,
+              ),
               Text(
-                email ?? "",
+                authProvider.currentUser!.email ?? "",
                 // "",
                 style: TextStyle(
-                    fontSize: 22,
-                    color: Colors.white,
+                    fontSize: 18,
+                    color: Colors.black,
                     fontWeight: FontWeight.bold),
               ),
 
               //Edit Profile Button
-              Padding(
-                padding: const EdgeInsets.only(top: 10),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * .5,
-                  height: MediaQuery.of(context).size.height * .05,
-                  child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              side: BorderSide(
-                                  color:
-                                      const Color.fromARGB(255, 54, 108, 244),
-                                  width: 1))),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditUserData(
-                                id: id,
-                                name: name,
-                                email: email,
-                                password: password,
-                                role: role,
-                              ),
-                            ));
-                      },
-                      child: Text(
-                        "Edit Profile",
-                        style: TextStyle(fontSize: 18),
-                      )),
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.only(top: 10),
+              //   child: SizedBox(
+              //     width: MediaQuery.of(context).size.width * .5,
+              //     height: MediaQuery.of(context).size.height * .05,
+              //     child: ElevatedButton(
+              //         style: ElevatedButton.styleFrom(
+              //             backgroundColor: Colors.black,
+              //             shape: RoundedRectangleBorder(
+              //                 borderRadius: BorderRadius.circular(10),
+              //                 side: BorderSide(
+              //                     color: Color.fromARGB(255, 3, 8, 20),
+              //                     width: 1))),
+              //         onPressed: () {
+              //           Navigator.push(
+              //               context,
+              //               MaterialPageRoute(
+              //                 builder: (context) => EditUserData(
+              //                   id: authProvider.currentUser!.uid,
+              //                   name: authProvider.currentUser!.displayName,
+              //                   email: authProvider.currentUser!.email,
+              //                 ),
+              //               ));
+              //         },
+              //         child: Text(
+              //           "Edit Profile",
+              //           style: TextStyle(color: Colors.white, fontSize: 18),
+              //         )),
+              //   ),
+              // ),
 
               //Settings For the users (in List)
               Padding(
                 padding: const EdgeInsets.only(top: 50, left: 20),
                 child: Column(
                   children: [
+                    userRole == "admin"
+                        ? Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: ProfileSettingsList(
+                              icon: Icons.admin_panel_settings_rounded,
+                              onPress: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AdminFunctions(
+                                        uId: uId,
+                                        userRole: userRole,
+                                      ),
+                                    ));
+                              },
+                              title: "Admin Functions",
+                            ),
+                          )
+                        : SizedBox(),
                     ProfileSettingsList(
                       icon: Icons.settings,
                       onPress: () {},
                       title: "Settings",
                     ),
+                    SizedBox(height: 10),
                     ProfileSettingsList(
                       icon: Icons.manage_accounts,
-                      onPress: () {},
+                      onPress: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UserSettings(),
+                            ));
+                      },
                       title: "User Management",
+                    ),
+                    SizedBox(
+                      height: 10,
                     ),
                     ProfileSettingsList(
                       icon: Icons.contact_phone,
                       onPress: () {},
                       title: "Contact Customer Service",
                     ),
+                    SizedBox(
+                      height: 10,
+                    ),
                     ProfileSettingsList(
                       icon: Icons.info_outlined,
                       onPress: () {},
                       title: "Information",
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(top: 10),
-                    //   child: ProfileSettingsList(
-                    //     icon: Icons.logout,
-                    //     onPress: () {
-                    //       // logoutShowDialog(context, userProvider);
-                    //     },
-                    //     title: "Logout",
-                    //     endIcon: false,
-                    //     textColor: Colors.yellow,
-                    //   ),
-                    // ),
+                    SizedBox(
+                      height: 13,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: ProfileSettingsList(
+                        icon: Icons.logout,
+                        onPress: () {
+                          logoutShowDialog(context, authProvider);
+                        },
+                        title: "Logout",
+                        endIcon: false,
+                        textColor: Colors.red,
+                      ),
+                    ),
                   ],
                 ),
               )
@@ -175,75 +249,75 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  // logout() async {
-  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   await prefs.remove("isLogin");
-  //   await Helper.displaySnackBar(context, logoutSuccessfullStr);
+  logout() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove("isLogin");
+    await Helper.displaySnackbar(context, "Logout Successfull!");
 
-  //   Navigator.pushAndRemoveUntil(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => Login(),
-  //       ),
-  //       (route) => false);
-  // }
-
-  signOut() async {
-    // FirebaseAuth.instance.signOut();
-    // if (GoogleSignIn().currentUser != null) {
-    //   await GoogleSignIn().signOut();
-    // }
-
-    // try {
-    //   await GoogleSignIn().disconnect();
-    // } catch (e) {
-    //   // Helper.displaySnackBar(context, "Failed to disconnect on SignOut.");
-    // }
-
-    // Navigator.pushAndRemoveUntil(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (context) => Login(),
-    //     ),
-    //     (route) => false);
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CustomBottomNavigationBar(),
+        ),
+        (route) => false);
   }
 
-  // logoutShowDialog(BuildContext context, UserProvider userProvider) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         title: Text('Logout'),
-  //         content: Text('Are you sure you want to Logout?'),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () async {
-  //               logout();
-  //               signOut();
-  //               Helper.displaySnackBar(context, "Logout Successfull!");
-  //               Navigator.pushAndRemoveUntil(
-  //                   context,
-  //                   MaterialPageRoute(
-  //                     builder: (context) => Login(),
-  //                   ),
-  //                   (route) => false);
+  signOut() async {
+    FirebaseAuth.instance.signOut();
+    if (GoogleSignIn().currentUser != null) {
+      await GoogleSignIn().signOut();
+    }
 
-  //               // Perform delete operation here
-  //               // Navigator.of(context).pop(); // Close the dialog
-  //             },
-  //             child: Text('Yes'),
-  //           ),
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop(); // Close the dialog
-  //             },
-  //             child: Text('No'),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+    try {
+      await GoogleSignIn().disconnect();
+    } catch (e) {
+      // Helper.displaySnackBar(context, "Failed to disconnect on SignOut.");
+    }
+
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CustomBottomNavigationBar(),
+        ),
+        (route) => false);
+  }
+
+  logoutShowDialog(BuildContext context, AuthenticationProvider authProvider) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Logout'),
+          content: Text('Are you sure you want to Logout?'),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                logout();
+                signOut();
+                Helper.displaySnackbar(context, "Logout Successfull!");
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CustomBottomNavigationBar(),
+                    ),
+                    (route) => false);
+
+                // Perform delete operation here
+                // Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Yes'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('No'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class ProfileSettingsList extends StatelessWidget {
@@ -273,13 +347,13 @@ class ProfileSettingsList extends StatelessWidget {
             color: Colors.white.withOpacity(0.1)),
         child: Icon(
           icon,
-          color: Colors.white,
+          color: Colors.black,
         ),
       ),
       title: Text(
         title,
-        style: TextStyle(color: Colors.white, fontSize: 18)
-            ?.apply(color: textColor),
+        style: TextStyle(color: Colors.black, fontSize: 18)
+            .apply(color: textColor),
       ),
       trailing: endIcon
           ? Container(

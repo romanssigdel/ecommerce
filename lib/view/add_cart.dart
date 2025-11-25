@@ -143,6 +143,7 @@ class _AddCartState extends State<AddCart> {
                             return userId ==
                                     productProvider.cartList[index].userId
                                 ? Card(
+                                    color: Colors.white,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 10.0, vertical: 10),

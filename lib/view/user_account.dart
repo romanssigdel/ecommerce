@@ -6,6 +6,7 @@ import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/custom/custom_textformfield.dart';
 import 'package:ecommerce/model/product.dart';
 import 'package:ecommerce/model/user.dart';
+import 'package:ecommerce/provider/auth_provider.dart';
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
@@ -166,8 +167,8 @@ class _UserAccountState extends State<UserAccount> {
     }
     //admin page starts from here
     return userRole == "admin"
-        ? Consumer<UserProvider>(
-            builder: (context, userProvider, child) => SafeArea(
+        ? Consumer<AuthenticationProvider>(
+            builder: (context, authProvider, child) => SafeArea(
                   child: Scaffold(
                     appBar: AppBar(
                       backgroundColor: backGroundColor,
@@ -260,7 +261,7 @@ class _UserAccountState extends State<UserAccount> {
                             backgroundColor: backGroundColor,
                             foregroundColor: buttonForegroundColor,
                             onPressed: () {
-                              logoutShowDialog(context, userProvider);
+                              logoutShowDialog(context, authProvider);
                             },
                             child: Text("Logout"),
                           ),
@@ -614,7 +615,7 @@ class _UserAccountState extends State<UserAccount> {
                                       width: MediaQuery.of(context).size.width *
                                           0.95,
                                       child: ListView.builder(
-                                        itemCount: userProvider.userList.length,
+                                        itemCount: value.userList.length,
                                         itemBuilder: (context, index) {
                                           return Card(
                                             child: Padding(
@@ -635,8 +636,7 @@ class _UserAccountState extends State<UserAccount> {
                                                                   FontWeight
                                                                       .bold)),
                                                       Text(
-                                                        userProvider
-                                                            .userList[index]
+                                                        value.userList[index]
                                                             .name!,
                                                         style: TextStyle(
                                                             fontSize: 18),
@@ -652,8 +652,7 @@ class _UserAccountState extends State<UserAccount> {
                                                                   FontWeight
                                                                       .bold)),
                                                       Text(
-                                                        userProvider
-                                                            .userList[index]
+                                                        value.userList[index]
                                                             .email!,
                                                         style: TextStyle(
                                                             fontSize: 18),
@@ -1025,9 +1024,7 @@ class _UserAccountState extends State<UserAccount> {
                     Row(
                       children: [
                         IconButton(
-                            onPressed: () {
-                              
-                            },
+                            onPressed: () {},
                             icon: Icon(
                               Icons.settings,
                               size: 30,
@@ -1065,13 +1062,16 @@ class _UserAccountState extends State<UserAccount> {
                         ),
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 0.70,
-                          child: CustomButton(
-                            backgroundColor: buttonBackgroundColor,
-                            foregroundColor: buttonForegroundColor,
-                            onPressed: () {
-                              logoutShowDialog(context, userProvider);
-                            },
-                            child: Text("Logout"),
+                          child: Consumer<AuthenticationProvider>(
+                            builder: (context, authProvider, child) =>
+                                CustomButton(
+                              backgroundColor: buttonBackgroundColor,
+                              foregroundColor: buttonForegroundColor,
+                              onPressed: () async {
+                                await logoutShowDialog(context, authProvider);
+                              },
+                              child: Text("Logout"),
+                            ),
                           ),
                         ),
                         SizedBox(
@@ -1519,7 +1519,7 @@ class _UserAccountState extends State<UserAccount> {
     );
   }
 
-  logoutShowDialog(BuildContext context, UserProvider userProvider) {
+  logoutShowDialog(BuildContext context, AuthenticationProvider authProvider) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1529,7 +1529,7 @@ class _UserAccountState extends State<UserAccount> {
           actions: [
             TextButton(
               onPressed: () async {
-                await logoutUserFromSharedPreference();
+                await authProvider.logoutUser();
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(

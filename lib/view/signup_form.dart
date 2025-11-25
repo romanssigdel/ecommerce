@@ -1,6 +1,7 @@
 import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/custom/custom_textformfield.dart';
+import 'package:ecommerce/provider/auth_provider.dart';
 import 'package:ecommerce/provider/icons_providers.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
@@ -19,12 +20,23 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
+    authProvider.emailTextField.clear();
+    authProvider.passwordTextField.clear();
+    authProvider.confirmPasswordTextField.clear();
+  }
+
   RegExp regExp = RegExp(emailPattern);
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(
-      builder: (context, userProvider, child) => SafeArea(
+    return Consumer<AuthenticationProvider>(
+      builder: (context, authProvider, child) => SafeArea(
         child: Scaffold(
           body: SingleChildScrollView(
             child: SizedBox(
@@ -38,40 +50,38 @@ class _SignupPageState extends State<SignupPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 0, top: 0),
+                          padding: const EdgeInsets.only(left: 0, top: 30),
                           child: Text(
                             createAccountStr,
                             style: TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.w900),
+                                fontSize: 35, fontWeight: FontWeight.w900),
                           ),
                         ),
+                        SizedBox(
+                          height: 25,
+                        ),
+                        // CustomTextFormField(
+                        //   onChanged: (value) {
+                        //     userProvider.setName(value);
+                        //   },
+                        //   validator: (value) {
+                        //     if (value!.isEmpty) {
+                        //       return nameValidationStr;
+                        //     }
+                        //     return null;
+                        //   },
+                        //   labelText: nameStr,
+                        //   prefixIcon: Icon(
+                        //     Icons.person,
+                        //     color: Colors.black,
+                        //     size: 30,
+                        //   ),
+                        // ),
                         SizedBox(
                           height: 30,
                         ),
                         CustomTextFormField(
-                          onChanged: (value) {
-                            userProvider.setName(value);
-                          },
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return nameValidationStr;
-                            }
-                            return null;
-                          },
-                          labelText: nameStr,
-                          prefixIcon: Icon(
-                            Icons.person,
-                            color: Colors.black,
-                            size: 30,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 30,
-                        ),
-                        CustomTextFormField(
-                          onChanged: (value) {
-                            userProvider.setEmail(value);
-                          },
+                          controller: authProvider.emailTextField,
                           validator: (value) {
                             if (value!.isEmpty) {
                               return emailValidtionStr;
@@ -90,18 +100,16 @@ class _SignupPageState extends State<SignupPage> {
                         Visibility(
                           visible: false,
                           child: TextFormField(
-                            controller: userProvider.setRole("user"),
-                          ),
+                              controller: authProvider.roleTextField),
                         ),
+
                         SizedBox(
                           height: 30,
                         ),
                         CustomTextFormField(
                             obscureText:
                                 iconsProvider.showPassword ? false : true,
-                            onChanged: (value) {
-                              userProvider.setPassword(value);
-                            },
+                            controller: authProvider.passwordTextField,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return passwordValidationStr;
@@ -139,15 +147,14 @@ class _SignupPageState extends State<SignupPage> {
                             obscureText: iconsProvider.showConfirmPassword
                                 ? false
                                 : true,
-                            onChanged: (value) {
-                              userProvider.setConfirmPassword(value);
-                            },
+                            controller: authProvider.confirmPasswordTextField,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return confirmPasswordValidationStr;
                               } else if (value.length < 8) {
                                 return passwordLengthValidationStr;
-                              } else if (value != userProvider.password) {
+                              } else if (value !=
+                                  authProvider.confirmPasswordTextField.text) {
                                 return passwordMatchValidationStr;
                               }
                               return null;
@@ -182,31 +189,27 @@ class _SignupPageState extends State<SignupPage> {
                           foregroundColor: buttonForegroundColor,
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              await userProvider.saveStudentData();
-                              if (userProvider.saveUserStatus ==
+                              await authProvider.signupUser();
+                              if (authProvider.saveUserStatus ==
                                   StatusUtil.success) {
-                                if (userProvider.isSuccess) {
-                                  Helper.displaySnackbar(
-                                      context, dataSuccessfullySavedStr);
-                                  Navigator.pushAndRemoveUntil(
+                                if (authProvider.isSuccess) {
+                                  Helper.displaySnackbar(context,
+                                      "Please Verify Your Email Address.");
+                                  Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
-                                            CustomBottomNavigationBar(
-                                          initialIndex: 3,
-                                        ),
-                                      ),
-                                      (route) => false);
+                                        builder: (context) => SigninPage(),
+                                      ));
                                 }
-                              } else if (userProvider.saveUserStatus ==
+                              } else if (authProvider.saveUserStatus ==
                                   StatusUtil.error) {
                                 Helper.displaySnackbar(
-                                    context, userProvider.errorMessage);
+                                    context, authProvider.errorMessage);
                               }
                             }
                           },
                           child:
-                              userProvider.saveUserStatus == StatusUtil.loading
+                              authProvider.saveUserStatus == StatusUtil.loading
                                   ? CircularProgressIndicator()
                                   : Text(
                                       signUpButtonStr,
@@ -289,6 +292,9 @@ class _SignupPageState extends State<SignupPage> {
                               width: 50,
                             ),
                             ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  shadowColor: Colors.transparent,
+                                  backgroundColor: Colors.white),
                               onPressed: () {
                                 Navigator.pushAndRemoveUntil(
                                     context,
@@ -303,7 +309,7 @@ class _SignupPageState extends State<SignupPage> {
                               child: Text(signInButtonStr,
                                   style: TextStyle(
                                       fontSize: 16,
-                                      color: buttonBackgroundColor)),
+                                      color: const Color(0xff1161FC))),
                             ),
                           ],
                         )

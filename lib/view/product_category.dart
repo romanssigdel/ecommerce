@@ -64,7 +64,7 @@ class _ProductCategoryState extends State<ProductCategory> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: buttonBackgroundColor,
+          backgroundColor: backGroundColor,
           foregroundColor: Colors.white,
           title: Text(
             "${widget.data!}",

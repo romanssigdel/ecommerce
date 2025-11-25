@@ -11,6 +11,7 @@ class CustomTextFormField extends StatelessWidget {
   String? initialValue;
   TextEditingController? controller;
   bool readOnly;
+  Iterable<String>? autofillHints;
   CustomTextFormField({
     super.key,
     this.labelText,
@@ -21,6 +22,7 @@ class CustomTextFormField extends StatelessWidget {
     this.validator,
     this.keyboardType,
     this.initialValue,
+    this.autofillHints,
     this.obscureText = false,
     this.readOnly = false,
   });
@@ -30,6 +32,7 @@ class CustomTextFormField extends StatelessWidget {
     return SizedBox(
       width: MediaQuery.of(context).size.width * 0.95,
       child: TextFormField(
+        autofillHints: autofillHints,
         readOnly: readOnly,
         initialValue: initialValue,
         controller: controller,

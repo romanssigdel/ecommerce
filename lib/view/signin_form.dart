@@ -1,13 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/custom/custom_textformfield.dart';
+import 'package:ecommerce/provider/auth_provider.dart';
 import 'package:ecommerce/provider/icons_providers.dart';
 import 'package:ecommerce/provider/user_provider.dart';
+import 'package:ecommerce/services/auth_services.dart';
+import 'package:ecommerce/services/auth_services_impl.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
 import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/home_page.dart';
+import 'package:ecommerce/view/reset_password.dart';
 import 'package:ecommerce/view/signup_form.dart';
 import 'package:ecommerce/view/user_account.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,11 +34,28 @@ class _SigninPageState extends State<SigninPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    // final authProvider =
+    //     Provider.of<AuthenticationProvider>(context, listen: false);
+    // authProvider.emailTextField.clear();
+    // authProvider.passwordTextField.clear();
+    // authProvider.confirmPasswordTextField.clear();
+    // Future.delayed(
+    //   Duration.zero,
+    //   () {
+    //     var provider = Provider.of<UserProvider>(context, listen: false);
+    //     provider.readRememberMe();
+    //   },
+    // );
+  }
+
+  saveUserDataToFirestore(
+      String uid, String email, String role, String timestamp) {
     Future.delayed(
       Duration.zero,
       () {
-        var provider = Provider.of<UserProvider>(context, listen: false);
-        provider.readRememberMe();
+        var provider =
+            Provider.of<AuthenticationProvider>(context, listen: false);
+        provider.saveUserDataToFirestore(uid, email, role, timestamp);
       },
     );
   }
@@ -41,8 +63,8 @@ class _SigninPageState extends State<SigninPage> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    return Consumer<UserProvider>(
-      builder: (context, userProvider, child) => SafeArea(
+    return Consumer<AuthenticationProvider>(
+      builder: (context, authProvider, child) => SafeArea(
         child: Scaffold(
           body: SingleChildScrollView(
             child: SizedBox(
@@ -56,18 +78,18 @@ class _SigninPageState extends State<SigninPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 0, top: 0),
+                          padding: const EdgeInsets.only(left: 5, top: 30),
                           child: Text(
                             loginAccountStr,
                             style: TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.w900),
+                                fontSize: 35, fontWeight: FontWeight.w900),
                           ),
                         ),
                         SizedBox(
-                          height: 30,
+                          height: 50,
                         ),
                         CustomTextFormField(
-                          controller: userProvider.emailTextField,
+                          controller: authProvider.emailTextField,
                           validator: (value) {
                             if (value!.isEmpty) {
                               return emailValidtionStr;
@@ -89,7 +111,7 @@ class _SigninPageState extends State<SigninPage> {
                         CustomTextFormField(
                             obscureText:
                                 iconsProvider.showPassword ? false : true,
-                            controller: userProvider.passwordTextField,
+                            controller: authProvider.passwordTextField,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return passwordValidationStr;
@@ -119,16 +141,20 @@ class _SigninPageState extends State<SigninPage> {
                                       ))),
                         Row(
                           children: [
-                            Checkbox(
-                              value: userProvider.isCheckRememberMe,
-                              onChanged: (value) {
-                                userProvider.rememberMe(value!);
-                                userProvider.setSaveCheckRememberMe(value);
-                              },
-                            ),
-                            Text(
-                              rememberMeStr,
+                            SizedBox(
+                              height: 30,
                             )
+                            // Checkbox(
+                            //   value: true,
+                            //   // value: userProvider.isCheckRememberMe,
+                            //   onChanged: (value) {
+                            //     // userProvider.rememberMe(value!);
+                            //     // userProvider.setSaveCheckRememberMe(value);
+                            //   },
+                            // ),
+                            // Text(
+                            //   rememberMeStr,
+                            // )
                           ],
                         ),
                         CustomButton(
@@ -136,32 +162,70 @@ class _SigninPageState extends State<SigninPage> {
                           foregroundColor: buttonForegroundColor,
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              await userProvider.loginCheckUserData();
-                              if (userProvider.getLoginUserStatus ==
+                              await authProvider.loginUser();
+                              if (authProvider.getLoginUserStatus ==
                                   StatusUtil.success) {
-                                if (userProvider.isUserExists) {
-                                  Helper.displaySnackbar(
-                                      context, loginSuccessful);
-                                  userProvider
-                                      .saveLoginUserToSharedPreference();
-                                  Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            CustomBottomNavigationBar(),
+                                // await authProvider
+                                //     .saveLoginUserToSharedPreference();
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CustomBottomNavigationBar(
+                                        initialIndex: 0,
                                       ),
-                                      (route) => false);
-                                } else {
-                                  Helper.displaySnackbar(
-                                      context, invalidCredential);
-                                }
-                              } else if (userProvider.getLoginUserStatus ==
+                                    ),
+                                    (route) => false);
+                                Helper.displaySnackbar(
+                                    context, loginSuccessful);
+                              } else if (authProvider.getLoginUserStatus ==
                                   StatusUtil.error) {
                                 Helper.displaySnackbar(context, loginFailed);
                               }
+                              // await authProvider.signupUser();
+                              // if (authProvider.saveUserStatus ==
+                              //     StatusUtil.success) {
+                              //   Helper.displaySnackbar(
+                              //       context, signupSuccessStr);
+                              //   Navigator.pushAndRemoveUntil(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //         builder: (context) =>
+                              //             CustomBottomNavigationBar(),
+                              //       ),
+                              //       (route) => false);
+                              // } else if (authProvider.saveUserStatus ==
+                              //     StatusUtil.error) {
+                              //   Helper.displaySnackbar(
+                              //       context, signupFailedStr);
+                              // }
+
+                              // await userProvider.loginCheckUserData();
+                              // if (userProvider.getLoginUserStatus ==
+                              //     StatusUtil.success) {
+                              //   if (userProvider.isUserExists) {
+                              //     Helper.displaySnackbar(
+                              //         context, loginSuccessful);
+                              //     userProvider
+                              //         .saveLoginUserToSharedPreference();
+                              //     Navigator.pushAndRemoveUntil(
+                              //         context,
+                              //         MaterialPageRoute(
+                              //           builder: (context) =>
+                              //               CustomBottomNavigationBar(),
+                              //         ),
+                              //         (route) => false);
+                              //   } else {
+                              //     Helper.displaySnackbar(
+                              //         context, invalidCredential);
+                              //   }
+                              // } else if (userProvider.getLoginUserStatus ==
+                              //     StatusUtil.error) {
+                              //   Helper.displaySnackbar(context, loginFailed);
+                              // }
                             }
                           },
-                          child: userProvider.getLoginUserStatus ==
+                          child: authProvider.getLoginUserStatus ==
                                   StatusUtil.loading
                               ? CircularProgressIndicator()
                               : Text(
@@ -171,6 +235,30 @@ class _SigninPageState extends State<SigninPage> {
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold),
                                 ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ResetPassword(),
+                                      ));
+                                },
+                                child: Text(
+                                  "Forgot Password?",
+                                  style: TextStyle(
+                                      color: Color.fromARGB(255, 20, 117, 197)),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                         SizedBox(
                           height: 20,
@@ -229,9 +317,13 @@ class _SigninPageState extends State<SigninPage> {
                                   child: Row(
                                     children: [
                                       Image.asset("assets/images/google.png"),
-                                      Text("Signin with Google"),
                                       SizedBox(
                                         width: 10,
+                                      ),
+                                      Text(
+                                        "Signin with Google",
+                                        style:
+                                            TextStyle(color: Color(0xff1161FC)),
                                       ),
                                     ],
                                   )),
@@ -308,6 +400,28 @@ class _SigninPageState extends State<SigninPage> {
             await auth.signInWithCredential(credential);
 
         user = userCredential.user;
+
+        // 🟢 After successful login, save to Firestore
+        if (user != null) {
+          String uid = user.uid;
+          String email = user.email ?? '';
+          String timestamp = DateTime.now().toIso8601String();
+
+          // 🔹 Check if user already exists in Firestore
+          DocumentSnapshot userDoc = await FirebaseFirestore.instance
+              .collection('users')
+              .doc(uid)
+              .get();
+
+          if (userDoc.exists) {
+            // 🔹 Keep existing role (admin/user)
+            String existingRole = userDoc['role'];
+            await saveUserDataToFirestore(uid, email, existingRole, timestamp);
+          } else {
+            // 🔹 New user → assign default role "user"
+            await saveUserDataToFirestore(uid, email, "user", timestamp);
+          }
+        }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
           // handle the error here
@@ -319,22 +433,22 @@ class _SigninPageState extends State<SigninPage> {
       }
     }
 
-    print(user);
-    String? token = await user?.getIdToken();
-    if (token!.isNotEmpty) {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setBool("isLogin", true);
-      prefs.setString("userId", user!.uid);
-      prefs.setString("authenticationType", "google");
-      prefs.setString("userName", user.displayName!);
-      prefs.setString("userEmail", user.email!);
-      prefs.setString("userRole", "user");
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CustomBottomNavigationBar(),
-          ),
-          (route) => false);
-    }
+    // print(user);
+    // String? token = await user?.getIdToken();
+    // if (token!.isNotEmpty) {
+    //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+    //   prefs.setBool("isLogin", true);
+    //   prefs.setString("userId", user!.uid);
+    //   prefs.setString("authenticationType", "google");
+    //   prefs.setString("userName", user.displayName!);
+    //   prefs.setString("userEmail", user.email!);
+    //   prefs.setString("userRole", "user");
+    //   Navigator.pushAndRemoveUntil(
+    //       context,
+    //       MaterialPageRoute(
+    //         builder: (context) => CustomBottomNavigationBar(),
+    //       ),
+    //       (route) => false);
+    // }
   }
 }

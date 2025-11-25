@@ -1,6 +1,8 @@
 import 'package:ecommerce/core/api_response.dart';
 import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/model/user.dart';
+import 'package:ecommerce/services/auth_services.dart';
+import 'package:ecommerce/services/auth_services_impl.dart';
 import 'package:ecommerce/services/user_services.dart';
 import 'package:ecommerce/services/user_services_impl.dart';
 import 'package:ecommerce/utils/Helper.dart';
@@ -33,6 +35,7 @@ class UserProvider extends ChangeNotifier {
   TextEditingController passwordTextField = TextEditingController();
 
   UserServices userServices = UserServicesImplementation();
+
 
   setRole(value) {
     roleTextField = TextEditingController(text: value);
@@ -225,6 +228,7 @@ class UserProvider extends ChangeNotifier {
     passwordTextField.text = prefs.getString('password') ?? "";
     notifyListeners();
   }
+  
 }
 
 class UserData {

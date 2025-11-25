@@ -74,6 +74,7 @@ class _OrderHistoryState extends State<OrderHistory> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10.0, vertical: 10),
                                   child: Card(
+                                    color: Colors.white,
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,

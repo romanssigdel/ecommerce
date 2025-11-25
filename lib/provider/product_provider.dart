@@ -586,13 +586,13 @@ class ProductProvider extends ChangeNotifier {
         // Store the average and total number of reviews in the productRatings map
         productRatings[productId] = {
           'average': average,
-          'count': count, 
+          'count': count,
         };
       } else {
         // Default values if no ratings are available
         productRatings[productId] = {
           'average': 0.0,
-          'count': 0, 
+          'count': 0,
         };
       }
 
@@ -645,5 +645,66 @@ class ProductProvider extends ChangeNotifier {
     } else {
       errorMessage = apiResponse.errorMessage;
     }
+  }
+
+  double _priceToDouble(dynamic price) {
+    if (price == null) return 0.0;
+    if (price is num) return price.toDouble();
+    if (price is String) {
+      // remove non-numeric except dot, then parse
+      final cleaned = price.replaceAll(RegExp(r'[^0-9.]'), '');
+      return double.tryParse(cleaned) ?? 0.0;
+    }
+    return 0.0;
+  }
+
+  double calculateSimilarityScore(Product current, Product other) {
+    double score = 0;
+
+    if (current.category == other.category) {
+      score += 0.5; // weight for category
+    }
+
+    if (current.brand == other.brand) {
+      score += 0.3; // weight for brand
+    }
+
+    final double p1 = _priceToDouble(current.price);
+    final double p2 = _priceToDouble(other.price);
+    final double priceDifference = (p1 - p2).abs();
+
+    if (priceDifference <= 1000) {
+      // within Rs.1000 price range
+      score += 0.2;
+    }
+
+    return score; // max score = 1.0
+  }
+
+  Future<List<Product>> getRecommendedProductsManually(
+      Product currentProduct) async {
+    final snapshot =
+        await FirebaseFirestore.instance.collection('products').get();
+
+    List<Product> allProducts = snapshot.docs.map((doc) {
+      final data = doc.data();
+      data['id'] = doc.id; // 🔥 Attach Firestore ID
+      return Product.fromJson(data);
+    }).toList();
+
+    // Remove the current product
+    allProducts.removeWhere((p) => p.id == currentProduct.id);
+
+    // Calculate score for each product
+    List<Map<String, dynamic>> scoredProducts = allProducts.map((product) {
+      double score = calculateSimilarityScore(currentProduct, product);
+      return {'product': product, 'score': score};
+    }).toList();
+
+    // Sort by highest score
+    scoredProducts.sort((a, b) => b['score'].compareTo(a['score']));
+
+    // Return top 5
+    return scoredProducts.take(5).map((e) => e['product'] as Product).toList();
   }
 }

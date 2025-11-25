@@ -56,7 +56,7 @@ class _DescriptionPageState extends State<DescriptionPage> {
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.01,
             child: ToggleButtons(
-              fillColor: Color(0xff1161FC),
+              fillColor: buttonBackgroundColor,
               onPressed: (index) {
                 for (int i = 0; i < isSelected.length; i++) {
                   if (i == index) {

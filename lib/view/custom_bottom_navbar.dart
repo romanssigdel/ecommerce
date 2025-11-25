@@ -1,6 +1,7 @@
 import 'package:ecommerce/utils/color_const.dart';
 import 'package:ecommerce/utils/string_const.dart';
 import 'package:ecommerce/view/add_cart.dart';
+import 'package:ecommerce/view/auth_state.dart';
 import 'package:ecommerce/view/home_page.dart';
 import 'package:ecommerce/view/history.dart';
 import 'package:ecommerce/view/signin_form.dart';
@@ -26,7 +27,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     // TODO: implement initState
     super.initState();
     selectedIndex = widget.initialIndex;
-    getSharedPreference();
+    // getSharedPreference();
   }
 
   getSharedPreference() async {
@@ -48,7 +49,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       HomePage(),
       OrderHistory(),
       AddCart(),
-      isLogin == true ? UserAccount() : SigninPage(), // Conditional logic
+      // isLogin == true ? UserAccount() : SigninPage(), // Conditional logic
+      AuthState(),
     ];
   }
 

@@ -1,8 +1,10 @@
 import 'package:ecommerce/model/user.dart';
+import 'package:ecommerce/provider/auth_provider.dart';
 import 'package:ecommerce/provider/icons_providers.dart';
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/api_const.dart';
+import 'package:ecommerce/view/auth_wrapper.dart';
 import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/description_page.dart';
 import 'package:ecommerce/firebase_options.dart';
@@ -39,18 +41,29 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool isLoginUserLoggedIn = false;
+  // bool isLoginUserLoggedIn = false;
   @override
   void initState() {
-    getLoginUserFromSharedPreference();
+    // getLoginUserFromSharedPreference();
     // TODO: implement initState
     super.initState();
+    // getUserId();
   }
+
+  // String? uId;
+  // Future<String?> getUserId() async {
+  //   var provider = await Provider.of<AuthenticationProvider>(context, listen: false);
+  //   uId = provider.currentUser!.uid;
+  //   return uId;
+  // }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(
+          create: (context) => AuthenticationProvider(),
+        ),
         ChangeNotifierProvider(
           create: (context) => UserProvider(),
         ),
@@ -60,24 +73,22 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (context) => ProductProvider())
       ],
       child: MaterialApp(
-        title: 'EPasal',
+        title: 'Shopizo',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           useMaterial3: true,
         ),
-        home: isLoginUserLoggedIn
-            ? CustomBottomNavigationBar()
-            : SplashScreenPage(),
+        home: const AuthWrapper(),
       ),
     );
   }
 
-  getLoginUserFromSharedPreference() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    isLoginUserLoggedIn = prefs.getBool("isLogin") ?? false;
-    setState(() {
-      isLoginUserLoggedIn;
-    });
-  }
+  // getLoginUserFromSharedPreference() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   isLoginUserLoggedIn = prefs.getBool("isLogin") ?? false;
+  //   setState(() {
+  //     isLoginUserLoggedIn;
+  //   });
+  // }
 }

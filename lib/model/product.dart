@@ -4,6 +4,7 @@ class Product {
   String? quantity;
   String? name;
   String? category;
+  String? brand;
   String? price;
   String? model;
   String? cpu;
@@ -20,6 +21,7 @@ class Product {
   Product(
       {this.image,
       this.description,
+      this.brand,
       this.quantity,
       this.id,
       this.name,
@@ -38,6 +40,7 @@ class Product {
 
   Product.fromJson(Map<String, dynamic> json) {
     image = json['image'];
+    brand = json['brand'];
     description = json['description'];
     quantity = json['quantity'];
     id = json['id'];

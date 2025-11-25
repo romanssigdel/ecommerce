@@ -50,6 +50,7 @@ dependencies:
   flutter_rating_bar: ^4.0.1
   flutter_launcher_icons: ^0.13.1
   google_sign_in: ^6.2.1
+  credential_manager: 2.0.2
     
   
 
