@@ -11,18 +11,42 @@ import 'package:flutter/material.dart';
 
 class ProductProvider extends ChangeNotifier {
   List<String> categoryImages = [
+    "assets/images/television.jpg",
+    "assets/images/vacuumcleaner.png",
     "assets/images/mobile.png",
+    "assets/images/speaker.jpg",
     "assets/images/laptop.png",
     "assets/images/printer.png",
     "assets/images/earbuds.png",
     "assets/images/smartwatch.png",
+    "assets/images/washing_machine.jpg",
+    "assets/images/refrigerator.jpg",
+    "assets/images/coffee_maker.jpg",
+    "assets/images/dishwasher.jpg",
+    "assets/images/electric_fan.jpg",
+    "assets/images/rice_cooker.jpg",
+    "assets/images/toaster.jpg",
+    "assets/images/mixer.jpg",
+    "assets/images/electric_kettle.jpg",
   ];
   List<String> categories = [
+    "Television",
+    "Vacuum Cleaner",
     "Mobilephone",
+    "Speaker",
     "Laptop",
     "Printer",
-    "Earbuds",
-    "Smart Watches"
+    "Earbud",
+    "Smart Watch",
+    "Washing Machine",
+    "Refrigerator",
+    "Coffee Maker",
+    "Dishwasher",
+    "Electric Fan",
+    "Rice Cooker",
+    "Toaster",
+    "Mixer",
+    "Electric Kettle",
   ];
 
   String? id,
