@@ -322,6 +322,24 @@ class _UserAccountState extends State<AdminFunctions> {
                                     // initialValue:
                                     //     productProvider.productName,
                                     onChanged: (value) {
+                                      productProvider.setProductBrand(value);
+                                    },
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return productBrandValidationStr;
+                                      }
+                                      return null;
+                                    },
+                                    labelText: "Product Brand",
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 10),
+                                  child: CustomTextFormField(
+                                    // initialValue:
+                                    //     productProvider.productName,
+                                    onChanged: (value) {
                                       productProvider.setProductName(value);
                                     },
                                     validator: (value) {
@@ -832,7 +850,7 @@ class _UserAccountState extends State<AdminFunctions> {
                                       SizedBox(
                                         height:
                                             MediaQuery.of(context).size.height *
-                                                0.9,
+                                                0.95,
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 0.95,

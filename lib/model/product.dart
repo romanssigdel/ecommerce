@@ -63,6 +63,7 @@ class Product {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['description'] = this.description;
     data['quantity'] = this.quantity;
+    data['brand'] = this.brand;
     data['image'] = this.image;
     data['id'] = this.id;
     data['name'] = this.name;

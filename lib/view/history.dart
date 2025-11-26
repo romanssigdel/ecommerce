@@ -1,5 +1,6 @@
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/utils/color_const.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,12 +14,13 @@ class OrderHistory extends StatefulWidget {
 
 class _OrderHistoryState extends State<OrderHistory> {
   @override
-  String? userId;
   void initState() {
     super.initState();
     getOrderFromCart();
     getValue();
   }
+
+  String? userId;
 
   getOrderFromCart() async {
     Future.delayed(
@@ -31,13 +33,7 @@ class _OrderHistoryState extends State<OrderHistory> {
   }
 
   getValue() async {
-    Future.delayed(
-      Duration.zero,
-      () async {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        userId = prefs.getString("userId");
-      },
-    );
+    userId = FirebaseAuth.instance.currentUser!.uid;
   }
 
   @override

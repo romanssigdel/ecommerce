@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:ecommerce/utils/api_const.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,7 +13,8 @@ class StripeService {
   Future<bool> makePayment(int amount) async {
     try {
       // Retrieve user email from SharedPreferences
-      await getValueOfUserFromSharedPreference();
+      // await getValueOfUserFromSharedPreference();
+      await getUserEmailFromFirebase();
 
       // Create a customer first
       String? customerId = await _createCustomer(userEmail!);
@@ -27,7 +29,7 @@ class StripeService {
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: paymentIntentClientSecret,
-          merchantDisplayName: "epasal",
+          merchantDisplayName: "shopizo",
           billingDetails: BillingDetails(
             email: userEmail, // The email will be used here for the payment
             address: Address(
@@ -123,8 +125,12 @@ class StripeService {
     return calculatedAmount.toString();
   }
 
-  getValueOfUserFromSharedPreference() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    userEmail = prefs.getString("userEmail");
+  // getValueOfUserFromSharedPreference() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   userEmail = prefs.getString("userEmail");
+  // }
+
+  Future<void> getUserEmailFromFirebase() async {
+    userEmail = FirebaseAuth.instance.currentUser?.email;
   }
 }

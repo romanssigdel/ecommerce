@@ -26,6 +26,7 @@ class ProductProvider extends ChangeNotifier {
   ];
 
   String? id,
+      productBrand,
       productName,
       productDescription,
       productQuantity,
@@ -86,6 +87,11 @@ class ProductProvider extends ChangeNotifier {
   AdminServices adminServices = AdminServicesImpl();
   setProductId(String value) {
     id = value;
+    notifyListeners();
+  }
+
+  setProductBrand(String value) {
+    productBrand = value;
     notifyListeners();
   }
 
@@ -298,6 +304,7 @@ class ProductProvider extends ChangeNotifier {
     }
     Product product = Product(
         id: id,
+        brand: productBrand,
         name: productName,
         quantity: productQuantity,
         image: imageTextField!.text,
@@ -673,7 +680,7 @@ class ProductProvider extends ChangeNotifier {
     final double p2 = _priceToDouble(other.price);
     final double priceDifference = (p1 - p2).abs();
 
-    if (priceDifference <= 1000) {
+    if (priceDifference <= 10000) {
       // within Rs.1000 price range
       score += 0.2;
     }

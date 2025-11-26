@@ -2,6 +2,7 @@ import 'package:ecommerce/core/status_util.dart';
 import 'package:ecommerce/custom/custom_button.dart';
 import 'package:ecommerce/model/cart.dart';
 import 'package:ecommerce/model/product.dart';
+import 'package:ecommerce/provider/auth_provider.dart';
 import 'package:ecommerce/provider/product_provider.dart';
 import 'package:ecommerce/services/stripe_service.dart';
 import 'package:ecommerce/utils/Helper.dart';
@@ -20,8 +21,8 @@ class AddCart extends StatefulWidget {
 
 class _AddCartState extends State<AddCart> {
   @override
-  String? userId;
-  String? userEmail;
+  // String? userId;
+  // String? userEmail;
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -47,27 +48,45 @@ class _AddCartState extends State<AddCart> {
     );
   }
 
-  getValue() {
-    Future.delayed(
-      Duration.zero,
-      () async {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        userId = prefs.getString("userId");
-        userEmail = prefs.getString("userEmail");
-      },
-    );
+  // getValue() {
+  //   Future.delayed(
+  //     Duration.zero,
+  //     () async {
+  //       final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //       userId = prefs.getString("userId");
+  //       userEmail = prefs.getString("userEmail");
+  //     },
+  //   );
+  // }
+
+  String? uId, uRole, uEmail;
+  Future<void> getValue() async {
+    var authProvider =
+        Provider.of<AuthenticationProvider>(context, listen: false);
+    // var productProvider = Provider.of<ProductProvider>(context, listen: false);
+
+    //  Get user ID and email safely
+    uId = authProvider.currentUser?.uid;
+    uEmail = authProvider.currentUser?.email;
+
+    if (uId == null) return; // Stop if user is not logged in
+
+    // Get user role
+    uRole = await authProvider.getUserRole(uId!);
+
+    // Update UI safely
+    setState(() {
+      // canRateProduct = productProvider.hasPurchasedProduct;
+    });
   }
 
   int currentQuantity = 0;
   double totalPrice = 0.0;
   var userCartList = [];
   getCartProduct() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    userId = prefs.getString("userId");
-
     var provider = Provider.of<ProductProvider>(context, listen: false);
     userCartList = provider.cartList.where((product) {
-      return product.userId == userId;
+      return product.userId == uId;
     }).toList();
 
     calculateTotalPrice(); // Calculate total price after getting the cart products
@@ -140,8 +159,7 @@ class _AddCartState extends State<AddCart> {
                           scrollDirection: Axis.vertical,
                           itemCount: productProvider.cartList.length,
                           itemBuilder: (context, index) {
-                            return userId ==
-                                    productProvider.cartList[index].userId
+                            return uId == productProvider.cartList[index].userId
                                 ? Card(
                                     color: Colors.white,
                                     child: Padding(
@@ -365,7 +383,7 @@ class _AddCartState extends State<AddCart> {
                         ],
                       ),
                       Spacer(),
-                      userId == null || userId!.isEmpty
+                      uId == null || uId!.isEmpty
                           ? SizedBox()
                           : SizedBox(
                               height: MediaQuery.of(context).size.height * 0.05,
@@ -382,8 +400,8 @@ class _AddCartState extends State<AddCart> {
                                   if (isSuccessfulPayment) {
                                     await productProvider.saveSoldProduct(
                                         userCartList,
-                                        userId!,
-                                        userEmail!,
+                                        uId!,
+                                        uEmail!,
                                         totalPrice.toString());
 
                                     for (var product in userCartList) {
@@ -392,7 +410,7 @@ class _AddCartState extends State<AddCart> {
                                           int.parse(product.quantity!));
                                     }
                                     await productProvider
-                                        .deleteCartAfterPayment(userId!);
+                                        .deleteCartAfterPayment(uId!);
                                     getDataFromCart();
                                     await Helper.displaySnackbar(
                                         context, "Order Successful");

@@ -44,6 +44,7 @@ String emailRegexValidation = "Email not Valid.";
 
 String searchProduct = "Search for Products";
 
+String productBrandValidationStr = "Please enter you product name";
 String productNameValidationStr = "Please enter you product name";
 String priceValidationStr = "Please enter Product's price.";
 String descriptionValidationStr = "Please enter product description";
