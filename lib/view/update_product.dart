@@ -118,6 +118,23 @@ class _UpdateProductState extends State<UpdateProduct> {
                         padding: const EdgeInsets.symmetric(
                             vertical: 10.0, horizontal: 10),
                         child: CustomTextFormField(
+                          initialValue: widget.data.brand,
+                          onChanged: (value) {
+                            productProvider.setProductBrand(value);
+                          },
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return nameValidationStr;
+                            }
+                            return null;
+                          },
+                          labelText: "Brand",
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 10),
+                        child: CustomTextFormField(
                           initialValue: widget.data.price,
                           keyboardType: TextInputType.number,
                           onChanged: (value) {

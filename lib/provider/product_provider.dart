@@ -361,6 +361,7 @@ class ProductProvider extends ChangeNotifier {
     Product product = Product(
         id: id,
         name: productName,
+        brand: productBrand,
         quantity: productQuantity,
         image: imageTextField!.text,
         price: productPrice,
