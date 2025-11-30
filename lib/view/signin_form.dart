@@ -49,15 +49,15 @@ class _SigninPageState extends State<SigninPage> {
   }
 
   saveUserDataToFirestore(
-      String uid, String email, String role, String timestamp) {
-    Future.delayed(
-      Duration.zero,
-      () {
-        var provider =
-            Provider.of<AuthenticationProvider>(context, listen: false);
-        provider.saveUserDataToFirestore(uid, email, role, timestamp);
-      },
-    );
+      String uid, String email, String role, String timestamp) async {
+    // Future.delayed(
+    //   Duration.zero,
+    //   ()
+    //  async{
+    var provider = Provider.of<AuthenticationProvider>(context, listen: false);
+    await provider.saveUserDataToFirestore(uid, email, role, timestamp);
+    // },
+    // );
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -311,8 +311,8 @@ class _SigninPageState extends State<SigninPage> {
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10))),
-                                  onPressed: () {
-                                    googleLogin();
+                                  onPressed: () async {
+                                    await googleLogin(context);
                                   },
                                   child: Row(
                                     children: [
@@ -377,10 +377,9 @@ class _SigninPageState extends State<SigninPage> {
     );
   }
 
-  googleLogin() async {
+  googleLogin(BuildContext context) async {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
-
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
     final GoogleSignInAccount? googleSignInAccount =
@@ -413,14 +412,23 @@ class _SigninPageState extends State<SigninPage> {
               .doc(uid)
               .get();
 
+          // if (userDoc.exists) {
+          //   // 🔹 Keep existing role (admin/user)
+          //   String existingRole = userDoc['role'];
+          //   await saveUserDataToFirestore(uid, email, existingRole, timestamp);
+          // } else {
+          //   // 🔹 New user → assign default role "user"
+          //   await saveUserDataToFirestore(uid, email, "user", timestamp);
+          // }
+          String role = "user";
           if (userDoc.exists) {
-            // 🔹 Keep existing role (admin/user)
-            String existingRole = userDoc['role'];
-            await saveUserDataToFirestore(uid, email, existingRole, timestamp);
-          } else {
-            // 🔹 New user → assign default role "user"
-            await saveUserDataToFirestore(uid, email, "user", timestamp);
+            role = userDoc['role'] ?? "user";
           }
+          await FirebaseFirestore.instance.collection('users').doc(uid).set({
+            'email': email,
+            'role': role,
+            'createdAt': timestamp,
+          }, SetOptions(merge: true));
         }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
@@ -432,23 +440,5 @@ class _SigninPageState extends State<SigninPage> {
         // handle the error here
       }
     }
-
-    // print(user);
-    // String? token = await user?.getIdToken();
-    // if (token!.isNotEmpty) {
-    //   final SharedPreferences prefs = await SharedPreferences.getInstance();
-    //   prefs.setBool("isLogin", true);
-    //   prefs.setString("userId", user!.uid);
-    //   prefs.setString("authenticationType", "google");
-    //   prefs.setString("userName", user.displayName!);
-    //   prefs.setString("userEmail", user.email!);
-    //   prefs.setString("userRole", "user");
-    //   Navigator.pushAndRemoveUntil(
-    //       context,
-    //       MaterialPageRoute(
-    //         builder: (context) => CustomBottomNavigationBar(),
-    //       ),
-    //       (route) => false);
-    // }
   }
 }

@@ -56,7 +56,7 @@ class AuthServicesImplementation implements AuthServices {
           .doc(userCredential.user!.uid)
           .set({
         'email': email,
-        'role': role, // 👈 Save role here
+        'role': role,
         'createdAt': Timestamp.now(),
       });
       if (userCredential.user != null) {
@@ -156,6 +156,4 @@ class AuthServicesImplementation implements AuthServices {
           statusUtil: StatusUtil.error, errorMessage: e.toString());
     }
   }
-
-  
 }
