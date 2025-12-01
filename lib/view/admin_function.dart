@@ -845,126 +845,105 @@ class _UserAccountState extends State<AdminFunctions> {
                                         .getProductStatus ==
                                     StatusUtil.loading
                                 ? CircularProgressIndicator()
-                                : Column(
-                                    children: [
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.95,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.95,
-                                        child: ListView.builder(
-                                          itemCount: productProvider
-                                              .productslist.length,
-                                          itemBuilder: (context, index) {
-                                            return Card(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10.0,
-                                                        vertical: 10),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    ClipRRect(
-                                                      child: Image.network(
-                                                        productProvider
-                                                            .productslist[index]
-                                                            .image!,
-                                                        height: 70,
-                                                        width: 70,
-                                                        fit: BoxFit.fill,
-                                                      ),
-                                                    ),
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            Text("Name: ",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold)),
-                                                            Text(
-                                                              productProvider
-                                                                  .productslist[
-                                                                      index]
-                                                                  .name!,
-                                                              style: TextStyle(
-                                                                  fontSize: 12),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            Text("Price: ",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold)),
-                                                            Text(
-                                                              productProvider
-                                                                  .productslist[
-                                                                      index]
-                                                                  .price!,
-                                                              style: TextStyle(
-                                                                  fontSize: 12),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        IconButton(
-                                                            onPressed: () {
-                                                              updateShowDialog(
-                                                                  context,
-                                                                  productProvider
-                                                                          .productslist[
-                                                                      index]);
-                                                            },
-                                                            icon: Icon(
-                                                              Icons.edit,
-                                                              color:
-                                                                  Colors.green,
-                                                            )),
-                                                        IconButton(
-                                                            onPressed:
-                                                                () async {
-                                                              deleteShowDialog(
-                                                                  context,
-                                                                  productProvider,
-                                                                  productProvider
-                                                                      .productslist[
-                                                                          index]
-                                                                      .id!);
-                                                            },
-                                                            icon: Icon(
-                                                              Icons.delete,
-                                                              color: Colors
-                                                                  .redAccent,
-                                                            )),
-                                                      ],
-                                                    ),
-                                                  ],
+                                : ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    itemCount:
+                                        productProvider.productslist.length,
+                                    itemBuilder: (context, index) {
+                                      return Card(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10.0, vertical: 10),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              ClipRRect(
+                                                child: Image.network(
+                                                  productProvider
+                                                      .productslist[index]
+                                                      .image!,
+                                                  height: 70,
+                                                  width: 70,
+                                                  fit: BoxFit.fill,
                                                 ),
                                               ),
-                                            );
-                                          },
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text("Name: ",
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                      Text(
+                                                        productProvider
+                                                            .productslist[index]
+                                                            .name!,
+                                                        style: TextStyle(
+                                                            fontSize: 12),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text("Price: ",
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                      Text(
+                                                        productProvider
+                                                            .productslist[index]
+                                                            .price!,
+                                                        style: TextStyle(
+                                                            fontSize: 12),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  IconButton(
+                                                      onPressed: () {
+                                                        updateShowDialog(
+                                                            context,
+                                                            productProvider
+                                                                    .productslist[
+                                                                index]);
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.edit,
+                                                        color: Colors.green,
+                                                      )),
+                                                  IconButton(
+                                                      onPressed: () async {
+                                                        deleteShowDialog(
+                                                            context,
+                                                            productProvider,
+                                                            productProvider
+                                                                .productslist[
+                                                                    index]
+                                                                .id!);
+                                                      },
+                                                      icon: Icon(
+                                                        Icons.delete,
+                                                        color: Colors.redAccent,
+                                                      )),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      );
+                                    },
                                   ),
                           )
                       ],
@@ -975,16 +954,16 @@ class _UserAccountState extends State<AdminFunctions> {
             ));
   }
 
-  logoutUserFromSharedPreference() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove("");
-    await prefs.remove("userId");
-    await prefs.remove('isLogin');
-    await prefs.remove('userName');
-    await prefs.remove('userEmail');
-    await prefs.remove('userRole');
-    Helper.displaySnackbar(context, "Successfully Logged Out!");
-  }
+  // logoutUserFromSharedPreference() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.remove("");
+  //   await prefs.remove("userId");
+  //   await prefs.remove('isLogin');
+  //   await prefs.remove('userName');
+  //   await prefs.remove('userEmail');
+  //   await prefs.remove('userRole');
+  //   Helper.displaySnackbar(context, "Successfully Logged Out!");
+  // }
 
   createShowDialog(BuildContext context, UserProvider userProvider) {
     showDialog(
