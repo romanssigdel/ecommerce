@@ -65,7 +65,7 @@ class _ProductCategoryState extends State<ProductCategory> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: backGroundColor,
-          foregroundColor: Colors.white,
+          foregroundColor: Colors.black,
           title: Text(
             "${widget.data!}",
             style: const TextStyle(fontWeight: FontWeight.w900),

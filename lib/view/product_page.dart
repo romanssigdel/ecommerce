@@ -167,7 +167,7 @@ class _ProductPageState extends State<ProductPage> {
         appBar: AppBar(
           elevation: 0,
           backgroundColor: backGroundColor,
-          foregroundColor: buttonForegroundColor,
+          foregroundColor: Colors.black,
           centerTitle: true,
           title: Text(
             "${widget.data.category ?? ''}",
@@ -221,7 +221,7 @@ class _ProductPageState extends State<ProductPage> {
                           ),
                           child: Image.network(
                             "${widget.data.image ?? ''}",
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fill,
                             loadingBuilder: (context, child, progress) {
                               if (progress == null) return child;
                               return Center(child: CircularProgressIndicator());
@@ -287,6 +287,11 @@ class _ProductPageState extends State<ProductPage> {
                                     Spacer(),
                                     Text(
                                       "In Stock: ${widget.data.quantity ?? '0'}",
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                    Spacer(),
+                                    Text(
+                                      "Brand: ${widget.data.brand ?? 'Unknown'}",
                                       style: TextStyle(fontSize: 14),
                                     )
                                   ],

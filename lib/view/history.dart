@@ -45,7 +45,7 @@ class _OrderHistoryState extends State<OrderHistory> {
           foregroundColor: buttonForegroundColor,
           title: Text(
             "Order History",
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
         ),
         body: Consumer<ProductProvider>(

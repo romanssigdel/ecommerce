@@ -113,7 +113,7 @@ class _AddCartState extends State<AddCart> {
           foregroundColor: buttonForegroundColor,
           title: Text(
             "Cart",
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
           actions: [],
         ),
@@ -148,7 +148,9 @@ class _AddCartState extends State<AddCart> {
                               child: Text(
                                 "Continue Shopping",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18),
                               )),
                         ],
                       ))
