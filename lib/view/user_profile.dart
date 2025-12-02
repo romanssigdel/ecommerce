@@ -199,6 +199,7 @@ class _UserProfileState extends State<UserProfile> {
                     //   title: "Settings",
                     // ),
                     // SizedBox(height: 10),
+                    
                     ProfileSettingsList(
                       icon: Icons.manage_accounts,
                       onPress: () {
