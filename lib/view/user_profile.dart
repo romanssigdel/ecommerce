@@ -2,7 +2,9 @@ import 'package:ecommerce/provider/auth_provider.dart';
 import 'package:ecommerce/provider/user_provider.dart';
 import 'package:ecommerce/utils/Helper.dart';
 import 'package:ecommerce/utils/color_const.dart';
+import 'package:ecommerce/view/AboutShopizoPage.dart';
 import 'package:ecommerce/view/admin_function.dart';
+import 'package:ecommerce/view/contact_customer_service.dart';
 import 'package:ecommerce/view/custom_bottom_navbar.dart';
 import 'package:ecommerce/view/edit_user.dart';
 import 'package:ecommerce/view/reset_password.dart';
@@ -191,12 +193,12 @@ class _UserProfileState extends State<UserProfile> {
                             ),
                           )
                         : SizedBox(),
-                    ProfileSettingsList(
-                      icon: Icons.settings,
-                      onPress: () {},
-                      title: "Settings",
-                    ),
-                    SizedBox(height: 10),
+                    // ProfileSettingsList(
+                    //   icon: Icons.settings,
+                    //   onPress: () {},
+                    //   title: "Settings",
+                    // ),
+                    // SizedBox(height: 10),
                     ProfileSettingsList(
                       icon: Icons.manage_accounts,
                       onPress: () {
@@ -213,7 +215,14 @@ class _UserProfileState extends State<UserProfile> {
                     ),
                     ProfileSettingsList(
                       icon: Icons.contact_phone,
-                      onPress: () {},
+                      onPress: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ContactCustomerServicePage(),
+                            ));
+                      },
                       title: "Contact Customer Service",
                     ),
                     SizedBox(
@@ -221,7 +230,13 @@ class _UserProfileState extends State<UserProfile> {
                     ),
                     ProfileSettingsList(
                       icon: Icons.info_outlined,
-                      onPress: () {},
+                      onPress: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AboutShopizoPage(),
+                            ));
+                      },
                       title: "Information",
                     ),
                     SizedBox(
@@ -249,18 +264,18 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  logout() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove("isLogin");
-    await Helper.displaySnackbar(context, "Logout Successfull!");
+  // // logout() async {
+  // //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  // //   await prefs.remove("isLogin");
+  // //   await Helper.displaySnackbar(context, "Logout Successfull!");
 
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CustomBottomNavigationBar(),
-        ),
-        (route) => false);
-  }
+  //   Navigator.pushAndRemoveUntil(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => CustomBottomNavigationBar(),
+  //       ),
+  //       (route) => false);
+  // }
 
   signOut() async {
     FirebaseAuth.instance.signOut();
@@ -292,7 +307,7 @@ class _UserProfileState extends State<UserProfile> {
           actions: [
             TextButton(
               onPressed: () async {
-                logout();
+                // logout();
                 signOut();
                 Helper.displaySnackbar(context, "Logout Successfull!");
                 Navigator.pushAndRemoveUntil(
