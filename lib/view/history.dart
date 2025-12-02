@@ -50,13 +50,14 @@ class _OrderHistoryState extends State<OrderHistory> {
         ),
         body: Consumer<ProductProvider>(
           builder: (context, productProvider, child) => productProvider
-                  .orderList.isEmpty
+                  .orderList
+                  .where((order) => order.userId == userId)
+                  .isEmpty
               ? Center(
-                  child: Expanded(
-                      child: Text(
+                  child: Text(
                   "Order hisory doesn't exist.",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                )))
+                ))
               : Column(
                   children: [
                     Expanded(
@@ -188,6 +189,35 @@ class _OrderHistoryState extends State<OrderHistory> {
                                             );
                                           },
                                         ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 6),
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  _getStatusColor(order.status)
+                                                      .withOpacity(0.15),
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                color: _getStatusColor(
+                                                    order.status),
+                                                width: 1,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              order.status?.toUpperCase() ??
+                                                  "PENDING",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                                color: _getStatusColor(
+                                                    order.status),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -201,5 +231,18 @@ class _OrderHistoryState extends State<OrderHistory> {
         ),
       ),
     );
+  }
+
+  Color _getStatusColor(String? status) {
+    switch (status) {
+      case "processing":
+        return Colors.orange;
+      case "shipped":
+        return Colors.blue;
+      case "delivered":
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
   }
 }

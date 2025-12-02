@@ -5,6 +5,7 @@ class Orders {
   String? userId;
   String? userEmail;
   String? totalAmount;
+  String? status;
   DateTime? orderDate;
   List<Products>? products;
 
@@ -13,6 +14,7 @@ class Orders {
       this.userEmail,
       this.userId,
       this.totalAmount,
+      this.status,
       this.orderDate,
       this.products});
 
@@ -21,6 +23,7 @@ class Orders {
     userId = json['userId'];
     userEmail = json['userEmail'];
     totalAmount = json['totalAmount'];
+    status = json['status'];
     orderDate = json['orderDate'] is Timestamp
         ? (json['orderDate'] as Timestamp).toDate()
         : json['orderDate'] as DateTime?;
@@ -38,6 +41,7 @@ class Orders {
     data['userEmail'] = this.userEmail;
     data['userId'] = this.userId;
     data['totalAmount'] = this.totalAmount;
+    data['status'] = this.status;
     data['orderDate'] = this.orderDate;
     if (this.products != null) {
       data['products'] = this.products!.map((v) => v.toJson()).toList();

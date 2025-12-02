@@ -720,7 +720,7 @@ class ProductProvider extends ChangeNotifier {
 
     List<Product> allProducts = snapshot.docs.map((doc) {
       final data = doc.data();
-      data['id'] = doc.id; // 🔥 Attach Firestore ID
+      data['id'] = doc.id; // Attach Firestore ID
       return Product.fromJson(data);
     }).toList();
 

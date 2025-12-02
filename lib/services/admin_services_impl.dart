@@ -238,6 +238,7 @@ class AdminServicesImpl implements AdminServices {
         "userId": userId,
         "userEmail": userEmail,
         "totalAmount": totalPrice,
+        "status": "none",
         "orderDate": DateTime.now(),
         "products": userCartList
             .map((product) => {
@@ -427,23 +428,18 @@ class AdminServicesImpl implements AdminServices {
 
   @override
   Future<ApiResponse> getAvailableProductQuantity(String productId) async {
-    
     if (await Helper().isInternetConnectionAvailable()) {
       try {
-       
         var documentSnapshot = await FirebaseFirestore.instance
             .collection("products")
             .doc(productId)
             .get();
 
-        
         if (documentSnapshot.exists) {
-          
           String quantity = documentSnapshot.data()?['quantity'] ?? 0;
 
           return ApiResponse(statusUtil: StatusUtil.success, data: quantity);
         } else {
-          
           return ApiResponse(
               statusUtil: StatusUtil.error, data: "Product not found");
         }
