@@ -111,16 +111,16 @@ class _ProductPageState extends State<ProductPage> {
   Widget _buildSpecsGrid() {
     // Present specs in two-column grid
     final specs = {
-      "Model": widget.data.model ?? "-",
-      "CPU": widget.data.cpu ?? "-",
-      "OS": widget.data.operatingSystem ?? "-",
-      "Memory": widget.data.memory ?? "-",
-      "Storage": widget.data.storage ?? "-",
-      "Camera": widget.data.camera ?? "-",
-      "Graphics": widget.data.graphics ?? "-",
-      "Screen": widget.data.screen ?? "-",
-      "Warranty": widget.data.warranty ?? "-",
-      "Wireless": widget.data.wirelessConnectivity ?? "-",
+      "Model": widget.data.model ?? "N/A",
+      "CPU": widget.data.cpu ?? "N/A",
+      "OS": widget.data.operatingSystem ?? "N/A",
+      "Memory": widget.data.memory ?? "N/A",
+      "Storage": widget.data.storage ?? "N/A",
+      "Camera": widget.data.camera ?? "N/A",
+      "Graphics": widget.data.graphics ?? "N/A",
+      "Screen": widget.data.screen ?? "N/A",
+      "Warranty": widget.data.warranty ?? "N/A",
+      "Wireless": widget.data.wirelessConnectivity ?? "N/A",
     };
 
     return GridView.builder(

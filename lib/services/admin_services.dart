@@ -12,14 +12,15 @@ abstract class AdminServices {
   Future<ApiResponse> getProductFromCart();
   Future<ApiResponse> updateProductQuantity(Cart cart);
   Future<ApiResponse> deleteProductFromCart(String id, String userId);
+  Future<ApiResponse> updateOrderStatus(String orderId, String newStatus);
 
   //Checks if the cart doesnot have any redundancy
   // User should not be able to add if the product is already added to the cart.
   Future<ApiResponse> checkProductInCart(Cart cart);
 
   // Future<ApiResponse> addSoldProductToCart(Cart cart);
-  Future<ApiResponse> sendUserCartListToFirestore(
-      List<dynamic> userCartList, String userId,String userEmail, String totalPrice);
+  Future<ApiResponse> sendUserCartListToFirestore(List<dynamic> userCartList,
+      String userId, String userEmail, String totalPrice);
 
   Future<ApiResponse> deleteCartAfterPayment(String useraId);
   Future<ApiResponse> getUserOrdersFromFirestore();
@@ -33,5 +34,5 @@ abstract class AdminServices {
       String productId, String userId);
 
   Future<ApiResponse> getUserEmailForOrders(String userId);
-  Future<ApiResponse> getAvailableProductQuantity(String productId); 
+  Future<ApiResponse> getAvailableProductQuantity(String productId);
 }

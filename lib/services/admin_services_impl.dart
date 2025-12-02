@@ -150,6 +150,27 @@ class AdminServicesImpl implements AdminServices {
   }
 
   @override
+  Future<ApiResponse> updateOrderStatus(
+      String orderId, String newStatus) async {
+    if (await Helper().isInternetConnectionAvailable()) {
+      try {
+        await FirebaseFirestore.instance
+            .collection("orders")
+            .doc(orderId)
+            .update({"status": newStatus});
+        isSuccess = true;
+
+        return ApiResponse(statusUtil: StatusUtil.success, data: isSuccess);
+      } catch (e) {
+        return ApiResponse(statusUtil: StatusUtil.error, data: e.toString());
+      }
+    } else {
+      return ApiResponse(
+          statusUtil: StatusUtil.error, data: noInternetConectionStr);
+    }
+  }
+
+  @override
   Future<ApiResponse> updateProductQuantity(Cart cart) async {
     try {
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
@@ -238,7 +259,7 @@ class AdminServicesImpl implements AdminServices {
         "userId": userId,
         "userEmail": userEmail,
         "totalAmount": totalPrice,
-        "status": "none",
+        "status": "pending",
         "orderDate": DateTime.now(),
         "products": userCartList
             .map((product) => {

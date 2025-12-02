@@ -42,7 +42,7 @@ class _UserAccountState extends State<AdminFunctions> {
 
   List<String> adminFunctions = [
     "Add Product",
-    "Sold Products",
+    "Sales/Status of Orders",
     "Products List"
   ];
   int selectedIndex = 0;
@@ -54,7 +54,7 @@ class _UserAccountState extends State<AdminFunctions> {
       style: optionStyle,
     ),
     Text(
-      'Sold Products',
+      'Sales/Status of Orders',
       style: optionStyle,
     ),
     Text(
@@ -73,41 +73,11 @@ class _UserAccountState extends State<AdminFunctions> {
     //
     // TODO: implement initState
     super.initState();
-    // getValue();
-    // getUserData();
     getProductData();
     getOrderFromCart();
   }
 
-  String? userName, userRole, authenticationType, userPassword, userEmail;
   bool isLoading = true;
-  getValue() {
-    Future.delayed(
-      Duration.zero,
-      () async {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        authenticationType = prefs.getString("authenticationType");
-        userName = prefs.getString("userName");
-        userRole = prefs.getString("userRole");
-        userPassword = prefs.getString("userPassword");
-        userEmail = prefs.getString("userEmail");
-        setState(() {
-          // user = User(email: userEmail, name: userName, role: userRole);
-          isLoading = false;
-        });
-      },
-    );
-  }
-
-  getUserData() async {
-    Future.delayed(
-      Duration.zero,
-      () async {
-        var provider = Provider.of<UserProvider>(context, listen: false);
-        await provider.getUser();
-      },
-    );
-  }
 
   getProductData() async {
     Future.delayed(
@@ -234,7 +204,7 @@ class _UserAccountState extends State<AdminFunctions> {
                     //   },
                     // ),
                     ListTile(
-                      title: const Text('Sold Products'),
+                      title: const Text('Sales/Status of Orders'),
                       selected: selectedIndex == 1,
                       onTap: () {
                         onItemTapped(1);
@@ -828,13 +798,97 @@ class _UserAccountState extends State<AdminFunctions> {
                                                   );
                                                 },
                                               ),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10.0,
+                                                        vertical: 8),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      "Update Status:",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+
+                                                    // Modern Dropdown
+                                                    Container(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 12),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors
+                                                            .grey.shade100,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        border: Border.all(
+                                                            color: Colors
+                                                                .grey.shade300),
+                                                      ),
+                                                      child:
+                                                          DropdownButtonHideUnderline(
+                                                        child: DropdownButton<
+                                                            String>(
+                                                          value: order.status ??
+                                                              "pending",
+                                                          items: [
+                                                            DropdownMenuItem(
+                                                                value:
+                                                                    "pending",
+                                                                child: Text(
+                                                                    "Pending")),
+                                                            DropdownMenuItem(
+                                                                value:
+                                                                    "processing",
+                                                                child: Text(
+                                                                    "Processing")),
+                                                            DropdownMenuItem(
+                                                                value:
+                                                                    "shipped",
+                                                                child: Text(
+                                                                    "Shipped")),
+                                                            DropdownMenuItem(
+                                                                value:
+                                                                    "delivered",
+                                                                child: Text(
+                                                                    "Delivered")),
+                                                          ],
+                                                          onChanged:
+                                                              (value) async {
+                                                            if (value != null) {
+                                                              setState(() {
+                                                                order.status =
+                                                                    value; // Update the local status immediately
+                                                              });
+                                                              await productProvider
+                                                                  .saveUpdateOrderStatus(
+                                                                      order
+                                                                          .orderId!,
+                                                                      value);
+                                                            }
+                                                            await productProvider
+                                                                .getOrdersFromCart();
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
                                             ],
                                           ),
                                         ),
                                       );
                                     },
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),

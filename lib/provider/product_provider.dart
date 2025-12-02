@@ -204,6 +204,11 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  setUpdateOrderStatus(StatusUtil statusUtil) {
+    _updateOrderStatus = statusUtil;
+    notifyListeners();
+  }
+
   StatusUtil? _saveProductStatus = StatusUtil.none;
   StatusUtil? get saveProductStatus => _saveProductStatus;
 
@@ -251,6 +256,9 @@ class ProductProvider extends ChangeNotifier {
 
   StatusUtil? _getUserEmailForOrder = StatusUtil.none;
   StatusUtil? get getUserEmailForOrder => _getUserEmailForOrder;
+
+  StatusUtil? _updateOrderStatus = StatusUtil.none;
+  StatusUtil? get updateOrderStatus => _updateOrderStatus;
 
   setgetUpdateQuantity(StatusUtil statusUtil) {
     _getUpdateQuantity = statusUtil;
@@ -589,6 +597,21 @@ class ProductProvider extends ChangeNotifier {
       setGetUserEmailForOrder(StatusUtil.success);
     } else if (response.statusUtil == StatusUtil.error) {
       setGetUserEmailForOrder(StatusUtil.error);
+      errorMessage = response.errorMessage;
+    }
+  }
+
+  Future<void> saveUpdateOrderStatus(String orderId, String newStatus) async {
+    if (updateOrderStatus != StatusUtil.loading) {
+      setUpdateOrderStatus(StatusUtil.loading);
+    }
+    ApiResponse response =
+        await adminServices.updateOrderStatus(orderId, newStatus);
+    if (response.statusUtil == StatusUtil.success) {
+      isSuccess = response.data;
+      setUpdateOrderStatus(StatusUtil.success);
+    } else if (response.statusUtil == StatusUtil.error) {
+      setUpdateOrderStatus(StatusUtil.error);
       errorMessage = response.errorMessage;
     }
   }
