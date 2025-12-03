@@ -472,6 +472,9 @@ class _ProductPageState extends State<ProductPage> {
                                               if (productProvider
                                                       .addRatingToProduct ==
                                                   StatusUtil.success) {
+                                                await productProvider
+                                                    .checkRatingOfProducts(
+                                                        widget.data.id, uId!);
                                                 Helper.displaySnackbar(context,
                                                     "Product Successfully Rated");
                                               } else {
@@ -487,7 +490,12 @@ class _ProductPageState extends State<ProductPage> {
                                                 //     size: 18,
                                                 //     color: Colors.yellowAccent),
                                                 // SizedBox(width: 6),
-                                                Text("Rate Product"),
+
+                                                // if (hasRated == false &&
+                                                //     uId != null &&
+                                                //     uRole != "admin" &&
+                                                //     canRateProduct != false)
+                                                  Text("Rate Product"),
                                               ],
                                             ),
                                           ),
