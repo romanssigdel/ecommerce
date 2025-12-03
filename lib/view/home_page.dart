@@ -16,6 +16,8 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'dart:io';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -34,7 +36,76 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     // getValue();
+    checkConnectivityOnStart();
     getProductData();
+  }
+
+  void checkConnectivityOnStart() async {
+    bool status = await checkInternet();
+    if (!status) {
+      showNoInternetDialog();
+    }
+
+    // Listen for connectivity changes
+    Connectivity()
+        .onConnectivityChanged
+        .listen((List<ConnectivityResult> results) async {
+      // Since results is a list, check if NONE is connected
+      bool noConnection = results.contains(ConnectivityResult.none);
+
+      if (noConnection) {
+        showNoInternetDialog();
+        return;
+      }
+
+      // Extra: check actual internet connection
+      bool status = await checkInternet();
+      if (!status) {
+        showNoInternetDialog();
+      }
+    });
+  }
+
+  void showNoInternetDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: Text("No Internet Connection"),
+        content: Text(
+            "Please check your network.\nYou cannot use the app without internet."),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              exit(0); // Close the app
+            },
+            child: Text("Exit"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> checkInternet() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+
+    if (connectivityResult == ConnectivityResult.none) {
+      return false;
+    }
+
+    // Actual internet check
+    try {
+      final result = await InternetAddress.lookup('google.com')
+          .timeout(Duration(seconds: 3));
+
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        return true;
+      }
+    } catch (_) {
+      return false;
+    }
+    return false;
   }
 
   getValue() async {
@@ -649,15 +720,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  logoutUserFromSharedPreference() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('isLogin');
-    Helper.displaySnackbar(context, "Successfully Logged Out!");
-    Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SigninPage(),
-        ),
-        (route) => false);
-  }
+  // logoutUserFromSharedPreference() async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   await prefs.remove('isLogin');
+  //   Helper.displaySnackbar(context, "Successfully Logged Out!");
+  //   Navigator.pushAndRemoveUntil(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => SigninPage(),
+  //       ),
+  //       (route) => false);
+  // }
 }

@@ -52,6 +52,7 @@ dependencies:
   google_sign_in: ^6.2.1
   credential_manager: 2.0.2
   url_launcher: ^6.1.11
+  connectivity_plus: ^6.0.3
     
   
 
